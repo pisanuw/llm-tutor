@@ -1,0 +1,96 @@
+{# Shared help text: rendered inside the chat's help modal and on the public
+   /help page. It reads only the Jinja globals (tutor, course_list from
+   courses.yaml), so both can include it. Student-facing;
+   plain words, short sections. Consent/retention wording on the login page is
+   the approved notice; the "Your data" section here summarizes it and links
+   to it rather than restating it. #}
+<div class="space-y-5 text-sm text-gray-800">
+
+  <section>
+    <h2 class="text-base font-bold text-gray-900 mb-1">How {{ tutor.name }} works</h2>
+    <p>{{ tutor.name }} is {{ tutor.instructor_short }}'s tutor for {{ tutor.subject }}. It knows the
+      lectures, slides, and course materials{% if course_list|length > 1 %} for each course
+      ({{ course_list|map(attribute="label")|join(", ") }}){% endif %}, and it answers the way
+      {{ tutor.instructor_short }} teaches, with the same examples. It is here to help you learn
+      the material, not to do the course for you.</p>
+  </section>
+
+  <section>
+    <h3 class="font-semibold text-gray-900 mb-1">What you can do</h3>
+    <ul class="list-disc pl-5 space-y-1">
+      <li><strong>Ask about any topic</strong> in your own words. When the answer is on a
+        slide, the slide opens next to the chat (on a phone, tap 📽 Slides).</li>
+      <li><strong>Get feedback on code.</strong> Press <span class="font-mono">&lt;/&gt;</span>,
+        paste your {{ tutor.code_language or "code" }} (or photograph handwritten code on a phone), and it tells you what
+        is wrong and where to look. Before it grades, it asks what score you expect.</li>
+      <li><strong>Practice.</strong> Ask for an exercise on a topic, or say "quiz me on
+        lecture 2".</li>
+      <li><strong>Prepare for an exam.</strong> Ask it to work through a problem with you, to let
+        you try each step, or to explain why an answer is wrong.</li>
+      <li><strong>Hear it.</strong> When the voice is on, the 🔊 button under a reply reads it
+        aloud in {{ tutor.instructor_short }}'s voice.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h3 class="font-semibold text-gray-900 mb-1">What it will not do, and why</h3>
+    <ul class="list-disc pl-5 space-y-1">
+      <li>It will not write your homework solution. It gives <strong>one hint at a
+        time</strong>: first the idea, then where to look, then a leading question. If you
+        push for the full answer it holds where it is and says why.</li>
+      <li>Sometimes, before going deeper, it asks two or three quick questions on the
+        topic that comes before. Answer them (or say "not now") and it continues.</li>
+      <li>It can be wrong. Check anything important against the lecture or the book.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h3 class="font-semibold text-gray-900 mb-1">Asking good questions</h3>
+    <ul class="list-disc pl-5 space-y-1">
+      <li>Paste the exact error message or the failing test, not a description of it.</li>
+      <li>Say what you tried and what you expected to happen.</li>
+      <li>One question at a time. Name the lecture or assignment if it matters.</li>
+      <li>Want to think it through yourself? Say "let me try each step".</li>
+    </ul>
+  </section>
+
+  <section>
+    <h3 class="font-semibold text-gray-900 mb-1">Getting around</h3>
+    <ul class="list-disc pl-5 space-y-1">
+      <li><strong>💬 Chat</strong>: the tutor. <strong>💡</strong> shows suggested questions.
+        The course and lecture menus in the header pick which slides you see.</li>
+      <li><strong>🗺 Map</strong>: every topic in the course, what you have covered, and
+        what comes next, with links to the slide and the book section.</li>
+      <li><strong>🎓 Lectures</strong>: the slide decks with narration.</li>
+      <li><strong>🔁 Review</strong>: short retrieval practice on things you learned
+        earlier, timed so they stick. It appears in the sidebar when something is due.</li>
+      <li><strong>📖 Book</strong>: the course text. <strong>🧭 Order</strong>: optional; changes
+        the order topics are suggested in.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h3 class="font-semibold text-gray-900 mb-1">Your data</h3>
+    <p>Your questions, code, and progress are recorded to run the tutor and to improve it
+      for future students. If your instructor uses {{ tutor.name }} for your class, they can see how
+      you are using it — how often, which topics, how the exercises went — and read your
+      conversations for that class. How you use the site is recorded too: which pages,
+      slides, and lectures you open, and for how long. It is a learning tool: it is
+      <strong>not used to grade you</strong>,
+      and your data is never sold or shared outside the course. Identifiable records are
+      kept for up to one year, then anonymized. To request deletion,
+      {% if tutor.instructor_email %}email
+      <a href="mailto:{{ tutor.instructor_email }}" class="underline break-words">{{ tutor.instructor_email }}</a>{% else %}ask
+      {{ tutor.instructor_short }}{% endif %}. The full notice is on the
+      <a href="/book/index.html" class="underline">course site</a>.</p>
+  </section>
+
+  <section>
+    <h3 class="font-semibold text-gray-900 mb-1">Something wrong?</h3>
+    <p>Press 👎 under the reply and say what was off; {{ tutor.instructor_short }} reads those. For anything
+      else, {% if tutor.instructor_email %}email
+      <a href="mailto:{{ tutor.instructor_email }}" class="underline break-words">{{ tutor.instructor_email }}</a>{% else %}ask
+      your instructor{% endif %}.</p>
+  </section>
+
+</div>

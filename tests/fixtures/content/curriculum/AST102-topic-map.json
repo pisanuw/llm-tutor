@@ -1,0 +1,31 @@
+{
+  "course": "AST102",
+  "topics": [
+    {
+      "name": "Measuring the stars",
+      "lectures_covered": ["stars-measuring.pptx"],
+      "depth": "introductory",
+      "key_concepts": ["parallax", "magnitudes", "spectral classes"]
+    },
+    {
+      "name": "The lives of stars",
+      "lectures_covered": ["stars-lives.pptx"],
+      "depth": "introductory",
+      "key_concepts": ["HR diagram", "stellar endpoints"]
+    },
+    {
+      "name": "Galaxies and dark matter",
+      "lectures_covered": ["galaxies.pptx"],
+      "depth": "introductory",
+      "key_concepts": ["galaxy types", "dark matter evidence"]
+    },
+    {
+      "name": "The expanding universe",
+      "lectures_covered": ["cosmology.pptx"],
+      "depth": "introductory",
+      "key_concepts": ["Hubble's law", "Big Bang evidence"]
+    }
+  ],
+  "coverage_gaps": [],
+  "suggested_lecture_sequence": ["measure, lives, galaxies, cosmology"]
+}

@@ -1,0 +1,99 @@
+[project]
+name = "tutor"
+version = "0.1.0"
+description = "A Claude-backed, supervised AI tutor you configure for your own course"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+# High-signal, CI-gated ruleset (the lint step in .github/workflows/tests.yml):
+#   F   pyflakes       — unused imports, undefined names, f-strings w/o placeholders
+#   E9  syntax errors
+#   B   flake8-bugbear — likely-bug patterns (mutable default args, raise w/o from on
+#                        auth paths, etc.)
+# Full style/formatting (E/W/I/UP) is a larger backlog (~460 findings) and is
+# left to a follow-up so this gate can be made required without a mass reformat.
+select = ["F", "E9", "B"]
+ignore = [
+  # B008: FastAPI's `param = Depends(...)` / `Query(...)` default IS the framework's
+  # intended idiom, not a bug; bugbear cannot tell them apart.
+  "B008",
+  # Cosmetic bugbear findings deferred to a follow-up cleanup (not behavior bugs):
+  "B007",  # unused loop variable
+  "B023",  # closure over loop var (every current site calls the closure same-iteration)
+  "B905",  # zip() without explicit strict=
+]
+
+[tool.mypy]
+# Static type check, exposed to CI as the `typecheck` step in tests.yml.
+# Pragmatic, not --strict: the goal is to machine-verify the existing
+# annotations and ratchet coverage up per module.
+#
+# Scope: the security-critical core (auth, session/JWT, config, startup/RLS),
+# every router and the web-layer helpers (plan step 5.4, finding C23), and the
+# reporting modules. The agent package (the turn stages, tools, prompts) still
+# carries third-party SDK surface (anthropic overloads, chromadb) that emits
+# findings, so it is followed silently: routers are checked against its types,
+# but its own findings are not reported unless a file is listed here, as
+# vision.py and misconception_mining.py are. Bringing it in is a follow-up.
+python_version = "3.11"
+files = [
+  "tutor/auth",
+  "tutor/db",
+  "tutor/routers",
+  "tutor/conversations.py",
+  "tutor/student_days.py",
+  "tutor/config.py",
+  "tutor/startup.py",
+  "tutor/logging_config.py",
+  "tutor/activity_events.py",
+  "tutor/deck_tracking.py",
+  "tutor/analytics",
+  "tutor/quotas.py",
+  "tutor/quota_report.py",
+  "tutor/utctime.py",
+  "tutor/mail.py",
+  "tutor/alerts.py",
+  "tutor/selfheal.py",
+  "tutor/streambuf.py",
+  "tutor/courses.py",
+  "tutor/kb.py",
+  "tutor/templating.py",
+  "tutor/classes.py",
+  "tutor/class_metrics.py",
+  "tutor/health.py",
+  "tutor/learning_metrics.py",
+  "tutor/agent/vision.py",
+  "tutor/agent/misconception_mining.py",
+]
+warn_unused_ignores = true
+warn_redundant_casts = true
+check_untyped_defs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true       # third-party libs without stubs (chromadb, resend, jose, authlib)
+
+[[tool.mypy.overrides]]
+module = ["tutor.agent.*"]
+follow_imports = "silent"
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers"
+# Only our suite. A dev machine keeps the untracked course materials beside the
+# repo (source-materials/), and those hold old assignment graders named
+# test_*.py; bare `pytest` used to collect them and die in their argparse before
+# a single test ran. CI never saw it, because they are not in git.
+testpaths = ["tests"]
+# Warnings policy (plan step 6.2a, finding F23): a deprecation raised in the
+# app's or the pipeline's own code fails the test that triggers it. The one
+# known third-party warning, Starlette asking for httpx2 in its test client,
+# is silenced until the test client moves.
+filterwarnings = [
+    "error::DeprecationWarning:tutor",
+    "error::DeprecationWarning:pipeline",
+    "error::PendingDeprecationWarning:tutor",
+    "ignore:Using `httpx` with `starlette.testclient` is deprecated:UserWarning",
+]

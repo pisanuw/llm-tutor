@@ -1,0 +1,132 @@
+{#- The recent-conversations list (docs/conversations-list-plan-2026-10.md), shared by the
+    admin Conversations tab and the instructor view. `view` carries: rows (Conversation
+    objects whose .links the router filled: thread, open, and for admins timeline,
+    supervision, logins), listing, days, day_choices, flagged, course, courses (None hides
+    the picker), classes (None hides the picker), class_id, students (datalist, may be
+    empty), student, new_count, show_cost, show_admin_links, form_action, hidden (name,
+    value pairs), sort_links (key -> href, active, desc). -#}
+{% macro sort_th(view, key, label, align='left') -%}
+{% set s = view.sort_links[key] -%}
+<th class="px-3 py-3 text-{{ align }}"><a href="{{ s.href }}" data-sort="{{ key }}" class="no-underline hover:text-gray-800 {% if s.active %}text-gray-800{% endif %}">{{ label }}{% if s.active %} {{ '▼' if s.desc else '▲' }}{% endif %}</a></th>
+{%- endmacro %}
+
+{% macro badges(c) -%}
+<span class="inline-flex flex-wrap gap-1 text-[11px] leading-5">
+{%- if c.thumbs_down %}<span class="px-1.5 rounded bg-red-100 text-red-800" data-badge="thumbs">👎 {{ c.thumbs_down }}</span>{% endif -%}
+{%- if c.thumbs_up %}<span class="px-1.5 rounded bg-green-100 text-green-800" data-badge="thumbs-up">👍 {{ c.thumbs_up }}</span>{% endif -%}
+{%- if c.cuts %}<span class="px-1.5 rounded bg-orange-100 text-orange-800" data-badge="cut">cut{% if c.cuts > 1 %} ×{{ c.cuts }}{% endif %}</span>{% endif -%}
+{%- if c.exams %}<span class="px-1.5 rounded bg-purple-100 text-purple-800" data-badge="exam">exam</span>{% endif -%}
+{%- if c.quota_hits %}<span class="px-1.5 rounded bg-red-100 text-red-800" data-badge="quota">quota</span>{% endif -%}
+{%- if c.first_ever %}<span class="px-1.5 rounded bg-green-100 text-green-800" data-badge="first">first conversation</span>{% endif -%}
+</span>
+{%- endmacro %}
+
+{% macro open_controls(view, c) -%}
+<button type="button" data-expand aria-expanded="false" title="Show the messages here"
+        class="px-2 py-0.5 rounded border border-gray-300 text-gray-600 hover:bg-gray-100">▾</button>
+<a href="{{ c.links.open }}" target="_blank" rel="noopener" title="Open the transcript in a new tab"
+   class="ml-1 px-2 py-0.5 rounded border border-gray-300 text-blue-700 hover:bg-blue-50 no-underline">↗</a>
+{%- if view.show_admin_links %}
+<span class="block mt-1 text-xs space-x-2">
+  <a href="{{ c.links.timeline }}" class="text-blue-700 hover:underline">timeline</a>
+  <a href="{{ c.links.supervision }}" class="text-blue-700 hover:underline">turns</a>
+  <a href="{{ c.links.logins }}" class="text-blue-700 hover:underline">logins</a>
+</span>
+{%- endif %}
+{%- endmacro %}
+
+{% macro conversations_list(view) %}
+<div class="bg-white rounded-xl shadow-sm overflow-hidden" data-conversations>
+  <div class="px-4 sm:px-6 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-3">
+    <h2 class="font-semibold text-gray-700">
+      Recent conversations
+      <span class="text-sm text-gray-400 font-normal">— {{ view.listing.total }} in the last {{ view.days }} day{{ '' if view.days == 1 else 's' }}{% if view.listing.capped %}, showing the newest {{ view.rows|length }}{% endif %}{% if view.new_count %} · <span class="text-amber-700" data-new-count>{{ view.new_count }} new since your last visit</span>{% endif %}</span>
+    </h2>
+    <form method="get" action="{{ view.form_action }}" class="flex flex-wrap items-center gap-2 text-sm" data-filters>
+      {% for name, value in view.hidden %}<input type="hidden" name="{{ name }}" value="{{ value }}">{% endfor %}
+      <select name="days" class="px-2 py-1.5 border border-gray-300 rounded-lg">
+        {% for d in view.day_choices %}<option value="{{ d }}" {% if d == view.days %}selected{% endif %}>{{ d }} day{{ '' if d == 1 else 's' }}</option>{% endfor %}
+      </select>
+      {% if view.classes is not none %}
+      <select name="class_id" class="px-2 py-1.5 border border-gray-300 rounded-lg">
+        <option value="">all classes</option>
+        {% for k in view.classes %}<option value="{{ k.id }}" {% if k.id == view.class_id %}selected{% endif %}>{{ k.label }}</option>{% endfor %}
+      </select>
+      {% endif %}
+      {% if view.courses %}
+      <select name="course" class="px-2 py-1.5 border border-gray-300 rounded-lg">
+        <option value="">both courses</option>
+        {% for k in view.courses %}<option value="{{ k }}" {% if k == view.course %}selected{% endif %}>{{ k }}</option>{% endfor %}
+      </select>
+      {% endif %}
+      <label class="inline-flex items-center gap-1 text-gray-700"><input type="checkbox" name="flagged" value="1" {% if view.flagged %}checked{% endif %}> flagged only</label>
+      <input list="convo-emails" name="student" value="{{ view.student or '' }}" placeholder="student@example.edu"
+             class="px-3 py-1.5 border border-gray-300 rounded-lg w-44 min-w-0" />
+      {% if view.students %}<datalist id="convo-emails">{% for s in view.students %}<option value="{{ s.email }}">{% endfor %}</datalist>{% endif %}
+      <button type="submit" class="px-3 py-1.5 bg-gray-700 text-white rounded-lg">Show</button>
+    </form>
+  </div>
+
+  {% if not view.rows %}
+  <p class="px-6 py-8 text-center text-gray-400">No conversations in this window.</p>
+  {% else %}
+  <div class="hidden md:block overflow-x-auto">
+    <table class="w-full text-sm" data-conversations-table>
+      <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+        <tr>
+          {{ sort_th(view, 'start', 'When') }}
+          {{ sort_th(view, 'student', 'Student') }}
+          {{ sort_th(view, 'course', 'Where') }}
+          <th class="px-3 py-3 text-left">What</th>
+          {{ sort_th(view, 'questions', 'Size') }}
+          {% if view.show_cost %}{{ sort_th(view, 'cost', 'Cost', 'right') }}{% endif %}
+          {{ sort_th(view, 'flags', 'Flags') }}
+          <th class="px-3 py-3 text-right">Open</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        {% for c in view.rows %}
+        <tr data-conversation data-thread-url="{{ c.links.thread }}" class="align-top hover:bg-gray-50 cursor-pointer {% if c.is_new %}bg-amber-50{% endif %}">
+          <td class="px-3 py-2 whitespace-nowrap">
+            <div class="font-mono text-gray-700">{% if c.active %}<span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-1 align-middle" title="active now" data-active></span>{% endif %}{{ c.when }}{% if c.is_new %} <span class="text-[10px] uppercase text-amber-700" data-new>new</span>{% endif %}</div>
+            <div class="text-xs text-gray-400">{{ c.ago }} · {{ c.span }}</div>
+          </td>
+          <td class="px-3 py-2">
+            <div class="text-gray-800">{{ c.name or c.email }}</div>
+            <div class="text-xs text-gray-500 font-mono break-all">{{ c.email }}</div>
+            {% if c.classes %}<div class="text-xs text-gray-400">{{ c.class_label }}</div>{% endif %}
+          </td>
+          <td class="px-3 py-2 whitespace-nowrap text-gray-700">{{ c.course or '—' }}{% for l in c.lecture_labels %} <span class="text-xs text-gray-500">{{ l }}</span>{% endfor %}</td>
+          <td class="px-3 py-2 text-gray-700 max-w-md break-words">{{ c.preview or '—' }}</td>
+          <td class="px-3 py-2 whitespace-nowrap font-mono text-gray-700" title="questions / replies">{{ c.questions }} / {{ c.replies }}</td>
+          {% if view.show_cost %}<td class="px-3 py-2 text-right font-mono text-gray-700">${{ '%.3f'|format(c.cost_usd) }}</td>{% endif %}
+          <td class="px-3 py-2">{{ badges(c) }}</td>
+          <td class="px-3 py-2 text-right whitespace-nowrap">{{ open_controls(view, c) }}</td>
+        </tr>
+        <tr data-thread-row hidden><td colspan="{{ 8 if view.show_cost else 7 }}" class="px-3 py-3 bg-gray-50"><div data-thread class="space-y-2 max-w-3xl"></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <ul class="md:hidden divide-y divide-gray-100" data-conversations-cards>
+    {% for c in view.rows %}
+    <li data-conversation data-thread-url="{{ c.links.thread }}" class="px-4 py-3 {% if c.is_new %}bg-amber-50{% endif %}">
+      <div class="flex items-start justify-between gap-2">
+        <div class="min-w-0">
+          <div class="font-mono text-sm text-gray-700">{% if c.active %}<span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-1 align-middle" data-active></span>{% endif %}{{ c.when }} <span class="text-xs text-gray-400 font-sans">{{ c.ago }} · {{ c.span }}</span>{% if c.is_new %} <span class="text-[10px] uppercase text-amber-700" data-new>new</span>{% endif %}</div>
+          <div class="text-sm text-gray-800 truncate">{{ c.name or c.email }} <span class="text-xs text-gray-500 font-mono">{{ c.email }}</span></div>
+          <div class="text-xs text-gray-500">{{ c.course or '—' }} {{ c.lecture_labels|join(' ') }} · {{ c.questions }} / {{ c.replies }}{% if view.show_cost %} · ${{ '%.3f'|format(c.cost_usd) }}{% endif %}</div>
+        </div>
+        <div class="shrink-0 text-right whitespace-nowrap">{{ open_controls(view, c) }}</div>
+      </div>
+      {% if c.preview %}<p class="mt-1 text-sm text-gray-700 break-words">{{ c.preview }}</p>{% endif %}
+      <div class="mt-1">{{ badges(c) }}</div>
+      <div data-thread hidden class="mt-2 space-y-2"></div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+<script src="{{ asset_url('conversations.js') }}" defer></script>
+{% endmacro %}

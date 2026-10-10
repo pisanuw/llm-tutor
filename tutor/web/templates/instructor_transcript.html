@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_nav.html" import site_header %}
+{% from "_conversation_bubbles.html" import thread_messages %}
+{% block title %}{{ tutor.name }} — Transcript{% endblock %}
+{% block content %}
+
+{{ site_header("instructor", "Instructor dashboard", student=viewer, is_admin=is_admin,
+               is_instructor=True, course=course) }}
+
+<main class="max-w-4xl mx-auto px-3 sm:px-6 py-6">
+  <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
+    <h1 class="text-xl font-bold text-gray-900 min-w-0 break-words">
+      {{ target.name or target.email }}
+      <span class="block sm:inline text-sm font-normal text-gray-500 font-mono">{{ target.email }}</span>
+    </h1>
+    <span class="flex flex-wrap gap-2 text-sm">
+      <a href="/instructor?view=conversations&class_id={{ current.id }}" data-back-to-list
+         class="px-3 py-1.5 text-blue-700 hover:underline">← Recent conversations</a>
+      <a href="/instructor/transcript?class_id={{ current.id }}&student={{ target.email|urlencode }}&format=md"
+         class="px-3 py-1.5 border border-gray-300 rounded-lg bg-white hover:border-blue-400">⬇ .md</a>
+      <a href="/instructor/transcript?class_id={{ current.id }}&student={{ target.email|urlencode }}&format=json"
+         class="px-3 py-1.5 border border-gray-300 rounded-lg bg-white hover:border-blue-400">⬇ .json</a>
+    </span>
+  </div>
+  <p class="text-sm text-gray-500 mb-4">
+    {{ course_label(current.course) }} · {{ current.label }} · {{ messages|length }} message{{ '' if messages|length == 1 else 's' }}{% if truncated %} (the newest {{ messages|length }}; download for the rest){% endif %}
+  </p>
+  <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 space-y-3" data-transcript>
+    {% if messages %}
+    {{ thread_messages(messages) }}
+    {% else %}
+    <p class="text-sm text-gray-400 italic">No messages in this course yet.</p>
+    {% endif %}
+  </div>
+</main>
+{% endblock %}

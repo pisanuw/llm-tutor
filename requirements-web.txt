@@ -1,0 +1,36 @@
+# Tutor web-app runtime deps (NOT the pipeline; see requirements.txt for that).
+# The running app imports only `chromadb` for RAG — no torch / sentence-transformers
+# (those are build-time-only, used to BUILD the index, not to query it). Chroma
+# queries with its bundled ONNX all-MiniLM embedder via onnxruntime.
+# Versions pinned to the tested .venv (Python 3.11).
+
+fastapi==0.136.3
+uvicorn[standard]==0.48.0
+jinja2==3.1.6
+python-multipart==0.0.30
+itsdangerous==2.2.0
+authlib==1.7.2
+python-jose[cryptography]==3.5.0
+resend==2.30.1
+sqlalchemy==2.0.50
+httpx==0.28.1
+anthropic==0.105.2
+python-dotenv==1.2.2
+chromadb==1.5.9
+# onnxruntime publishes no Intel-Mac (macOS x86_64) wheel after 1.23.2, so a
+# 1.26.0 pin cannot install there and a weekly report run on such a Mac (whose first step
+# is this install) failed every run. Production, CI and Apple Silicon keep 1.26.0.
+onnxruntime==1.26.0; sys_platform != "darwin" or platform_machine != "x86_64"
+onnxruntime==1.23.2; sys_platform == "darwin" and platform_machine == "x86_64"
+# Time zone data for zoneinfo where the image has none (the reports label
+# their windows in America/Los_Angeles; plan step 4.4).
+tzdata==2025.2
+
+# Postgres driver for Supabase (DATABASE_URL). Not needed for local SQLite dev.
+psycopg[binary]==3.3.6
+# The pedagogy playbook (tutor/agent/playbook.py); same pin as requirements.txt.
+pyyaml==6.0.3
+
+# Schema migrations (applied at boot by entrypoint.sh: python -m tutor.migrate; see DEPLOY.md).
+alembic==1.18.4
+sentry-sdk==2.70.0           # optional error reporting; inert without SENTRY_DSN (ROADMAP 4b)

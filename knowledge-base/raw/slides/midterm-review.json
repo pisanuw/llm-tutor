@@ -1,0 +1,68 @@
+{
+  "filename": "midterm-review.pptx",
+  "lecture_title": "AST 101 Midterm Review",
+  "slide_count": 5,
+  "slides": [
+    {
+      "slide_number": 1,
+      "layout_name": "TITLE",
+      "title": "AST 101 Midterm Review",
+      "body_text": [
+        "Lectures 1 to 3",
+        "Dr. Alex Morgan"
+      ],
+      "speaker_notes": "This is a review session, not a new lecture. Bring questions.",
+      "has_code": false
+    },
+    {
+      "slide_number": 2,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "What Is on the Midterm",
+      "body_text": [
+        "The celestial sphere, daily motion and angles",
+        "Phases, eclipses and tides",
+        "Seasons, solstices and the Sun's path",
+        "One handwritten page of notes allowed"
+      ],
+      "speaker_notes": "Expect to draw at least two diagrams. Diagrams earn partial credit even when the final answer is off.",
+      "has_code": false
+    },
+    {
+      "slide_number": 3,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Draw These From Memory",
+      "body_text": [
+        "The top-down view of the Moon's phases with the Sun on one side",
+        "Earth's orbit with the tilted axis at both solstices",
+        "Your horizon with the Sun's path in June and in December"
+      ],
+      "speaker_notes": "If you can draw these three, you can answer most of the exam.",
+      "has_code": false
+    },
+    {
+      "slide_number": 4,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Mistakes We Saw Last Year",
+      "body_text": [
+        "Earth's shadow causing the phases",
+        "Earth closer to the Sun in summer",
+        "A full moon rising at midnight",
+        "Mixing up arcminutes and arcseconds"
+      ],
+      "speaker_notes": "Every one of these is a good wrong answer. Make sure it is not yours.",
+      "has_code": false
+    },
+    {
+      "slide_number": 5,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Practice Question",
+      "body_text": [
+        "The Moon is at third quarter.",
+        "About what time does it rise?",
+        "Where in the sky is it at sunrise?"
+      ],
+      "speaker_notes": "Work it in pairs from the top-down view before anyone shares an answer.",
+      "has_code": false
+    }
+  ]
+}

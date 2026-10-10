@@ -1,0 +1,120 @@
+# The Lives of Stars
+
+Predict first. Why does the Sun shine? Is it burning, like an enormous fire?
+Slowly shrinking and heating up? Something nuclear? Commit to one, then
+estimate how long a fire the size of the Sun could last.
+
+By the end of this chapter you should be able to:
+
+- place a star on the H-R diagram and name its main groups;
+- explain how fusion powers a main-sequence star, and why massive stars die young;
+- predict how a star ends from its initial mass.
+
+## The H-R Diagram {#the-hr-diagram}
+
+From the last chapter, every star can be given two numbers: its
+**luminosity** (total power output, from distance and apparent brightness)
+and its **surface temperature** (from color or spectral class). Plot one
+against the other for thousands of stars and they do not scatter at random.
+The chart is the **Hertzsprung-Russell diagram**.
+
+By tradition, luminosity goes up the vertical axis and temperature increases
+to the **left**, so hot blue stars are on the left and cool red ones on the
+right. Three groups stand out:
+
+- **The main sequence**: a diagonal band from hot and bright (upper left) to
+  cool and dim (lower right). About 90 percent of stars, the Sun included,
+  sit here.
+- **Giants and supergiants** (upper right): cool, yet very luminous. A cool
+  star can only be that bright if it is enormous. Betelgeuse is a red
+  supergiant.
+- **White dwarfs** (lower left): hot, yet dim. They must be tiny, about the
+  size of Earth. Sirius B is one.
+
+## Hydrogen Into Helium {#fusion}
+
+A chemical fire the size of the Sun would burn out in a few thousand years,
+and rocks on Earth are billions of years old. The Sun runs on something far
+more powerful: nuclear **fusion**.
+
+In the core, at about 15 million kelvin, hydrogen nuclei fuse into helium.
+Four hydrogen nuclei make one helium nucleus with about 0.7 percent less mass,
+and the missing mass becomes energy (E = mc squared). The Sun converts about
+600 million tons of hydrogen every second and has enough in its core to keep
+going for about 10 billion years in all.
+
+A main-sequence star is a balance. Gravity pulls every part of the star
+inward; the pressure of the hot gas pushes outward. Squeeze a balloon between
+your hands and you feel the same standoff. While the core has hydrogen, the
+two stay balanced and the star stays steady.
+
+A star's **mass** sets its place on the main sequence, and its lifetime.
+Massive stars have more fuel but burn it enormously faster, like a truck with
+a bigger tank and a much bigger engine:
+
+| Initial mass | Main-sequence lifetime (rough) |
+|---|---|
+| 0.5 Suns | more than 50 billion years |
+| 1 Sun | about 10 billion years |
+| 10 Suns | a few tens of millions of years |
+
+## How Stars Die {#stellar-endpoints}
+
+When the core runs out of hydrogen, gravity gains ground. The core contracts
+and heats, hydrogen keeps fusing in a shell around it, and the outer layers
+swell and cool: the star becomes a **red giant**, moving up and to the right on
+the H-R diagram. The Sun will do this in about 5 billion years.
+
+What happens next depends on the star's initial mass:
+
+- **Below about 8 solar masses** (the Sun included): the outer layers drift
+  away as a glowing planetary nebula, and the core is left as a **white
+  dwarf**.
+- **Above about 8 solar masses**: the core collapses and the star explodes as
+  a **supernova**, leaving a **neutron star**, about 20 km across.
+- **The most massive stars**, roughly 20 solar masses and up: the collapsed
+  core becomes a **black hole**.
+
+The dividing masses are approximate, and astronomers still argue about the
+exact values. The Sun is far too small to become a black hole.
+
+::: {.callout-note title="Dr. Morgan's note"}
+The iron in your blood and the calcium in your bones were made inside stars
+and scattered by their deaths. Next time someone tells you that you are made
+of stardust, you can tell them which kind.
+:::
+
+## Self-check
+
+```{=html}
+<div class="quiz" data-answer="b">
+  <div class="question">1. A star has a surface of 3,500 K and 10,000 times the Sun's luminosity. Where is it on the H-R diagram?</div>
+  <ul>
+    <li data-choice="a"><label><strong>a.</strong> Lower left, with the white dwarfs</label></li>
+    <li data-choice="b"><label><strong>b.</strong> Upper right, with the giants and supergiants</label></li>
+    <li data-choice="c"><label><strong>c.</strong> Upper left, at the top of the main sequence</label></li>
+    <li data-choice="d"><label><strong>d.</strong> Lower right, at the bottom of the main sequence</label></li>
+  </ul>
+  <div class="explain">
+    <strong>b</strong>. Cool (on the right) yet very luminous (high up), so it must be huge: a red giant or supergiant.
+  </div>
+</div>
+
+<div class="quiz" data-answer="c">
+  <div class="question">2. How will the Sun end?</div>
+  <ul>
+    <li data-choice="a"><label><strong>a.</strong> As a black hole</label></li>
+    <li data-choice="b"><label><strong>b.</strong> In a supernova, leaving a neutron star</label></li>
+    <li data-choice="c"><label><strong>c.</strong> As a white dwarf, after a red giant stage</label></li>
+    <li data-choice="d"><label><strong>d.</strong> It will shine forever</label></li>
+  </ul>
+  <div class="explain">
+    <strong>c</strong>. The Sun is well below 8 solar masses, so it sheds its outer layers and leaves a white dwarf.
+  </div>
+</div>
+```
+
+## Where this fits
+
+The stars in this chapter live in galaxies. Next we step back to look at our
+own galaxy from the inside, and at the matter in it we cannot see.

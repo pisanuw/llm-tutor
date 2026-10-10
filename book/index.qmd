@@ -1,0 +1,58 @@
+---
+title: "Astra's Astronomy Notes"
+subtitle: "A short companion to AST 101 and AST 102"
+---
+
+# Preface {.unnumbered}
+
+You already own the best astronomy lab there is. It is over your head every
+clear night, it costs nothing, and the Moon is in it most evenings. This book
+is short on purpose, so you spend less time reading about the sky and more
+time looking at it.
+
+Every chapter follows one lecture. Read it before class, or after, or the
+night before the exam. I will not judge. (I will, a little.)
+
+## What this book is
+
+Two courses, four lectures each, eight chapters.
+
+- **AST 101, The Night Sky**: the celestial sphere and daily motion, the
+  phases of the Moon and eclipses, the seasons, and light and telescopes.
+- **AST 102, Stars and Galaxies**: measuring the stars, the lives of stars,
+  galaxies and dark matter, and the expanding universe.
+
+No physics background is assumed. The math is ratios, angles and the
+occasional division. A calculator is welcome; fear is not required.
+
+## How to use it
+
+**Predict first.** Each chapter asks you questions before it answers them.
+Stop and commit to an answer, even a wild one. A wrong prediction you have
+written down teaches you more than a right answer you only read.
+
+**Draw everything.** Most of AST 101 comes down to a few pictures: the Sun,
+Earth and Moon seen from above, and your horizon seen from the ground. If you
+can draw them from memory, you can work out the rest.
+
+**Check yourself.** Every chapter ends with a self-check. Click an answer to
+see whether you were right and why. The self-checks are not graded.
+
+**Go outside.** Each chapter has something to look for in the real sky. Do
+it, and put it in your observing log.
+
+## Where this fits
+
+The book sits next to two other things you will use all term:
+
+- **The lecture slides**, one deck per lecture, with the same titles as the
+  sections here.
+- **Astra**, the course's AI tutor. Astra knows these chapters, the slides
+  and the problem sets, and it teaches the way I do: it will ask you to
+  predict, hand you hints, and refuse to do your homework. Each learning goal
+  on Astra's map links to the section of this book that teaches it.
+
+If something here disagrees with the slides, or with Astra, tell me. One of
+us is wrong, and finding out which is a perfectly good use of office hours.
+
+*Dr. Alex Morgan*

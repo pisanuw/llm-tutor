@@ -1,0 +1,35 @@
+{
+  "_comment": [
+    "Maps a retrieved slide's source filename (as indexed in the knowledge base's",
+    "slides collection, the 'source_file' / 'filename' of each deck) to the lecture",
+    "number of the lecture plan and the rendered decks (learning_goals.json",
+    "'lecture', output/<course>/lecture-NN). Your original decks may be named or",
+    "numbered differently from the plan; this file says which lecture each one",
+    "teaches, so a slide hit can move the chat's slide panel to the right deck.",
+    "",
+    "Rules: 'map' pairs a source with exactly one lecture. 'unmapped' lists sources",
+    "that deliberately have no deck (review sessions, exam feedback): the panel",
+    "stays where it is. Matching is by exact filename, then case-insensitive stem,",
+    "so 'week2-moon.PDF' resolves to 'week2-moon.pptx'."
+  ],
+  "AST101": {
+    "map": {
+      "week1-sky.pptx": 1,
+      "week2-moon.pptx": 2,
+      "week3-seasons.pptx": 3,
+      "week4-light.pptx": 4
+    },
+    "unmapped": [
+      "midterm-review.pptx"
+    ]
+  },
+  "AST102": {
+    "map": {
+      "stars-measuring.pptx": 1,
+      "stars-lives.pptx": 2,
+      "galaxies.pptx": 3,
+      "cosmology.pptx": 4
+    },
+    "unmapped": []
+  }
+}

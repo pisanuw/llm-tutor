@@ -1,0 +1,136 @@
+{
+  "source_file": "AST102-2027Winter-lecture-01.mp4",
+  "full_text": "Welcome to AST 102. Some of you I know from last term, some of you are new, and either way you're in the right place. Sky report, then the big question for today. How do we know how far away a star is? Think about it for a second. Every star except the Sun is just a point of light. A faint one could be a dim star nearby or a really powerful star very far away. We can't go there. We can't bounce radar off a star. What we can do is measure angles, very, very carefully. So let's do the demo. Everybody hold your thumb out at arm's length. Close your left eye. Now open it and close your right. Blink, blink. See your thumb jump against the wall? Now bring your thumb halfway to your face. Predict first. Does it jump more or less? More. Right. The closer your thumb, the bigger the jump. That jump is parallax, and it is exactly how we measure star distances. Your two eyes are a few centimeters apart. For stars we use the biggest baseline we've got, Earth's orbit. Look at a star in January, look again in July. A nearby star shifts back and forth a tiny bit against the much more distant stars behind it. Your thumb is a very small star. We call half the total shift the parallax angle, p. And the nearer the star, the bigger p. Same as your thumb. Now the formula. It is honestly the friendliest formula in astronomy. Distance in parsecs equals one over the parallax in arcseconds. d equals one over p. A parsec, by the way, is just the distance where the parallax is one arcsecond. Astronomers invented the unit so the formula would be one division. One parsec is about three point two six light-years. Write that down, you'll use it all term. Okay, try one with your neighbor. Proxima Centauri, the nearest star after the Sun, has a parallax of zero point seven seven arcseconds. How far? One over zero point seven seven is about one point three parsecs. Times three point two six, about four point two light-years. Good. Sanity check. Is it more or less than one parsec? More. Should it be? Yes, because the parallax is less than one arcsecond. Smaller angle, farther star. And that's the nearest star. Every star has a parallax smaller than one arcsecond. A star a hundred parsecs away shifts one hundredth of an arcsecond. The atmosphere blurs everything by about an arcsecond, so the really precise parallaxes come from space telescopes. Even so, parallax only reaches a small corner of the galaxy. Switching gears. Brightness. Astronomers use magnitudes, and I'm going to warn you now, the scale runs backwards. Bigger number, fainter star. I know. I didn't design it. Blame the ancient star catalogs, then learn it anyway. The rule to remember: five magnitudes is a factor of exactly one hundred in brightness. So a magnitude one star is a hundred times brighter than a magnitude six star. Think golf scores. Lower is better. And really bright things go negative. Sirius is about minus one and a half. The Sun is about minus twenty-seven. Last idea. Color. Look at Orion this week. Betelgeuse, top left, is orange-red. Rigel, bottom right, is blue-white. You can see that with your eyes. Color is temperature. Hot stars are blue, cool stars are red. Like a stove burner going from dull red to white as it heats. Not like the faucets. We sort stars into spectral classes, O B A F G K M, hottest to coolest. The Sun is a G2, about fifty-eight hundred kelvin. Make up your own mnemonic. Weirder is better. Exit card: if a star's parallax is cut in half, what happens to its distance? See you next week.",
+  "segments": [
+    {
+      "start": 3.0,
+      "end": 12.6,
+      "text": "Welcome to AST 102. Some of you I know from last term, some of you are new, and either way you're in the right place."
+    },
+    {
+      "start": 13.2,
+      "end": 22.4,
+      "text": "Sky report, then the big question for today. How do we know how far away a star is? Think about it for a second."
+    },
+    {
+      "start": 23.0,
+      "end": 33.8,
+      "text": "Every star except the Sun is just a point of light. A faint one could be a dim star nearby or a really powerful star very far away."
+    },
+    {
+      "start": 34.4,
+      "end": 42.5,
+      "text": "We can't go there. We can't bounce radar off a star. What we can do is measure angles, very, very carefully."
+    },
+    {
+      "start": 43.1,
+      "end": 52.3,
+      "text": "So let's do the demo. Everybody hold your thumb out at arm's length. Close your left eye. Now open it and close your right."
+    },
+    {
+      "start": 72.9,
+      "end": 82.5,
+      "text": "Blink, blink. See your thumb jump against the wall? Now bring your thumb halfway to your face. Predict first. Does it jump more or less?"
+    },
+    {
+      "start": 83.1,
+      "end": 91.9,
+      "text": "More. Right. The closer your thumb, the bigger the jump. That jump is parallax, and it is exactly how we measure star distances."
+    },
+    {
+      "start": 92.5,
+      "end": 103.7,
+      "text": "Your two eyes are a few centimeters apart. For stars we use the biggest baseline we've got, Earth's orbit. Look at a star in January, look again in July."
+    },
+    {
+      "start": 104.3,
+      "end": 113.9,
+      "text": "A nearby star shifts back and forth a tiny bit against the much more distant stars behind it. Your thumb is a very small star."
+    },
+    {
+      "start": 114.5,
+      "end": 123.0,
+      "text": "We call half the total shift the parallax angle, p. And the nearer the star, the bigger p. Same as your thumb."
+    },
+    {
+      "start": 123.6,
+      "end": 133.6,
+      "text": "Now the formula. It is honestly the friendliest formula in astronomy. Distance in parsecs equals one over the parallax in arcseconds. d equals one over p."
+    },
+    {
+      "start": 134.2,
+      "end": 144.2,
+      "text": "A parsec, by the way, is just the distance where the parallax is one arcsecond. Astronomers invented the unit so the formula would be one division."
+    },
+    {
+      "start": 144.8,
+      "end": 151.3,
+      "text": "One parsec is about three point two six light-years. Write that down, you'll use it all term."
+    },
+    {
+      "start": 151.9,
+      "end": 161.5,
+      "text": "Okay, try one with your neighbor. Proxima Centauri, the nearest star after the Sun, has a parallax of zero point seven seven arcseconds. How far?"
+    },
+    {
+      "start": 222.1,
+      "end": 230.9,
+      "text": "One over zero point seven seven is about one point three parsecs. Times three point two six, about four point two light-years. Good."
+    },
+    {
+      "start": 231.5,
+      "end": 241.9,
+      "text": "Sanity check. Is it more or less than one parsec? More. Should it be? Yes, because the parallax is less than one arcsecond. Smaller angle, farther star."
+    },
+    {
+      "start": 242.5,
+      "end": 252.5,
+      "text": "And that's the nearest star. Every star has a parallax smaller than one arcsecond. A star a hundred parsecs away shifts one hundredth of an arcsecond."
+    },
+    {
+      "start": 253.1,
+      "end": 263.9,
+      "text": "The atmosphere blurs everything by about an arcsecond, so the really precise parallaxes come from space telescopes. Even so, parallax only reaches a small corner of the galaxy."
+    },
+    {
+      "start": 264.5,
+      "end": 271.0,
+      "text": "Switching gears. Brightness. Astronomers use magnitudes, and I'm going to warn you now, the scale runs backwards."
+    },
+    {
+      "start": 271.6,
+      "end": 278.9,
+      "text": "Bigger number, fainter star. I know. I didn't design it. Blame the ancient star catalogs, then learn it anyway."
+    },
+    {
+      "start": 279.5,
+      "end": 291.0,
+      "text": "The rule to remember: five magnitudes is a factor of exactly one hundred in brightness. So a magnitude one star is a hundred times brighter than a magnitude six star."
+    },
+    {
+      "start": 291.6,
+      "end": 301.6,
+      "text": "Think golf scores. Lower is better. And really bright things go negative. Sirius is about minus one and a half. The Sun is about minus twenty-seven."
+    },
+    {
+      "start": 302.2,
+      "end": 311.8,
+      "text": "Last idea. Color. Look at Orion this week. Betelgeuse, top left, is orange-red. Rigel, bottom right, is blue-white. You can see that with your eyes."
+    },
+    {
+      "start": 312.4,
+      "end": 323.2,
+      "text": "Color is temperature. Hot stars are blue, cool stars are red. Like a stove burner going from dull red to white as it heats. Not like the faucets."
+    },
+    {
+      "start": 323.8,
+      "end": 336.5,
+      "text": "We sort stars into spectral classes, O B A F G K M, hottest to coolest. The Sun is a G2, about fifty-eight hundred kelvin. Make up your own mnemonic. Weirder is better."
+    },
+    {
+      "start": 337.1,
+      "end": 344.4,
+      "text": "Exit card: if a star's parallax is cut in half, what happens to its distance? See you next week."
+    }
+  ]
+}

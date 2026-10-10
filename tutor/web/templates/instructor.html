@@ -1,0 +1,453 @@
+{% extends "base.html" %}
+{% from "_nav.html" import site_header %}
+{% from "_conversations_list.html" import conversations_list %}
+{% block title %}{{ tutor.name }} — Instructor{% endblock %}
+{% block content %}
+
+{{ site_header("instructor", "Instructor dashboard", student=viewer, is_admin=is_admin,
+               is_instructor=True, course=course) }}
+
+<main class="max-w-6xl mx-auto px-3 sm:px-6 py-6">
+
+  {% if not classes %}
+  <div class="bg-white rounded-xl border border-gray-200 p-6 text-center">
+    <p class="text-gray-800 font-medium">No classes yet.</p>
+    <p class="text-sm text-gray-500 mt-1">
+      An admin creates a class and adds your students to it. Ask
+      {% if tutor.instructor_email %}<a href="mailto:{{ tutor.instructor_email }}" class="underline break-words">{{ tutor.instructor_email }}</a>{% else %}the site's administrator{% endif %}
+      to set one up.
+    </p>
+  </div>
+
+  {% else %}
+
+  <!-- Class + window picker -->
+  <form method="get" action="/instructor" class="flex flex-wrap items-end gap-2 mb-5">
+    {% if conversations %}<input type="hidden" name="view" value="conversations">{% endif %}
+    <label class="text-xs text-gray-500">
+      <span class="block mb-1">Class</span>
+      <select name="class_id" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm bg-white max-w-[15rem]">
+        {% for c in classes %}
+        <option value="{{ c.id }}" {% if current and c.id == current.id %}selected{% endif %}>
+          {{ c.label }}{% if c.archived %} (archived){% endif %}
+        </option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="text-xs text-gray-500">
+      <span class="block mb-1">Window</span>
+      <select name="days" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm bg-white">
+        {% for d, lbl in [(7, 'Last 7 days'), (14, 'Last 14 days'), (30, 'Last 30 days'), (90, 'This quarter')] %}
+        <option value="{{ d }}" {% if days == d %}selected{% endif %}>{{ lbl }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <button type="submit"
+            class="px-4 py-1.5 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800">
+      Show
+    </button>
+    {% if classes|length > 1 %}
+    <a href="/instructor?view=all&days={{ days }}" data-all-classes
+       class="px-3 py-1.5 text-sm {% if overview is not none %}font-semibold text-gray-900{% else %}text-blue-700 hover:underline{% endif %}"
+       {% if overview is not none %}aria-current="page"{% endif %}>All my classes</a>
+    {% endif %}
+    {% if current %}
+    <span class="flex flex-wrap gap-2 ml-auto">
+      {% if conversations %}
+      <a href="/instructor?class_id={{ current.id }}&days={{ days }}" data-roster-link
+         class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white hover:border-blue-400">📋 Roster</a>
+      {% else %}
+      <a href="/instructor?view=conversations&class_id={{ current.id }}&days={{ days }}" data-conversations-link
+         class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white hover:border-blue-400">💬 Conversations</a>
+      {% endif %}
+      <a href="/instructor/export?class_id={{ current.id }}&days={{ days }}&format=csv"
+         class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white hover:border-blue-400">⬇ CSV</a>
+      <a href="/instructor/export?class_id={{ current.id }}&days={{ days }}&format=json"
+         class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white hover:border-blue-400">⬇ JSON</a>
+      <a href="/instructor/report?days={{ days }}"
+         class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white hover:border-blue-400"
+         title="Preview the weekly email">📧 Weekly email</a>
+    </span>
+    {% endif %}
+  </form>
+
+  <!-- The instructor's own switch for the weekly email (the admin's per-class
+       switch is the other gate). A POST, not a link: it changes state. -->
+  <form method="post" action="/instructor/weekly-email" data-weekly-email
+        class="flex flex-wrap items-center gap-2 text-xs text-gray-500 -mt-3 mb-5">
+    <input type="hidden" name="enabled" value="{{ 'on' if viewer.weekly_email_opt_out else 'off' }}" />
+    {% if viewer.weekly_email_opt_out %}
+    <span>Weekly email: <b class="text-gray-700">off</b> — you will not be emailed on Sundays.</span>
+    <button type="submit" class="text-blue-700 hover:underline">Turn it on</button>
+    {% else %}
+    <span>Weekly email: <b class="text-gray-700">on</b> — each Sunday evening, for the classes with activity during the quarter.</span>
+    <button type="submit" class="text-blue-700 hover:underline">Turn it off</button>
+    {% endif %}
+  </form>
+
+  <!-- All my classes (plan step 4.3): one line each, the same numbers. -->
+  {% if overview is not none %}
+  <h1 class="text-xl font-bold text-gray-900 mb-1">All my classes</h1>
+  <p class="text-sm text-gray-500 mb-4">Open classes, last {{ days }} days.</p>
+  <div class="bg-white rounded-xl shadow-sm overflow-x-auto mb-6" data-overview>
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 text-gray-500 text-left">
+        <tr>
+          <th class="px-3 py-2">Class</th>
+          <th class="px-3 py-2 text-right">Students</th>
+          <th class="px-3 py-2 text-right">Active</th>
+          <th class="px-3 py-2 text-right">Went quiet</th>
+          <th class="px-3 py-2 text-right">Never started</th>
+          <th class="px-3 py-2 text-right">Questions</th>
+          <th class="px-3 py-2 text-right">Flagged replies</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        {% for c in overview %}
+        <tr>
+          <td class="px-3 py-2"><a class="text-blue-700 hover:underline"
+              href="/instructor?class_id={{ c.class_id }}&days={{ days }}">{{ c.label }}</a>
+            <span class="text-xs text-gray-500">{{ course_label(c.course) }}</span></td>
+          <td class="px-3 py-2 text-right">{{ c.students }}</td>
+          <td class="px-3 py-2 text-right">{{ c.active }}</td>
+          <td class="px-3 py-2 text-right">{{ c.dormant }}</td>
+          <td class="px-3 py-2 text-right">{{ c.never }}</td>
+          <td class="px-3 py-2 text-right">{{ c.messages }}</td>
+          <td class="px-3 py-2 text-right">{{ c.thumbs_down }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="px-3 py-6 text-center text-gray-400 italic">No open classes.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  {% if conversations %}
+  {{ conversations_list(conversations) }}
+  {% else %}
+  {% if summary %}
+  <h1 class="text-xl font-bold text-gray-900">{{ summary.label }}</h1>
+  <p class="text-sm text-gray-500 mb-4">
+    {{ course_label(summary.course) }} · {{ summary.students }} student{{ "" if summary.students == 1 else "s" }} ·
+    last {{ days }} days
+  </p>
+
+  <!-- Who teaches this class. Any instructor of it (or an admin) can add
+       another or remove one, never themselves; a class keeps at least one. -->
+  <div class="bg-white rounded-xl shadow-sm p-4 mb-4 text-sm" data-instructors>
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="text-gray-500">Instructors:</span>
+      {% for i in instructors %}
+      <span class="inline-flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-full px-2 py-0.5 min-w-0"
+            data-instructor="{{ i.email }}">
+        <span class="font-mono text-xs break-all">{{ i.email }}</span>
+        {% if i.lead %}<span class="text-xs text-gray-400" title="The instructor the class was created for">lead</span>{% endif %}
+        {% if i.is_self %}
+        <span class="text-xs text-gray-400">(you)</span>
+        {% elif instructors|length > 1 %}
+        <form method="post" action="/instructor/instructors/remove" class="inline"
+              data-confirm="Remove {{ i.email }} from {{ current.label }}?"
+              onsubmit="return confirm(this.dataset.confirm)">
+          <input type="hidden" name="class_id" value="{{ current.id }}">
+          <input type="hidden" name="email" value="{{ i.email }}">
+          <button type="submit" class="text-xs text-red-600 hover:underline"
+                  aria-label="Remove {{ i.email }} from this class">remove</button>
+        </form>
+        {% endif %}
+      </span>
+      {% endfor %}
+      <form method="post" action="/instructor/instructors/add"
+            class="flex flex-wrap items-center gap-1 w-full md:w-auto md:ml-auto" data-add-instructor>
+        <input type="hidden" name="class_id" value="{{ current.id }}">
+        <input type="email" name="email" required placeholder="colleague@example.edu"
+               class="border border-gray-300 rounded-lg px-2 py-1 text-sm flex-1 min-w-0 md:w-56 md:flex-none">
+        <button type="submit"
+                class="px-3 py-1 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800">
+          Add instructor
+        </button>
+      </form>
+    </div>
+    {% if note %}
+    <p class="mt-2 text-xs text-gray-600" data-note>{{ note }}</p>
+    {% endif %}
+  </div>
+
+  <!-- Usage first: who is and is not using it -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+    <div class="bg-white rounded-xl border-l-4 border-green-400 shadow-sm p-4">
+      <div class="text-2xl font-bold text-gray-800">{{ summary.active }}</div>
+      <div class="text-sm text-gray-500">Active this window</div>
+    </div>
+    <div class="bg-white rounded-xl border-l-4 border-amber-400 shadow-sm p-4">
+      <div class="text-2xl font-bold text-gray-800">{{ summary.dormant }}</div>
+      <div class="text-sm text-gray-500">Went quiet</div>
+    </div>
+    <div class="bg-white rounded-xl border-l-4 border-red-400 shadow-sm p-4">
+      <div class="text-2xl font-bold text-gray-800">{{ summary.never }}</div>
+      <div class="text-sm text-gray-500">Never started</div>
+    </div>
+    <div class="bg-white rounded-xl border-l-4 border-blue-400 shadow-sm p-4">
+      <div class="text-2xl font-bold text-gray-800">{{ summary.messages }}</div>
+      <div class="text-sm text-gray-500">Questions asked</div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl shadow-sm p-4 mb-6 text-sm text-gray-700 grid gap-x-8 gap-y-1 sm:grid-cols-2">
+    <p data-status-counts><span class="text-gray-500">Also:</span>
+      {{ summary.reading }} reading only · {{ summary.signed_in }} signed in, never asked · {{ summary.locked_out }} could not sign in</p>
+    <p><span class="text-gray-500">Median questions per student:</span> {{ summary.median_messages }}</p>
+    <p><span class="text-gray-500">Exercises graded:</span> {{ summary.exercises }}{% if summary.avg_score is not none %} · avg {{ summary.avg_score }}/4{% endif %}</p>
+    <p><span class="text-gray-500">Topics solid (passed a quiz or strong exercises):</span> {{ summary.goals_mastered }}</p>
+    <p data-sources><span class="text-gray-500">Exercise grading:</span>
+      {{ sources.tests }} by running tests, {{ sources.rubric }} by the tutor's rubric (a model's opinion)</p>
+    <p><span class="text-gray-500">Of those topics, confirmed by a later review:</span> {{ summary.goals_confirmed }}</p>
+    <p data-activity><span class="text-gray-500">Time on the site:</span>
+      {{ activity.total_active_min }} min over {{ activity.total_visits }} visit{{ "" if activity.total_visits == 1 else "s" }}{% if activity.median_active_min is not none %} · median {{ activity.median_active_min }} min per student who came{% endif %}</p>
+    <p data-activity-decks><span class="text-gray-500">Lectures:</span>
+      {{ activity.students_with_deck }} student{{ "" if activity.students_with_deck == 1 else "s" }} opened a deck · {{ activity.lectures_listened }} lecture{{ "" if activity.lectures_listened == 1 else "s" }} listened through</p>
+    <p><span class="text-gray-500">Quizzes passed / failed:</span> {{ summary.exams_passed }} / {{ summary.exams_failed }}</p>
+    <p><span class="text-gray-500">Replies students flagged as wrong:</span>
+      {% if flagged %}<a href="#flagged" class="text-blue-700 hover:underline">{{ summary.thumbs_down }}</a>{% else %}{{ summary.thumbs_down }}{% endif %}</p>
+    {% if summary.top_lectures %}
+    <p class="sm:col-span-2"><span class="text-gray-500">Most asked about:</span>
+      {% for lec, n in summary.top_lectures %}
+      <span class="inline-block bg-blue-50 text-blue-800 rounded px-2 py-0.5 text-xs mr-1 mb-1">
+        L{{ lec }}{% if lecture_titles.get(lec) %} {{ lecture_titles.get(lec) }}{% endif %} ({{ n }})
+      </span>
+      {% endfor %}
+    </p>
+    {% endif %}
+  </div>
+
+  {% if flagged %}
+  <!-- Flagged replies (plan step 4.3, finding D30), each opening the
+       student's conversation at that reply. -->
+  <div class="bg-white rounded-xl shadow-sm p-4 mb-6" id="flagged">
+    <h2 class="font-semibold text-gray-800">Replies students flagged as wrong</h2>
+    <ul class="mt-2 divide-y divide-gray-100 text-sm">
+      {% for item in flagged %}
+      <li class="py-2 min-w-0">
+        <a href="{{ item.link }}" class="text-blue-700 hover:underline break-all">{{ item.flag.student_email }}</a>
+        <span class="text-gray-500">· {{ item.flag.flagged_at.strftime("%Y-%m-%d") if item.flag.flagged_at else "" }}{% if item.flag.lecture_num %} · lecture {{ item.flag.lecture_num }}{% endif %}</span>
+        {% if item.flag.comment %}<p class="text-gray-800">“{{ item.flag.comment }}”</p>{% endif %}
+        <p class="text-gray-500 break-words">{{ item.flag.reply_excerpt }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <!-- Roster: least active first, so the students to chase are at the top -->
+  <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+    <div class="px-4 py-3 border-b border-gray-100">
+      <h2 class="font-semibold text-gray-800">Roster</h2>
+      <p class="text-xs text-gray-500">
+        Least active first. This is engagement, not a grade: the tutor is not used to grade students.
+      </p>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500 text-left">
+          <tr>
+            <th class="px-3 py-2">Student</th>
+            <th class="px-3 py-2">Status</th>
+            <th class="px-3 py-2 text-right">Questions</th>
+            <th class="px-3 py-2 text-right">Days used</th>
+            <th class="px-3 py-2 text-right" title="Minutes with the site on screen, from the browser's events">On screen</th>
+            <th class="px-3 py-2 text-right" title="Lectures opened (and with at least half the slides seen)">Lectures</th>
+            <th class="px-3 py-2 text-right" title="Minutes of lecture narration played">Narration</th>
+            <th class="px-3 py-2 text-right">Topics solid</th>
+            <th class="px-3 py-2 text-right">Exercises</th>
+            <th class="px-3 py-2 text-right">Avg score</th>
+            <th class="px-3 py-2">Last active</th>
+            <th class="px-3 py-2"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {% for r in rows %}
+          <tr class="{% if r.status in ('never', 'locked_out') %}bg-red-50/40{% elif r.status in ('dormant', 'signed_in') %}bg-amber-50/40{% endif %}">
+            <td class="px-3 py-2">
+              <span class="font-medium text-gray-800">{{ r.name or r.email.split("@")[0] }}</span>
+              <span class="block text-xs text-gray-400 font-mono break-all">{{ r.email }}</span>
+              {% if r.login_failed_recently %}
+              <span class="block text-xs text-red-700" data-login-problem>could not sign in ({{ r.login_failures }} failure{{ '' if r.login_failures == 1 else 's' }}), {% if r.last_login %}last signed in {{ r.last_login.strftime("%Y-%m-%d") }}{% else %}never signed in{% endif %}</span>
+              {% endif %}
+            </td>
+            <td class="px-3 py-2">
+              {% if r.status == 'active' %}
+              <span class="text-xs rounded-full px-2 py-0.5 bg-green-100 text-green-800">active</span>
+              {% elif r.status == 'reading' %}
+              <span class="text-xs rounded-full px-2 py-0.5 bg-blue-100 text-blue-800">reading only</span>
+              {% elif r.status == 'dormant' %}
+              <span class="text-xs rounded-full px-2 py-0.5 bg-amber-100 text-amber-800">quiet</span>
+              {% elif r.status == 'signed_in' %}
+              <span class="text-xs rounded-full px-2 py-0.5 bg-amber-100 text-amber-800">never asked</span>
+              {% elif r.status == 'locked_out' %}
+              <span class="text-xs rounded-full px-2 py-0.5 bg-red-100 text-red-800">could not sign in</span>
+              {% else %}
+              <span class="text-xs rounded-full px-2 py-0.5 bg-red-100 text-red-800">never signed in</span>
+              {% endif %}
+            </td>
+            <td class="px-3 py-2 text-right">{{ r.messages }}</td>
+            <td class="px-3 py-2 text-right">{{ r.active_days }}</td>
+            {% set a = activity.rows.get(r.student_id) %}
+            <td class="px-3 py-2 text-right whitespace-nowrap" data-active-min>{{ a.active_min if a else 0 }} min</td>
+            <td class="px-3 py-2 text-right whitespace-nowrap" data-lectures>{{ a.lectures_label if a else "0" }}</td>
+            <td class="px-3 py-2 text-right whitespace-nowrap" data-narration>{{ a.narration_min if a else 0 }} min</td>
+            <td class="px-3 py-2 text-right">
+              {{ r.goals_mastered }}{% if r.goals_confirmed %} <span class="text-xs text-gray-400">({{ r.goals_confirmed }} confirmed)</span>{% endif %}
+            </td>
+            <td class="px-3 py-2 text-right">{{ r.exercises }}</td>
+            <td class="px-3 py-2 text-right">{{ r.avg_score if r.avg_score is not none else "—" }}</td>
+            <td class="px-3 py-2 text-gray-500 whitespace-nowrap">
+              {{ r.last_active.strftime("%Y-%m-%d") if r.last_active else "never" }}
+            </td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">
+              <a href="/instructor?class_id={{ current.id }}&days={{ days }}&student={{ r.email|urlencode }}"
+                 class="text-xs text-blue-600 hover:underline">Open</a>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="12" class="px-3 py-6 text-center text-gray-400 italic">
+            Nobody is enrolled in this class yet.
+          </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if standings %}
+  <!-- Where each student stands within the class (review step 0.9): a
+       percentile per measure, rank only; nothing under five students. -->
+  <details class="bg-white rounded-xl shadow-sm mb-6" data-standings>
+    <summary class="px-4 py-3 cursor-pointer font-semibold text-gray-800 min-h-[44px]">
+      Where each student stands this window
+      <span class="block text-xs font-normal text-gray-500">A percentile within the class per measure: p50 is the middle. A rank, not a judgement; instructors are unranked.</span>
+    </summary>
+    <div class="overflow-x-auto border-t border-gray-100">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500 text-left">
+          <tr>
+            <th class="px-3 py-2">Student</th>
+            {% for key, heading in percentile_metrics %}<th class="px-3 py-2 text-right">{{ heading }}</th>{% endfor %}
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {% for st in standings %}
+          <tr data-standing="{{ st.email }}">
+            <td class="px-3 py-2 min-w-0 break-words">{{ st.name or st.email }}{% if st.is_staff %} <span class="text-xs text-gray-400">(staff, unranked)</span>{% endif %}</td>
+            {% for key, heading in percentile_metrics %}<td class="px-3 py-2 text-right whitespace-nowrap">{{ st.cell(key) }}</td>{% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </details>
+  {% endif %}
+  {% endif %}
+
+  <!-- One student -->
+  {% if detail %}
+  {% set d = detail %}
+  <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6" id="student-detail">
+    <div class="flex flex-wrap items-start justify-between gap-2 mb-3">
+      <div class="min-w-0">
+        <h2 class="font-semibold text-gray-900">{{ d.student.name or d.student.email }}</h2>
+        <p class="text-xs text-gray-500 font-mono break-all">{{ d.student.email }}</p>
+      </div>
+      <div class="flex flex-wrap gap-2 text-sm">
+        <a href="/instructor/transcript?class_id={{ current.id }}&student={{ d.student.email|urlencode }}&format=md"
+           class="px-3 py-1.5 border border-gray-300 rounded-lg bg-white hover:border-blue-400">⬇ Transcript .md</a>
+        <a href="/instructor/transcript?class_id={{ current.id }}&student={{ d.student.email|urlencode }}&format=json"
+           class="px-3 py-1.5 border border-gray-300 rounded-lg bg-white hover:border-blue-400">⬇ .json</a>
+        <a href="/instructor?class_id={{ current.id }}&days={{ days }}"
+           class="px-3 py-1.5 text-gray-500 hover:underline">Close</a>
+      </div>
+    </div>
+
+    <div class="grid gap-x-8 gap-y-1 sm:grid-cols-2 text-sm text-gray-700 mb-5">
+      <p><span class="text-gray-500">Questions in window:</span> {{ d.engagement.messages }} over {{ d.engagement.active_days }} day(s)</p>
+      <p><span class="text-gray-500">Logins:</span> {{ d.engagement.login_count }}{% if d.engagement.last_login %} · last {{ d.engagement.last_login.strftime("%Y-%m-%d") }}{% endif %}</p>
+      <p><span class="text-gray-500">Topics started / solid / confirmed later:</span> {{ d.engagement.goals_seen }} / {{ d.engagement.goals_mastered }} / {{ d.engagement.goals_confirmed }}</p>
+      <p><span class="text-gray-500">Exercises:</span> {{ d.engagement.exercises }}{% if d.engagement.avg_score is not none %} · avg {{ d.engagement.avg_score }}/4{% endif %}
+        <span class="text-gray-500">({{ d.sources.tests }} by tests, {{ d.sources.rubric }} by the rubric)</span></p>
+      <p><span class="text-gray-500">Quizzes passed / failed:</span> {{ d.engagement.exams_passed }} / {{ d.engagement.exams_failed }}</p>
+      <p><span class="text-gray-500">Review items due now:</span> {{ d.engagement.reviews_due }}</p>
+      {% if d.standing and not d.standing.is_staff %}
+      <p data-detail-standing><span class="text-gray-500">Within the class this window:</span>
+        {% for key, heading in percentile_metrics %}{{ heading }} {{ d.standing.cell(key) }}{% if not loop.last %} · {% endif %}{% endfor %}</p>
+      {% endif %}
+      {% if d.activity %}
+      <p data-detail-activity><span class="text-gray-500">On the site:</span> {{ d.activity.active_min }} min over {{ d.activity.visits }} visit{{ "" if d.activity.visits == 1 else "s" }}{% if d.activity.last_seen %} · last seen {{ d.activity.last_seen.strftime("%Y-%m-%d %H:%M") }} UTC{% endif %}</p>
+      <p><span class="text-gray-500">Decks:</span> {{ d.activity.deck_min }} min on {{ d.activity.lectures_opened }} lecture{{ "" if d.activity.lectures_opened == 1 else "s" }}, {{ d.activity.slides_seen }} slides · narration {{ d.activity.narration_min }} min</p>
+      {% endif %}
+    </div>
+
+    {% if d.activity and d.activity.lectures %}
+    <h3 class="font-semibold text-gray-700 text-sm mb-2">Lectures opened ({{ course_label(current.course) }})</h3>
+    <div class="overflow-x-auto mb-5">
+      <table class="text-sm" data-detail-lectures>
+        <thead class="bg-gray-50 text-gray-500 text-left">
+          <tr>
+            <th class="px-3 py-1.5">Lecture</th>
+            <th class="px-3 py-1.5 text-right">Slides seen</th>
+            <th class="px-3 py-1.5 text-right">Minutes</th>
+            <th class="px-3 py-1.5">Reading</th>
+            <th class="px-3 py-1.5 text-right">Narration</th>
+            <th class="px-3 py-1.5">Last opened</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {% for u in d.activity.lectures %}
+          <tr>
+            <td class="px-3 py-1.5 whitespace-nowrap">L{{ "%02d"|format(u.lecture_num) }}{% if u.title %} {{ u.title }}{% endif %}</td>
+            <td class="px-3 py-1.5 text-right whitespace-nowrap">{{ u.slides_seen }}{% if u.slides_total %} of {{ u.slides_total }}{% endif %}{% if u.coverage_pct is not none %} ({{ u.coverage_pct|round|int }}%){% endif %}</td>
+            <td class="px-3 py-1.5 text-right">{{ (u.deck_s / 60)|round(1) }}</td>
+            <td class="px-3 py-1.5">{{ u.reading(thresholds) or "—" }}</td>
+            <td class="px-3 py-1.5 text-right whitespace-nowrap">{{ (u.narration_played_s / 60)|round(1) }} min{% if u.listened_pct is not none %} ({{ u.listened_pct|round|int }}%){% endif %}</td>
+            <td class="px-3 py-1.5 text-gray-500 whitespace-nowrap">{{ u.last.strftime("%Y-%m-%d") if u.last else "" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+    <h3 class="font-semibold text-gray-700 text-sm mb-2">
+      Recent conversation ({{ course_label(current.course) }})
+      {% if d.truncated %}<span class="font-normal text-xs text-gray-400">— last {{ d.messages|length }} messages; download for the rest</span>{% endif %}
+    </h3>
+    {% if not d.messages %}
+    <p class="text-sm text-gray-400 italic">No messages in this course yet.</p>
+    {% else %}
+    <div class="space-y-2 max-h-[28rem] overflow-y-auto pr-1">
+      {% for m in d.messages %}
+      <div id="msg-{{ m.id }}" class="flex gap-2 rounded-2xl {% if m.role == 'user' %}justify-end{% endif %} target:ring-2 target:ring-amber-400 target:ring-offset-2">
+        <div class="rounded-2xl px-3 py-2 text-sm max-w-[85%] min-w-0 break-words whitespace-pre-wrap
+                    {% if m.role == 'user' %}bg-gray-200 text-gray-800 rounded-tr-none{% else %}bg-blue-50 text-gray-800 rounded-tl-none{% endif %}">
+          <span class="block text-[10px] uppercase tracking-wide text-gray-400 mb-0.5">
+            {{ "Student" if m.role == "user" else "Tutor" }}
+            {% if m.lecture_num %}· L{{ "%02d"|format(m.lecture_num) }}{% endif %}
+            {% if m.created_at %}· {{ m.created_at.strftime("%Y-%m-%d %H:%M") }} UTC{% endif %}
+            {% if m.feedback %}· {{ "👍" if m.feedback.rating > 0 else "👎" }}{% endif %}
+          </span>{{ m.content }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+  {% endif %}{# conversations / roster #}
+
+  {% endif %}
+
+  <p class="text-xs text-gray-400 mt-6">
+    Students are told their instructor can see how they use {{ tutor.name }} and read their conversations
+    for the class. This data is for teaching, not grading.
+  </p>
+</main>
+
+{% endblock %}

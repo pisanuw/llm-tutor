@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "_nav.html" import site_header %}
+{% block title %}{{ tutor.name }} — {{ course_label(course) }} Lecture {{ num }}{% endblock %}
+{% block content %}
+
+<div class="app-vh flex flex-col">
+  {% call site_header("lectures", course_label(course) ~ " Lecture " ~ num ~ ": " ~ title,
+                      student=student, is_admin=is_admin, is_instructor=is_instructor,
+                      course=course) %}
+    <span class="text-sm font-semibold truncate min-w-0">{{ course_label(course) }} · Lecture {{ num }}: {{ title }}</span>
+    {% if has_audio %}
+      <span class="text-xs text-blue-100 hidden xl:inline">🔊 Click <span class="font-medium">Play narration</span> in the deck</span>
+    {% endif %}
+    <a href="{{ deck_url }}" target="_blank" rel="noopener"
+       class="text-sm text-blue-100 hover:text-white hover:underline no-underline shrink-0
+              inline-flex items-center min-h-[44px]">Open in new tab ↗</a>
+  {% endcall %}
+
+  <!-- allow=autoplay lets the deck's narration play once the student clicks the
+       in-deck button (the click is the required user gesture). -->
+  <iframe src="{{ deck_url }}"
+          class="flex-1 w-full border-0 bg-white"
+          allow="autoplay; fullscreen"
+          title="{{ course_label(course) }} Lecture {{ num }} deck"></iframe>
+</div>
+
+{% endblock %}

@@ -1,0 +1,116 @@
+# The Sky Above Us
+
+Before you read on, a question. Tonight, from where you live, where is
+Polaris, the North Star? Straight overhead? On the horizon? Somewhere in
+between? Commit to an answer. We will come back to it.
+
+By the end of this chapter you should be able to:
+
+- describe the sky as a sphere centered on you, and name its landmarks;
+- explain why the Sun and stars rise and set, and which stars never set;
+- measure angles on the sky with your hand.
+
+## The Celestial Sphere {#the-celestial-sphere}
+
+Stand outside on a clear night and the sky looks like a dome, with the stars
+painted on the inside. Astronomers keep that picture and complete it into a
+full sphere with you at the center: the **celestial sphere**.
+
+It is a model, not a real shell. The stars are at wildly different distances.
+But the model tells you exactly where to look, and that is what we want from
+it. Think of an open umbrella over your head with stars painted on the inside.
+
+Four landmarks on the sphere matter:
+
+- **Zenith**: the point straight over your head.
+- **Horizon**: the circle where the sky meets the ground.
+- **Celestial poles**: where Earth's axis, extended into space, meets the
+  sphere. The north celestial pole is very close to Polaris.
+- **Celestial equator**: Earth's equator projected onto the sky, halfway
+  between the poles.
+
+Point at each one with your arm. Your body is a better diagram than this page.
+
+## Why the Sky Turns {#daily-motion}
+
+Earth spins from west to east once a day. From the ground, that makes the
+whole sky appear to turn from east to west around the celestial poles, about
+15 degrees every hour (360 degrees in 24 hours).
+
+Spin slowly in an office chair and the room goes around you. Nothing in the
+room moved. The Sun, the Moon, the planets and the stars all rise in the east
+and set in the west for that one reason.
+
+Now the answer to the opening question. Polaris sits almost exactly at the
+north celestial pole, so it barely moves all night. Its height above your
+northern horizon, its **altitude**, equals your latitude. From 45 degrees
+north it is halfway up the sky. From the equator it sits on the horizon. From
+the North Pole it is straight overhead.
+
+Stars closer to the pole than your latitude circle it without ever setting.
+These are the **circumpolar stars**. From 45 degrees north, the Big Dipper is
+circumpolar: it is up all night, every night of the year.
+
+## Measuring Angles With Your Hand {#measuring-angles}
+
+We cannot tell how far away a star is by looking at it, so positions on the
+sky are angles, not lengths. Your hand, held at arm's length, is a surprisingly
+good protractor:
+
+| Hand at arm's length | Angle |
+|---|---|
+| Little finger | about 1 degree |
+| Three middle fingers | about 5 degrees |
+| Closed fist | about 10 degrees |
+| Spread hand, thumb to little finger | about 20 degrees |
+
+The full Moon is only half a degree across. It hides behind your little
+finger, which surprises almost everyone.
+
+For smaller angles, a degree splits into 60 **arcminutes**, and an arcminute
+into 60 **arcseconds**, the same pattern as hours, minutes and seconds. So one
+degree is 3,600 arcseconds. Remember the arcsecond: in AST 102 it is how we
+measure the distance to the stars.
+
+::: {.callout-tip title="Try it tonight"}
+Find the Big Dipper. The two stars at the end of its bowl, the pointers, are
+about half a fist apart, so about 5 degrees. Follow the line they make for
+about five times that distance and you reach Polaris. Measure its altitude in
+fists and compare with your latitude. Put it in your observing log.
+:::
+
+## Self-check
+
+```{=html}
+<div class="quiz" data-answer="c">
+  <div class="question">1. You live at latitude 30 degrees north. Where is Polaris?</div>
+  <ul>
+    <li data-choice="a"><label><strong>a.</strong> At the zenith</label></li>
+    <li data-choice="b"><label><strong>b.</strong> On the northern horizon</label></li>
+    <li data-choice="c"><label><strong>c.</strong> Due north, 30 degrees above the horizon</label></li>
+    <li data-choice="d"><label><strong>d.</strong> It moves across the sky during the night</label></li>
+  </ul>
+  <div class="explain">
+    <strong>c</strong>. The altitude of Polaris equals your latitude. It stays put because it sits almost exactly at the celestial pole.
+  </div>
+</div>
+
+<div class="quiz" data-answer="b">
+  <div class="question">2. Two stars look three fingers apart at arm's length. About how far apart are they in arcminutes?</div>
+  <ul>
+    <li data-choice="a"><label><strong>a.</strong> 5</label></li>
+    <li data-choice="b"><label><strong>b.</strong> 300</label></li>
+    <li data-choice="c"><label><strong>c.</strong> 3,600</label></li>
+    <li data-choice="d"><label><strong>d.</strong> 18,000</label></li>
+  </ul>
+  <div class="explain">
+    <strong>b</strong>. Three fingers is about 5 degrees, and each degree is 60 arcminutes.
+  </div>
+</div>
+```
+
+## Where this fits
+
+Daily motion comes back in every chapter of AST 101: the Moon's rising time
+in the next chapter, the Sun's path in the seasons. The arcsecond comes back
+in AST 102, when we measure how far away the stars are.

@@ -1,0 +1,100 @@
+# TEST FIXTURE (tests/conftest.py points TUTOR_CONTENT_DIR here). Frozen on
+# purpose: edit your own courses.yaml at the repository root, not this one.
+#
+# courses.yaml: who your tutor is and what it teaches.
+#
+# This is the first file to edit when you make the tutor your own. The web
+# app and the content pipeline both read it; nothing else names your courses.
+# The values below describe the EXAMPLE course that ships with the repository
+# (a made-up introductory astronomy sequence). Replace them with yours.
+#
+# Every field is explained in ADDING-KNOWLEDGE.md, step 1. After editing,
+# check the file with:   python -m pipeline check-content
+
+tutor:
+  # What students call the tutor. Appears in page titles, the greeting, the
+  # sign-in emails, and the first line of the system prompt.
+  name: Astra
+
+  # The instructor the tutor speaks for, and how students address them.
+  # The persona files (persona/) describe how this person teaches.
+  instructor: Dr. Alex Morgan
+  instructor_short: Dr. Morgan
+
+  # Where "email your instructor" links point. Leave empty to hide them.
+  instructor_email: instructor@example.edu
+
+  # Optional. Shown on the sign-in page and in the system prompt.
+  institution: Example College
+
+  # A noun phrase that completes "a tutor for ...". The graders, the judge
+  # and the classifier use it to know what a good answer looks like.
+  subject: introductory astronomy
+
+  # Who the students are, in a few words. Used by the graders.
+  audience: first-year undergraduates with no physics background
+
+  # The IANA time zone your class lives in. "Today", the daily quotas, the
+  # daily and weekly reports, and the activity rollups all follow it.
+  timezone: America/Los_Angeles
+
+  # Leave empty unless students submit code for the tutor to run and grade
+  # (evaluate_code). The sandbox compiles C++ only, so the only working value
+  # today is "C++"; any other value labels the code box but nothing runs it.
+  code_language: C++
+
+  # The public address of your deployment, used in emails and the help page.
+  # Leave empty while you develop locally.
+  site_url: ""
+
+  # Optional: an image file in tutor/web/static/ shown next to the tutor's
+  # replies and on the welcome page (a square photo or logo, 512x512 works).
+  # Empty shows the tutor's initial in a colored circle.
+  avatar: ""
+
+courses:
+  # One entry per course. The order is the order of the course picker, and
+  # the first course is the default for a student who has not picked one.
+  #
+  #   id        1 to 8 letters or digits. It becomes a folder name
+  #             (output/AST101/), a URL segment (/slides/AST101/...), a file
+  #             prefix (curriculum/AST101-lecture-plan.md) and the start of
+  #             every learning-goal id (AST101-L02-moon-phases). Pick it once:
+  #             changing it later orphans every student's saved progress.
+  #   label     How pages name the course ("AST 101").
+  #   title     The course's name, shown under the label.
+  #   lectures  How many lectures the plan has; lectures are numbered 1..N.
+  #   topics    One line for the course picker on the welcome page.
+  #   note      Optional extra line under the picker.
+  #   sources   Where the pipeline finds your raw materials for this course
+  #             (paths relative to the repository root). All optional: a
+  #             missing folder is skipped. See ADDING-KNOWLEDGE.md, step 3.
+  - id: AST101
+    label: AST 101
+    title: The Night Sky
+    lectures: 4
+    topics: >-
+      the celestial sphere, phases of the Moon and eclipses, seasons, light
+      and telescopes
+    sources:
+      slides: source-materials/AST101/slides            # .pptx decks
+      assignments: source-materials/AST101/assignments  # .docx, .txt, .md
+      exams: source-materials/AST101/exams              # .pdf
+      textbook: source-materials/AST101/textbook.pdf    # one PDF
+      topic_list: source-materials/AST101/topics.md     # for `pipeline map`
+      description: source-materials/AST101/description.txt
+
+  - id: AST102
+    label: AST 102
+    title: Stars and Galaxies
+    lectures: 4
+    topics: >-
+      measuring the stars, the lives of stars, galaxies and dark matter, the
+      expanding universe
+    sources:
+      slides: source-materials/AST102/slides
+      assignments: source-materials/AST102/assignments
+      exams: source-materials/AST102/exams
+      textbook: source-materials/AST102/textbook.pdf
+      topic_list: source-materials/AST102/topics.md
+      description: source-materials/AST102/description.txt

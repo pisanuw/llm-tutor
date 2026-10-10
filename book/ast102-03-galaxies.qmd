@@ -1,0 +1,111 @@
+# Galaxies
+
+From a dark site, a faint glowing band arches across the whole sky. Predict
+first: what is it? A cloud high in our atmosphere? Dust from the early solar
+system? Part of another galaxy? Our own galaxy, seen from inside? Pick one.
+
+By the end of this chapter you should be able to:
+
+- describe the Milky Way's structure and where the Sun is in it;
+- classify galaxies by shape and connect shape to stars and gas;
+- explain how rotation curves reveal dark matter.
+
+## Our Galaxy {#the-milky-way}
+
+The band is our own galaxy, the **Milky Way**, seen from inside. The galaxy is
+a flat **disk** of stars, gas and dust about 100,000 light-years across, with a
+thicker central **bulge** of older stars and a faint, roughly spherical
+**halo** of old stars and globular clusters around it all. It holds a few
+hundred billion stars.
+
+We live inside the disk, so looking along it we see stars piled up in every
+direction, and looking above or below it we see far fewer. Standing in a
+forest you see trees all around the horizon and open sky overhead. That is the
+view from inside a disk, and it is why the Milky Way is a band.
+
+The Sun sits in the disk about 26,000 light-years (8 kiloparsecs) from the
+center, which lies toward the constellation Sagittarius, hidden behind dust in
+visible light. The Sun orbits the center at about 230 km/s and takes about
+230 million years to go around once. Early astronomers counted stars and
+concluded we were near the center; the dust had fooled them. The globular
+clusters, scattered above and below the dusty disk, gave the game away: they
+are centered on a point far off in Sagittarius.
+
+## Spirals, Ellipticals, Irregulars {#galaxy-types}
+
+The faint "spiral nebulae" of early telescopes turned out to be whole
+galaxies. The nearest big one, the **Andromeda galaxy**, is about 2.5 million
+light-years away, and you can see it without a telescope from a dark site.
+The observable universe holds hundreds of billions of galaxies, in three
+broad shapes:
+
+| Type | Shape | Stars and gas | Examples |
+|---|---|---|---|
+| **Spiral** | flat disk with arms and a bulge, sometimes a bar | gas and dust; young blue stars in the arms | the Milky Way, Andromeda |
+| **Elliptical** | smooth round or oval ball | old reddish stars; little gas | giant ellipticals in clusters |
+| **Irregular** | no clear shape | often gas-rich, forming many stars | the Magellanic Clouds |
+
+Color tells age. Massive blue stars live only millions of years, so blue light
+means stars formed recently, and that needs gas. No gas, no new stars, which is
+why ellipticals look yellow-red.
+
+## Rotation Curves {#dark-matter}
+
+In the solar system almost all the mass is in the Sun, so the farther out a
+planet is, the weaker the pull and the slower its orbit. Mercury moves at about
+47 km/s; Neptune at about 5 km/s.
+
+A **rotation curve** plots orbital speed against distance from the center. If
+a galaxy's mass were where its stars are, mostly near the center, speeds far
+out would fall off the same way. Measurements of hydrogen gas, using its radio
+glow, show something else: the speeds stay roughly **flat** out to the edge of
+the visible disk and beyond.
+
+Swing a ball on a string. To swing it faster at the same radius, you have to
+pull harder. An orbit's speed tells you how hard gravity pulls, and the pull
+tells you how much mass is inside the orbit. Fast orbits far out mean much
+more mass than we can see. We call it **dark matter**. It neither emits nor
+absorbs light; we detect it only through its gravity. There is about five
+times as much of it as ordinary matter, in a large halo around each galaxy.
+
+::: {.callout-important title="Known and unknown"}
+That dark matter is there is well supported: rotation curves, galaxy clusters
+and the bending of light all agree. What it is remains open. It is not dark gas
+or dust, which we would detect, and there are too few dim stars and black holes
+to account for it. Most astronomers suspect a particle no one has detected yet.
+:::
+
+## Self-check
+
+```{=html}
+<div class="quiz" data-answer="c">
+  <div class="question">1. Why does the Milky Way look like a band across the sky?</div>
+  <ul>
+    <li data-choice="a"><label><strong>a.</strong> It is a cloud of gas in our atmosphere</label></li>
+    <li data-choice="b"><label><strong>b.</strong> We are at the exact center of a sphere of stars</label></li>
+    <li data-choice="c"><label><strong>c.</strong> We are inside a flat disk and see it edge-on</label></li>
+    <li data-choice="d"><label><strong>d.</strong> It is a spiral arm of the Andromeda galaxy</label></li>
+  </ul>
+  <div class="explain">
+    <strong>c</strong>. Looking along the disk we see many stars; above and below it, few. Inside the forest.
+  </div>
+</div>
+
+<div class="quiz" data-answer="a">
+  <div class="question">2. Stars far from a galaxy's center orbit about as fast as stars partway out. What does that imply?</div>
+  <ul>
+    <li data-choice="a"><label><strong>a.</strong> There is much more mass than the visible stars and gas</label></li>
+    <li data-choice="b"><label><strong>b.</strong> The outer stars are younger</label></li>
+    <li data-choice="c"><label><strong>c.</strong> Gravity is weaker in galaxies</label></li>
+    <li data-choice="d"><label><strong>d.</strong> Most of the mass is at the center</label></li>
+  </ul>
+  <div class="explain">
+    <strong>a</strong>. If the mass were concentrated near the center, outer speeds would fall off, as the planets' do. Flat curves mean unseen mass: dark matter.
+  </div>
+</div>
+```
+
+## Where this fits
+
+Galaxies are the markers we use to measure the universe itself. In the last
+chapter, their light tells us the universe is expanding.

@@ -1,0 +1,2 @@
+[{"repo": "example/ast101-labs", "relative_path": "main.cpp", "language": "cpp", "content": "int main() { std::cout << \"hello\" << std::endl; return 0; }"},
+ {"repo": "example/ast101-labs", "relative_path": "empty.cpp", "language": "cpp", "content": "int x;"}]

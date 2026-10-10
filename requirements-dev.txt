@@ -1,0 +1,22 @@
+# Everything CI installs to lint, type-check, and run the suite, pinned, so
+#   python -m pip install -r requirements-dev.txt
+# reproduces the tests job (.github/workflows/tests.yml; audit.yml installs it
+# too). The web app's runtime comes from requirements-web.txt. Of the
+# pipeline's (requirements.txt), only what the tests and the pipeline CLI
+# import is here: Whisper and torch build content and are not needed to test
+# it. Transitive dependencies are not locked.
+-r requirements-web.txt
+
+# Pipeline modules the tests import (same pins as requirements.txt)
+python-pptx==1.0.2
+pdfplumber==0.11.10
+click==8.5.0
+rich==15.0.0
+pillow==12.3.0
+
+# Test, lint, and type tools. pytest-randomly shuffles the test order on every
+# run (the seed is printed; rerun with -p randomly --randomly-seed=N).
+pytest==9.1.1
+pytest-randomly==3.16.0
+ruff==0.16.9
+mypy==2.3.1

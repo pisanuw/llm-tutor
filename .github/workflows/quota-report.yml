@@ -1,0 +1,57 @@
+# Who hit a tutor quota: the daily, weekly, and monthly roll-up emails
+# (tutor/quotas.py, tutor/quota_report.py). Which periods go out is an admin
+# setting on the Supervision tab; the script sends the ones due today
+# (weekly on Monday, monthly on the 1st, Pacific) and nothing when nobody hit
+# a quota. Read-only against the production database; no-ops cleanly when
+# DATABASE_URL is unset (e.g. on forks).
+
+name: quota-report
+
+on:
+  schedule:
+    - cron: "5 9 * * *"   # 09:05 UTC daily: 02:05 PDT, 01:05 PST; after the daily report
+  workflow_dispatch:
+    inputs:
+      period:
+        description: "Send one period now: daily, weekly, or monthly (blank: the periods due today)"
+        default: ""
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-web.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-web.txt
+
+      - name: Quota roll-up (emails only when someone hit a quota)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          REPORT_EMAIL: ${{ secrets.REPORT_EMAIL }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          BASE_URL: ${{ vars.SITE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "DATABASE_URL not set; skipping the quota roll-up."
+            exit 0
+          fi
+          PERIOD="${{ github.event.inputs.period }}"
+          if [ -n "$PERIOD" ]; then
+            python -m scripts.quota_report --period "$PERIOD"
+          else
+            python -m scripts.quota_report
+          fi

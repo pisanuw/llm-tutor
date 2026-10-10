@@ -1,0 +1,65 @@
+[
+  {
+    "text": "Chapter 2. Seasons and Light. Ask a room of people why summer is warmer than winter and most will say that Earth is closer to the Sun in summer. It is a reasonable guess, and it is wrong. This chapter explains what really causes the seasons, describes the solstices and equinoxes and the Sun's changing path across the sky, and then turns to light itself: what it is, how its brightness changes with distance, and why the most important feature of a telescope is the size of its opening, not its magnification.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 15,
+    "chunk_index": 8,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Distance does not cause the seasons. Earth's orbit is very nearly a circle. Earth is closest to the Sun, at about 147 million kilometers, in early January, and farthest, at about 152 million kilometers, in early July. That difference of about 3 percent is far too small to produce the seasons, and its timing is backwards for the Northern Hemisphere, where January is midwinter. The strongest argument is simpler still: the two hemispheres have opposite seasons at the same time. When it is summer in Canada it is winter in Australia, yet both are the same distance from the Sun.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 16,
+    "chunk_index": 9,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Axial tilt. Earth's rotation axis is tilted 23.5 degrees from perpendicular to the plane of its orbit, and the axis keeps pointing in the same direction in space all year, toward Polaris. As a result, around June the Northern Hemisphere leans toward the Sun, and around December it leans away. The hemisphere tilted toward the Sun receives sunlight more directly, so each square meter of ground gets more energy, much as a flashlight aimed straight down makes a smaller, brighter spot than one held at a slant. The same hemisphere also has longer days. Both effects together make summer.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 17,
+    "chunk_index": 10,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Solstices and equinoxes. At the June solstice, around June 21, the Sun reaches its farthest point north of the celestial equator, and the Northern Hemisphere has its longest day. At the December solstice, around December 21, the Sun is farthest south and northern days are shortest. At the March and September equinoxes, around March 20 and September 22, the Sun sits on the celestial equator, rises due east and sets due west everywhere, and day and night are each about 12 hours long. The word solstice means that the Sun stands still: its noon height stops rising or falling and turns back.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 19,
+    "chunk_index": 11,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "The Sun's path. The noon altitude of the Sun equals 90 degrees minus the observer's latitude plus the Sun's declination, which is about +23.5 degrees at the June solstice, 0 at the equinoxes, and -23.5 degrees at the December solstice. At latitude 47 degrees north the noon Sun climbs to 66.5 degrees in June but only 19.5 degrees in December. In northern summer the Sun rises north of east and sets north of west, tracing a long, high arc; in winter it rises south of east and follows a short, low arc. The hottest weather lags the June solstice by several weeks because oceans warm slowly.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 20,
+    "chunk_index": 12,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Light as a wave. Light is an electromagnetic wave that travels through empty space at about 300,000 kilometers per second. Its wavelength is the distance between successive crests, and its frequency is the number of crests passing each second; their product is the speed of light, so a shorter wavelength means a higher frequency. Light also comes in packets of energy called photons, and shorter-wavelength photons carry more energy. In order of decreasing wavelength, the electromagnetic spectrum runs from radio waves through microwaves, infrared, visible light, ultraviolet and X-rays to gamma rays. Visible light spans only about 400 to 700 nanometers.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 22,
+    "chunk_index": 13,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Color and temperature. Every object glows with thermal radiation. A hotter object emits more light at every wavelength, and its emission peaks at a shorter wavelength. An electric stove burner shows the pattern: as it heats it glows dull red, then orange, then yellowish white. The Sun's light peaks near 500 nanometers, in the visible band. A human body, at about 310 kelvin, glows most strongly in the infrared near 10 micrometers, which is why thermal cameras can see people in the dark. In astronomy, red means relatively cool and blue means hot.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 24,
+    "chunk_index": 14,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "The inverse-square law. Light leaving a source spreads out over the surface of an ever-larger sphere. Because the area of a sphere grows as the square of its radius, the light reaching each square meter falls off as one over the distance squared. Move a lamp twice as far away and it appears one quarter as bright; three times as far, one ninth as bright. Two identical streetlights along a road make the point: if one looks one sixteenth as bright as the other, it is four times farther away. This relationship links how bright a star looks to how far away it is.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 26,
+    "chunk_index": 15,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Telescopes. A telescope has three jobs, in order of importance. First, it gathers light. Its light-gathering power depends on the area of its main lens or mirror, its aperture, and so grows as the diameter squared: a telescope twice as wide collects four times as much light. Second, it resolves fine detail, and a larger aperture separates smaller angles. Third, it magnifies, which only enlarges whatever the first two jobs delivered. Large research telescopes are reflectors, using curved mirrors that can be supported from behind, rather than refractors, whose large lenses sag under their own weight.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 28,
+    "chunk_index": 16,
+    "doc_type": "textbook"
+  }
+]

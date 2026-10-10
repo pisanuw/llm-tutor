@@ -1,0 +1,44 @@
+[
+  {
+    "text": "AST 101 Problem Set 1 covers lectures 1 and 2: the celestial sphere, daily motion, angular measure, the phases of the Moon and eclipses. Show your reasoning for every question. A labeled diagram counts as reasoning and earns credit even when the final number is off. A correct number with no work earns little. Due at the start of class in week 3. You may use your two late days on this set.",
+    "source_file": "AST101-problem-set-1.docx",
+    "section": "Instructions",
+    "doc_type": "document"
+  },
+  {
+    "text": "Go outside on a clear night and use your hand at arm's length to measure three things: the angle between the two pointer stars of the Big Dipper, the angle from the pointer stars to Polaris, and the width of the Moon if it is up. Report each in degrees and in arcminutes, and say which part of your hand you used. If it is cloudy all week, measure two corners of a building across a parking lot instead and say so.",
+    "source_file": "AST101-problem-set-1.docx",
+    "section": "Question 1: Hand Angles",
+    "doc_type": "document"
+  },
+  {
+    "text": "Explain, with a sketch of the celestial sphere, why the altitude of Polaris above the northern horizon equals the observer's latitude. Then predict the altitude of Polaris for an observer at latitude 45 degrees north, at the equator, and at the North Pole. Use 45 degrees north as your own latitude unless you measured it yourself in Question 1.",
+    "source_file": "AST101-problem-set-1.docx",
+    "section": "Question 2: Polaris and Latitude",
+    "doc_type": "document"
+  },
+  {
+    "text": "From latitude 45 degrees north, which stars never set? Describe the region of the sky in terms of angular distance from the north celestial pole. Would the Big Dipper be circumpolar for an observer at latitude 20 degrees north? Explain using the angle between the Big Dipper and the pole, which is roughly 30 to 40 degrees.",
+    "source_file": "AST101-problem-set-1.docx",
+    "section": "Question 3: Circumpolar Stars",
+    "doc_type": "document"
+  },
+  {
+    "text": "Draw a top-down view of the Sun, Earth and the Moon at eight positions in its orbit. For each position, shade the half of the Moon that the Sun lights, mark the half that faces Earth, and name the phase. Then, in two or three sentences, explain why Earth's shadow cannot be the cause of a crescent Moon.",
+    "source_file": "AST101-problem-set-1.docx",
+    "section": "Question 4: Phase Geometry",
+    "doc_type": "document"
+  },
+  {
+    "text": "The Moon is a waxing gibbous. Using your diagram from Question 4, estimate roughly what time it rises and where in the sky it is at sunset. Then do the same for a waning crescent. Explain how the angle between the Sun and the Moon sets the rising time.",
+    "source_file": "AST101-problem-set-1.docx",
+    "section": "Question 5: Moonrise",
+    "doc_type": "document"
+  },
+  {
+    "text": "A friend says there should be a solar eclipse every month because there is a new moon every month. Write a short reply that explains the role of the 5 degree tilt of the Moon's orbit and the nodes. Include a sketch. Then say which phase the Moon must be in for a lunar eclipse, and why.",
+    "source_file": "AST101-problem-set-1.docx",
+    "section": "Question 6: Eclipses",
+    "doc_type": "document"
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "text": "AST 102 Problem Set 1 covers all four lectures and is released in two halves: questions 1 to 3 in week 1, questions 4 to 7 in week 3. Show your reasoning and units. Every numerical answer needs a sanity check: one sentence saying why the size of the number makes sense. A calculator is welcome.",
+    "source_file": "AST102-problem-set-1.docx",
+    "section": "Instructions",
+    "doc_type": "document"
+  },
+  {
+    "text": "A star has a parallax of 0.25 arcseconds. Find its distance in parsecs and in light-years. A second star has a parallax of 0.05 arcseconds; how many times farther is it than the first? Finally, explain in two sentences why parallax cannot measure the distance to a star on the far side of the galaxy.",
+    "source_file": "AST102-problem-set-1.docx",
+    "section": "Question 1: Parallax",
+    "doc_type": "document"
+  },
+  {
+    "text": "Star A has apparent magnitude 2 and star B has apparent magnitude 7. Which looks brighter, and by what factor? Star C has magnitude -1. Compare it with star A. Then explain the difference between apparent and absolute magnitude using the Sun as your example.",
+    "source_file": "AST102-problem-set-1.docx",
+    "section": "Question 2: Magnitudes",
+    "doc_type": "document"
+  },
+  {
+    "text": "Three stars have surface temperatures of 3,500 K, 6,000 K and 20,000 K. Assign each a spectral class, describe its color, and say which is most like the Sun. Explain why a star's color tells us its temperature.",
+    "source_file": "AST102-problem-set-1.docx",
+    "section": "Question 3: Spectral Classes",
+    "doc_type": "document"
+  },
+  {
+    "text": "Sketch an H-R diagram with labeled axes. Place the Sun, a red giant, a white dwarf and a hot O-type main-sequence star. Explain how a star can be cooler than the Sun yet far more luminous, and why massive main-sequence stars have shorter lives than the Sun.",
+    "source_file": "AST102-problem-set-1.docx",
+    "section": "Question 4: The H-R Diagram",
+    "doc_type": "document"
+  },
+  {
+    "text": "Classify three galaxy images provided on the course page as spiral, elliptical or irregular, and give one piece of evidence for each choice. Then sketch the rotation curve you would expect if a galaxy's mass were all in its visible stars, and the flat curve actually observed. What does the difference imply?",
+    "source_file": "AST102-problem-set-1.docx",
+    "section": "Question 5: Galaxies and Rotation",
+    "doc_type": "document"
+  },
+  {
+    "text": "A hydrogen line with rest wavelength 486.1 nm appears at 490.0 nm in a galaxy's spectrum. Find the redshift z and the galaxy's recession speed. Is the galaxy moving toward us or away? Explain how you can tell from the direction of the shift.",
+    "source_file": "AST102-problem-set-1.docx",
+    "section": "Question 6: Redshift",
+    "doc_type": "document"
+  },
+  {
+    "text": "Use your answer to Question 6 and Hubble's law, with H0 = 70 km/s/Mpc, to estimate the galaxy's distance in megaparsecs and in light-years. Then explain why finding that nearly every galaxy is receding does not mean we are at the center of the universe.",
+    "source_file": "AST102-problem-set-1.docx",
+    "section": "Question 7: Hubble's Law",
+    "doc_type": "document"
+  }
+]

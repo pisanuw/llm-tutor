@@ -1,0 +1,39 @@
+# Content-pipeline configuration (the web app reads .env, not this).
+#
+# Your courses, their lecture counts and where their source materials live
+# are NOT here: they are in courses.yaml, which the app and the pipeline both
+# read (see ADDING-KNOWLEDGE.md). This file holds the pipeline's own knobs.
+#
+# All paths are relative to the project root. Every key here has a reader in
+# pipeline/ (tests/test_pipeline_hygiene.py checks it): a key nothing reads
+# is deleted, not left to look like a setting.
+
+recordings:
+  dir: source-materials/recordings   # transcribe --recordings-dir default
+
+whisper:                 # transcribe --model and language defaults
+  model: medium          # tiny, base, small, medium, large
+  language: en
+
+knowledge_base:
+  raw_dir: knowledge-base/raw
+  db_dir: knowledge-base/chromadb
+  # The collections are listed once, in tutor/kb.py.
+
+canvas:
+  # Optional: pull files from a Canvas LMS course (python -m pipeline canvas).
+  # Your institution's Canvas address, and a file holding an API token you
+  # generated under Canvas > Account > Settings > Approved integrations.
+  base_url: https://canvas.example.edu
+  token_file: ~/.config/llm-tutor/canvas-token.txt   # canvas --token-file default
+
+claude:
+  # The model the generation commands use when they call the API (most call
+  # the local `claude` CLI instead, which bills your subscription).
+  model: claude-sonnet-4-6
+  max_tokens: 16000
+
+slide_generation:
+  min_slides_per_lecture: 18
+  max_slides_per_lecture: 40
+  rag_results_per_query: 5

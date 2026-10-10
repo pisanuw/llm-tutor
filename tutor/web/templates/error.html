@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "_nav.html" import site_header %}
+{% block title %}{{ heading }} — {{ tutor.name }}{% endblock %}
+{% block content %}
+
+{#- The page every 4xx and 5xx navigation lands on (docs/student-facing-
+    review-2026-10.md, step 0.1): the shared header when signed in, a way
+    back, a reference the student can quote, and one tap to tell the
+    instructor. The row behind it is in request_errors (tutor/request_errors.py). -#}
+{% if student %}
+{{ site_header("", None, student=student, is_admin=is_admin,
+               is_instructor=is_instructor, course=course) }}
+{% else %}
+<header class="relative z-40 bg-blue-700 text-white shadow">
+  <div class="flex items-center justify-between gap-2 px-2 sm:px-4 min-h-[52px]">
+    <a href="/" class="font-bold text-lg text-white hover:text-blue-200 no-underline
+                       inline-flex items-center min-h-[44px] px-1">{{ tutor.name }}</a>
+    <a href="/auth/login" class="text-sm text-blue-100 hover:text-white hover:underline
+                                 inline-flex items-center min-h-[44px] px-3">Log in</a>
+  </div>
+</header>
+{% endif %}
+
+<main class="max-w-2xl mx-auto px-4 py-8 sm:py-12">
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-8" data-error-page>
+    {% if reported %}
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">Thanks</h1>
+    <p class="text-gray-700">That has been reported{% if ref %} (reference {{ ref }}){% endif %}. You can go back to what you were doing.</p>
+    {% else %}
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">{{ heading }}</h1>
+    <p class="text-gray-700 break-words">{{ message }}</p>
+    <p class="mt-3 text-xs text-gray-500">Reference {{ ref }} · {{ status }}</p>
+    {% endif %}
+
+    <div class="mt-6 flex flex-wrap gap-3">
+      {% if student %}
+      <a href="/chat" class="inline-flex items-center min-h-[44px] px-4 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Back to the chat</a>
+      {% if kind in ("deck", "audio") or (request and request.url.path.startswith("/lectures")) %}
+      <a href="/lectures" class="inline-flex items-center min-h-[44px] px-4 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50">The lectures that are available</a>
+      {% endif %}
+      {% else %}
+      <a href="/auth/login" class="inline-flex items-center min-h-[44px] px-4 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Log in</a>
+      <a href="/help" class="inline-flex items-center min-h-[44px] px-4 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50">Help</a>
+      {% endif %}
+    </div>
+
+    {% if student and not reported and ref %}
+    <form method="post" action="/errors/report" class="mt-6 pt-5 border-t border-gray-100">
+      <input type="hidden" name="ref" value="{{ ref }}">
+      <p class="text-sm text-gray-600 mb-2">If a link on this site sent you here, one tap tells {{ tutor.instructor_short }} where it was.</p>
+      <button type="submit" data-track="report-problem"
+              class="inline-flex items-center min-h-[44px] px-4 rounded-lg border border-amber-300 bg-amber-50 text-sm text-amber-900 hover:bg-amber-100">Tell {{ tutor.instructor_short }}</button>
+    </form>
+    {% endif %}
+  </div>
+</main>
+
+{% endblock %}

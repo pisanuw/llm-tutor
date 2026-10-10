@@ -1,0 +1,116 @@
+{
+  "source_file": "AST102-2027Winter-lecture-04.mp4",
+  "full_text": "Okay, last lecture of the course. Today we cover everything. All of it. Fourteen billion years in seventy-five minutes. Start with a sound. I'm going to swing this buzzer around on a string. Listen to the pitch. Hear that? Higher when it's coming toward you, lower when it's going away. Same thing with an ambulance siren. That's the Doppler effect. When the source moves away, the waves get stretched. Longer wavelength. For light, longer wavelength means redder. So we call it a redshift. And we can measure it really precisely, because atoms leave fingerprints in spectra. Hydrogen absorbs at very specific wavelengths we know from the lab. Redshift, z, is the observed wavelength minus the rest wavelength, divided by the rest wavelength. For small z, the speed is about z times the speed of light. Try it. The hydrogen-alpha line is at six fifty-six point three nanometers in the lab. In some galaxy it shows up at six sixty-two point nine. What's z? The shift is six point six nanometers. Divide by six fifty-six point three and you get about zero point zero one. Times the speed of light, about three thousand kilometers per second. Now here's what blew everyone's minds about a century ago. Almost every galaxy is redshifted. They're nearly all moving away from us. And when people measured distances, there was a pattern. The farther the galaxy, the faster it's moving away. That's Hubble's law. v equals H naught times d. The velocity is the Hubble constant times the distance. And H naught is about seventy kilometers per second per megaparsec. I'll be honest with you, different methods give values from about sixty-seven to seventy-three, and nobody knows yet why they disagree. It's a live question. We use seventy for round numbers. So flip it around. Distance equals velocity over H naught. A galaxy going seven thousand kilometers per second is about a hundred megaparsecs away. Now, does that mean we're at the center? Everything's running away from us, so we must be in the middle, right? Predict. Nope. Picture raisin bread rising in the oven. Every raisin moves away from every other raisin. And a raisin twice as far moves away twice as fast. Every raisin sees exactly the same thing. No raisin is the center. The space between them, the dough, is what's expanding. So the Big Bang was not an explosion at a point in space. It happened everywhere at once, and space itself has been stretching ever since. Run it backwards and everything was together a long time ago. Roughly one over H naught, which works out to about fourteen billion years. The careful number is thirteen point eight. How do we know any of this is right? Three pieces of evidence. One, the expansion itself. Two, the cosmic microwave background. About three hundred eighty thousand years after the start, the universe cooled enough for light to travel freely. That light is still arriving, stretched into microwaves, at about two point seven kelvin. Three, the light elements. The early universe was hot enough to fuse hydrogen into helium, and the predicted amounts, about a quarter helium by mass, match what we measure. Exit card: which piece of evidence convinces you most, and why? There's no wrong answer to that one. Thank you all, it's been a great term.",
+  "segments": [
+    {
+      "start": 3.0,
+      "end": 10.3,
+      "text": "Okay, last lecture of the course. Today we cover everything. All of it. Fourteen billion years in seventy-five minutes."
+    },
+    {
+      "start": 10.9,
+      "end": 17.8,
+      "text": "Start with a sound. I'm going to swing this buzzer around on a string. Listen to the pitch."
+    },
+    {
+      "start": 48.4,
+      "end": 57.2,
+      "text": "Hear that? Higher when it's coming toward you, lower when it's going away. Same thing with an ambulance siren. That's the Doppler effect."
+    },
+    {
+      "start": 57.8,
+      "end": 66.6,
+      "text": "When the source moves away, the waves get stretched. Longer wavelength. For light, longer wavelength means redder. So we call it a redshift."
+    },
+    {
+      "start": 67.2,
+      "end": 76.4,
+      "text": "And we can measure it really precisely, because atoms leave fingerprints in spectra. Hydrogen absorbs at very specific wavelengths we know from the lab."
+    },
+    {
+      "start": 77.0,
+      "end": 87.8,
+      "text": "Redshift, z, is the observed wavelength minus the rest wavelength, divided by the rest wavelength. For small z, the speed is about z times the speed of light."
+    },
+    {
+      "start": 88.4,
+      "end": 99.2,
+      "text": "Try it. The hydrogen-alpha line is at six fifty-six point three nanometers in the lab. In some galaxy it shows up at six sixty-two point nine. What's z?"
+    },
+    {
+      "start": 159.8,
+      "end": 172.1,
+      "text": "The shift is six point six nanometers. Divide by six fifty-six point three and you get about zero point zero one. Times the speed of light, about three thousand kilometers per second."
+    },
+    {
+      "start": 172.7,
+      "end": 181.2,
+      "text": "Now here's what blew everyone's minds about a century ago. Almost every galaxy is redshifted. They're nearly all moving away from us."
+    },
+    {
+      "start": 181.8,
+      "end": 189.9,
+      "text": "And when people measured distances, there was a pattern. The farther the galaxy, the faster it's moving away. That's Hubble's law."
+    },
+    {
+      "start": 190.5,
+      "end": 200.5,
+      "text": "v equals H naught times d. The velocity is the Hubble constant times the distance. And H naught is about seventy kilometers per second per megaparsec."
+    },
+    {
+      "start": 201.1,
+      "end": 213.0,
+      "text": "I'll be honest with you, different methods give values from about sixty-seven to seventy-three, and nobody knows yet why they disagree. It's a live question. We use seventy for round numbers."
+    },
+    {
+      "start": 213.6,
+      "end": 222.8,
+      "text": "So flip it around. Distance equals velocity over H naught. A galaxy going seven thousand kilometers per second is about a hundred megaparsecs away."
+    },
+    {
+      "start": 223.4,
+      "end": 231.9,
+      "text": "Now, does that mean we're at the center? Everything's running away from us, so we must be in the middle, right? Predict."
+    },
+    {
+      "start": 232.5,
+      "end": 242.9,
+      "text": "Nope. Picture raisin bread rising in the oven. Every raisin moves away from every other raisin. And a raisin twice as far moves away twice as fast."
+    },
+    {
+      "start": 243.5,
+      "end": 251.6,
+      "text": "Every raisin sees exactly the same thing. No raisin is the center. The space between them, the dough, is what's expanding."
+    },
+    {
+      "start": 252.2,
+      "end": 262.2,
+      "text": "So the Big Bang was not an explosion at a point in space. It happened everywhere at once, and space itself has been stretching ever since."
+    },
+    {
+      "start": 262.8,
+      "end": 274.7,
+      "text": "Run it backwards and everything was together a long time ago. Roughly one over H naught, which works out to about fourteen billion years. The careful number is thirteen point eight."
+    },
+    {
+      "start": 275.3,
+      "end": 283.8,
+      "text": "How do we know any of this is right? Three pieces of evidence. One, the expansion itself. Two, the cosmic microwave background."
+    },
+    {
+      "start": 284.4,
+      "end": 296.7,
+      "text": "About three hundred eighty thousand years after the start, the universe cooled enough for light to travel freely. That light is still arriving, stretched into microwaves, at about two point seven kelvin."
+    },
+    {
+      "start": 297.3,
+      "end": 308.5,
+      "text": "Three, the light elements. The early universe was hot enough to fuse hydrogen into helium, and the predicted amounts, about a quarter helium by mass, match what we measure."
+    },
+    {
+      "start": 309.1,
+      "end": 319.1,
+      "text": "Exit card: which piece of evidence convinces you most, and why? There's no wrong answer to that one. Thank you all, it's been a great term."
+    }
+  ]
+}

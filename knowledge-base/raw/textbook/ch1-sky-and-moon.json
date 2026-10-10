@@ -1,0 +1,58 @@
+[
+  {
+    "text": "Chapter 1. The Sky and the Moon. Long before telescopes, people learned the sky by watching it night after night. This chapter starts the same way. It describes the sky as observers see it, explains why the whole sky seems to turn, shows how to measure positions with nothing more than an outstretched hand, and then turns to the Moon: why it shows phases, when eclipses can happen, and why the oceans rise and fall twice a day. None of it needs equations. All of it can be checked by going outside on a clear evening and looking up.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 3,
+    "chunk_index": 0,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "The celestial sphere. To an observer on the ground, the stars look as if they were fixed to the inside of an enormous sphere with the observer at its center. Astronomers call this imaginary surface the celestial sphere. It is a model, not a real shell: the stars lie at very different distances, and the sphere only records the directions in which we see them. The point directly overhead is the zenith. The horizon is the circle where the sky appears to meet the ground. Extending Earth's rotation axis into space marks the north and south celestial poles, and extending Earth's equator marks the celestial equator, a great circle halfway between the poles.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 4,
+    "chunk_index": 1,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Daily motion. Earth rotates from west to east once a day, so everything in the sky appears to move from east to west. The Sun, the Moon, the planets and the stars all rise in the east and set in the west for this single reason. The sky seems to turn about the celestial poles at 15 degrees per hour, a full 360 degrees in 24 hours. A long-exposure photograph aimed at the north celestial pole shows the stars as concentric arcs around a point near Polaris, the North Star. Nothing in the photograph moved except the camera, carried along by the turning Earth.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 5,
+    "chunk_index": 2,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Polaris and circumpolar stars. Polaris lies less than one degree from the north celestial pole, so it barely moves during the night. Its altitude, its angle above the northern horizon, equals the observer's latitude: about 45 degrees for someone at latitude 45 degrees north, and zero at the equator, where Polaris sits on the horizon. Stars closer to the pole than the observer's latitude circle the pole without ever dipping below the horizon. These are the circumpolar stars. From mid-northern latitudes the Big Dipper is circumpolar. Contrary to popular belief, Polaris is not especially bright; dozens of stars outshine it.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 6,
+    "chunk_index": 3,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Measuring angles. Positions and separations on the sky are angles, not lengths, because we cannot tell how far away the stars are just by looking. A hand held at arm's length makes a surprisingly reliable protractor. The width of the little finger covers about 1 degree, three fingers held together about 5 degrees, a closed fist about 10 degrees, and a fully spread hand about 20 degrees. The full Moon is only half a degree across. For finer measurements, one degree is divided into 60 arcminutes, and one arcminute into 60 arcseconds, so a degree contains 3,600 arcseconds.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 7,
+    "chunk_index": 4,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "The phases of the Moon. The Moon makes no light of its own; it shines by reflected sunlight. At every moment the Sun illuminates exactly half of the Moon. As the Moon orbits Earth, we see different fractions of that sunlit half, and those fractions are the phases. When the Moon lies roughly between Earth and the Sun, its lit half faces away from us and we see a new moon. A quarter of an orbit later we see half of the disk lit, the first quarter. Opposite the Sun, the whole lit half faces us: a full moon. The full cycle of phases takes about 29.5 days.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 9,
+    "chunk_index": 5,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Why the phases are not Earth's shadow. A common belief holds that Earth's shadow covers part of the Moon to produce the phases. A simple observation rules this out. Earth's shadow always points directly away from the Sun, so it could only fall on a Moon that is opposite the Sun in the sky. Yet a thin crescent Moon appears close to the Sun, low in the west just after sunset. The shadow does reach the Moon occasionally, during a lunar eclipse, and that can only happen at full moon. The phases are a matter of viewing angle, not of shadow.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 10,
+    "chunk_index": 6,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Eclipses and tides. A solar eclipse occurs when the Moon passes between the Sun and Earth, so it can happen only at new moon. A lunar eclipse occurs when the Moon passes through Earth's shadow, so it can happen only at full moon. Eclipses do not occur every month because the Moon's orbit is tilted about 5 degrees to Earth's orbit; usually the Moon passes above or below the Sun or the shadow. Tides arise because the Moon pulls harder on the near side of Earth than on its center, and harder on the center than on the far side, stretching Earth into two bulges and giving most coasts two high tides a day.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 12,
+    "chunk_index": 7,
+    "doc_type": "textbook"
+  }
+]

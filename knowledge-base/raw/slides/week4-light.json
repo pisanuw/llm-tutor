@@ -1,0 +1,141 @@
+{
+  "filename": "week4-light.pptx",
+  "lecture_title": "AST 101 Week 4: Light",
+  "slide_count": 11,
+  "slides": [
+    {
+      "slide_number": 1,
+      "layout_name": "TITLE",
+      "title": "AST 101 Week 4: Light",
+      "body_text": [
+        "Light and telescopes",
+        "Dr. Alex Morgan"
+      ],
+      "speaker_notes": "Almost everything we know about the universe arrived as light.",
+      "has_code": false
+    },
+    {
+      "slide_number": 2,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "What Is Light?",
+      "body_text": [
+        "An electromagnetic wave",
+        "Speed in empty space: about 300,000 km/s",
+        "Wavelength x frequency = speed of light"
+      ],
+      "speaker_notes": "Short wavelength means high frequency, and the reverse.",
+      "has_code": false
+    },
+    {
+      "slide_number": 3,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Electromagnetic Spectrum",
+      "body_text": [
+        "Longest to shortest: radio, microwave, infrared, visible, ultraviolet, X-ray, gamma ray",
+        "Visible light: about 700 nm (red) to 400 nm (violet)",
+        "Our eyes see only a thin slice"
+      ],
+      "speaker_notes": "The piano keyboard: the spectrum is miles of keys and our eyes hear about one octave.",
+      "has_code": false
+    },
+    {
+      "slide_number": 4,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Photons",
+      "body_text": [
+        "Light also comes in packets of energy called photons",
+        "Shorter wavelength means more energy per photon",
+        "That is why ultraviolet can burn skin and radio cannot"
+      ],
+      "speaker_notes": "Same light, two descriptions. Both are needed.",
+      "has_code": false
+    },
+    {
+      "slide_number": 5,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Thermal Radiation",
+      "body_text": [
+        "Every warm object glows",
+        "Hotter objects glow more, at every wavelength",
+        "Hotter objects peak at shorter wavelengths: hot is blue, cool is red",
+        "The Sun's glow peaks near 500 nm"
+      ],
+      "speaker_notes": "A stove burner goes dull red, then orange, then yellow-white as it heats.",
+      "has_code": false
+    },
+    {
+      "slide_number": 6,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Atmospheric Windows",
+      "body_text": [
+        "Visible light and most radio waves reach the ground",
+        "Water vapor absorbs much of the infrared",
+        "Ultraviolet, X-rays and gamma rays are blocked",
+        "So X-ray and gamma-ray telescopes have to be in space"
+      ],
+      "speaker_notes": "The atmosphere protects us and annoys astronomers in equal measure.",
+      "has_code": false
+    },
+    {
+      "slide_number": 7,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Inverse-Square Law",
+      "body_text": [
+        "Light spreads over a sphere whose area grows as distance squared",
+        "Brightness goes as 1 / distance squared",
+        "Twice as far: one quarter as bright"
+      ],
+      "speaker_notes": "Flashlight beam through a square cutout onto a grid at 1 meter and 2 meters: four times the squares.",
+      "has_code": false
+    },
+    {
+      "slide_number": 8,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Example: Streetlights",
+      "body_text": [
+        "Two identical streetlights",
+        "One is 3 times farther away",
+        "It looks 1/9 as bright"
+      ],
+      "speaker_notes": "Students invent their own version with a 4 or 5 and swap with a neighbor.",
+      "has_code": false
+    },
+    {
+      "slide_number": 9,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "What Telescopes Do",
+      "body_text": [
+        "1. Gather light",
+        "2. Resolve fine detail",
+        "3. Magnify, the least important job"
+      ],
+      "speaker_notes": "Every department-store telescope box advertises magnification. It is the wrong number to look at.",
+      "has_code": false
+    },
+    {
+      "slide_number": 10,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Light-Gathering Power",
+      "body_text": [
+        "Proportional to the area of the aperture, so to its diameter squared",
+        "Twice the diameter collects four times the light",
+        "An 8-meter mirror versus a 7 mm pupil: about 1.3 million times the light"
+      ],
+      "speaker_notes": "A telescope is a bucket for light. A wider bucket catches more rain.",
+      "has_code": false
+    },
+    {
+      "slide_number": 11,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Resolution",
+      "body_text": [
+        "The smallest angle a telescope can separate shrinks as the aperture grows",
+        "Twice the aperture, details twice as fine",
+        "A 10 cm telescope resolves about 1 arcsecond in visible light",
+        "On the ground, air turbulence blurs most views to about 1 arcsecond"
+      ],
+      "speaker_notes": "That blurring is why the sharpest images come from space or from adaptive optics.",
+      "has_code": false
+    }
+  ]
+}

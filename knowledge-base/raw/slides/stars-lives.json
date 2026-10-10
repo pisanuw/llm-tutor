@@ -1,0 +1,130 @@
+{
+  "filename": "stars-lives.pptx",
+  "lecture_title": "AST 102: The Life of a Star",
+  "slide_count": 10,
+  "slides": [
+    {
+      "slide_number": 1,
+      "layout_name": "TITLE",
+      "title": "AST 102: The Life of a Star",
+      "body_text": [
+        "Birth, main sequence, death",
+        "Dr. Alex Morgan"
+      ],
+      "speaker_notes": "Sky report, then: stars are not eternal. Today is their biography.",
+      "has_code": false
+    },
+    {
+      "slide_number": 2,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Luminosity and Temperature",
+      "body_text": [
+        "Luminosity: total power output, in units of the Sun's",
+        "Temperature: from color or spectral class",
+        "Luminosity needs distance plus apparent brightness"
+      ],
+      "speaker_notes": "Parallax and magnitudes from last week feed straight into this.",
+      "has_code": false
+    },
+    {
+      "slide_number": 3,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Hertzsprung-Russell Diagram",
+      "body_text": [
+        "Luminosity on the vertical axis",
+        "Temperature on the horizontal axis, increasing to the left",
+        "Main sequence: a diagonal band holding about 90 percent of stars",
+        "Giants upper right, white dwarfs lower left"
+      ],
+      "speaker_notes": "Build it on the wall with star cards. The main sequence appears by itself.",
+      "has_code": false
+    },
+    {
+      "slide_number": 4,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Main Sequence Means Hydrogen Fusion",
+      "body_text": [
+        "Main-sequence stars fuse hydrogen into helium in their cores",
+        "A star's mass sets its place on the main sequence",
+        "Stars stay in nearly the same spot for most of their lives"
+      ],
+      "speaker_notes": "Common mistake: stars do not slide down the main sequence as they age.",
+      "has_code": false
+    },
+    {
+      "slide_number": 5,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Fusion in Brief",
+      "body_text": [
+        "Core temperature in the Sun: about 15 million K",
+        "Four hydrogen nuclei combine into one helium nucleus",
+        "The helium has about 0.7 percent less mass; that mass becomes energy",
+        "The Sun converts about 600 million tons of hydrogen every second"
+      ],
+      "speaker_notes": "A chemical fire the size of the Sun would burn out in thousands of years. Fusion lasts billions.",
+      "has_code": false
+    },
+    {
+      "slide_number": 6,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Hydrostatic Equilibrium",
+      "body_text": [
+        "Gravity pulls inward",
+        "Pressure from hot gas pushes outward",
+        "Balanced, so the star keeps a steady size"
+      ],
+      "speaker_notes": "A balloon squeezed between two hands: squeeze and push back in balance.",
+      "has_code": false
+    },
+    {
+      "slide_number": 7,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Mass and Lifetime",
+      "body_text": [
+        "Lifetime is roughly 10 billion years x (mass in Suns) to the power -2.5",
+        "A 10-solar-mass star lives a few tens of millions of years",
+        "A 0.5-solar-mass red dwarf lives more than 50 billion years"
+      ],
+      "speaker_notes": "More fuel, but a much bigger engine. The gas-guzzler runs out first.",
+      "has_code": false
+    },
+    {
+      "slide_number": 8,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Red Giants",
+      "body_text": [
+        "Core hydrogen runs out; the core contracts and heats",
+        "Hydrogen fuses in a shell around the core",
+        "The outer layers swell and cool: a red giant",
+        "The Sun will do this in about 5 billion years"
+      ],
+      "speaker_notes": "The Sun will swell to roughly the size of Earth's orbit. Earth may or may not survive.",
+      "has_code": false
+    },
+    {
+      "slide_number": 9,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Endings for Low-Mass Stars",
+      "body_text": [
+        "Below about 8 solar masses",
+        "The outer layers drift off as a planetary nebula",
+        "The core remains as a white dwarf, about the size of Earth"
+      ],
+      "speaker_notes": "Planetary nebulas have nothing to do with planets. Old telescopes made them look like planet disks.",
+      "has_code": false
+    },
+    {
+      "slide_number": 10,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Endings for High-Mass Stars",
+      "body_text": [
+        "Above about 8 solar masses: core collapse and a supernova",
+        "Remnant: a neutron star, about 20 km across",
+        "The most massive stars, roughly above 20 solar masses, leave black holes",
+        "Supernovae scatter heavy elements into space"
+      ],
+      "speaker_notes": "The mass limits are approximate and still debated. The iron in your blood came from stars like these.",
+      "has_code": false
+    }
+  ]
+}

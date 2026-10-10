@@ -1,0 +1,128 @@
+{
+  "filename": "week3-seasons.pptx",
+  "lecture_title": "AST 101 Week 3: Seasons",
+  "slide_count": 10,
+  "slides": [
+    {
+      "slide_number": 1,
+      "layout_name": "TITLE",
+      "title": "AST 101 Week 3: Seasons",
+      "body_text": [
+        "Why summer is warm",
+        "Dr. Alex Morgan"
+      ],
+      "speaker_notes": "Today's opening question is one most graduates get wrong when asked on camera.",
+      "has_code": false
+    },
+    {
+      "slide_number": 2,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Quick Poll: What Causes the Seasons?",
+      "body_text": [
+        "Distance from the Sun",
+        "Changes in the Sun's output",
+        "The tilt of Earth's axis",
+        "Something else"
+      ],
+      "speaker_notes": "Distance is the favorite answer. Keep the tally for the end of class.",
+      "has_code": false
+    },
+    {
+      "slide_number": 3,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Earth's Orbit Is Nearly Circular",
+      "body_text": [
+        "Closest to the Sun (perihelion): about 147 million km, in early January",
+        "Farthest (aphelion): about 152 million km, in early July",
+        "A 3 percent difference cannot explain the seasons"
+      ],
+      "speaker_notes": "And when it is summer in the north it is winter in the south. Same Earth, same distance.",
+      "has_code": false
+    },
+    {
+      "slide_number": 4,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Tilt",
+      "body_text": [
+        "Earth's axis is tilted 23.5 degrees",
+        "The axis keeps pointing toward Polaris all year",
+        "Each hemisphere leans toward the Sun for half of the orbit"
+      ],
+      "speaker_notes": "Carry a tilted globe around a lamp. Do not let the axis wobble; it does not.",
+      "has_code": false
+    },
+    {
+      "slide_number": 5,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Angle of Sunlight",
+      "body_text": [
+        "Direct sunlight concentrates its energy on a small area",
+        "Slanted sunlight spreads the same energy over a larger area",
+        "Flashlight demonstration: count the squares on graph paper"
+      ],
+      "speaker_notes": "Straight down: a small bright circle. Tilted: a large dim oval. Summer and winter.",
+      "has_code": false
+    },
+    {
+      "slide_number": 6,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Day Length",
+      "body_text": [
+        "The hemisphere tilted toward the Sun has longer days",
+        "At 47 degrees north: about 16 hours of daylight in June, about 8.5 in December",
+        "Longer days plus more direct light give summer"
+      ],
+      "speaker_notes": "Two effects, one cause. Both come from the tilt.",
+      "has_code": false
+    },
+    {
+      "slide_number": 7,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Solstices and Equinoxes",
+      "body_text": [
+        "June solstice, about June 21: Sun farthest north",
+        "December solstice, about December 21: Sun farthest south",
+        "March and September equinoxes, about March 20 and September 22: Sun over the equator",
+        "At the equinoxes day and night are about equal everywhere"
+      ],
+      "speaker_notes": "Solstice means the Sun stands still: its noon height stops climbing and turns back.",
+      "has_code": false
+    },
+    {
+      "slide_number": 8,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Noon Sun Altitude",
+      "body_text": [
+        "Altitude at noon = 90 degrees - latitude + the Sun's declination",
+        "The Sun's declination: +23.5 in June, 0 at the equinoxes, -23.5 in December",
+        "Example: at latitude 40 north in June, 90 - 40 + 23.5 = 73.5 degrees"
+      ],
+      "speaker_notes": "Check with shadows: a low Sun casts long shadows.",
+      "has_code": false
+    },
+    {
+      "slide_number": 9,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Where the Sun Rises",
+      "body_text": [
+        "Equinoxes: due east, setting due west",
+        "June: north of east, setting north of west",
+        "December: south of east, setting south of west"
+      ],
+      "speaker_notes": "Observing log: record where the Sun sets against a landmark, twice, two weeks apart.",
+      "has_code": false
+    },
+    {
+      "slide_number": 10,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Seasonal Lag",
+      "body_text": [
+        "Most sunlight arrives at the June solstice",
+        "The hottest weather comes weeks later",
+        "Oceans and land take time to warm up and cool down"
+      ],
+      "speaker_notes": "Same reason the hottest time of day is mid-afternoon, not noon.",
+      "has_code": false
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+# Retrieval regression eval (ROADMAP capability item 8).
+#
+# Weekly + on demand: download the same chroma seed the deploy uses (the
+# release asset entrypoint.sh's CHROMA_SEED_URL points at), run the golden
+# retrieval set through the app's real find_topic path, and fail below the
+# threshold in evals/golden_retrieval.json. This is how a KB re-index or an
+# embedding/chromadb upgrade gets caught before students notice worse answers.
+#
+# Deliberately NOT part of the required "tests" gate: that gate stays
+# network-free and fast; this one downloads ~185 MB (seed + embedding model)
+# and takes a few minutes. Emails ADMIN_EMAILS via Resend on failure (same
+# secrets as db-keepalive.yml).
+#
+# The chroma seed is found by name (chroma.tgz) in the release whose tag is
+# the repository variable SEED_RELEASE_TAG; unset, the job is skipped. The
+# questions are evals/golden_retrieval.json (ADDING-KNOWLEDGE.md section 3).
+
+name: retrieval-eval
+
+on:
+  schedule:
+    - cron: "40 10 * * 1"   # Mondays 10:40 UTC: 03:40 PDT, 02:40 PST
+  workflow_dispatch:
+
+env:
+  RELEASE_TAG: ${{ vars.SEED_RELEASE_TAG }}
+
+# One run at a time: a run that starts while another is going waits for it
+# (plan step 6.4, finding E19).
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  eval:
+    if: ${{ vars.SEED_RELEASE_TAG != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-web.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-web.txt
+
+      - name: Download and extract the chroma seed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          asset_id=$(curl -fsS -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/$RELEASE_TAG" \
+            | python3 -c "import sys,json; a=[x for x in json.load(sys.stdin)['assets'] if x['name']=='chroma.tgz']; print(a[0]['id'])")
+          echo "chroma.tgz asset id: $asset_id"
+          mkdir -p knowledge-base/chromadb
+          curl -fsSL --retry 3 -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/octet-stream" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/assets/$asset_id" \
+            | tar --warning=no-unknown-keyword -xz -C knowledge-base/chromadb
+          ls knowledge-base/chromadb/chroma.sqlite3
+
+      - name: Run golden retrieval eval
+        run: python scripts/retrieval_eval.py
+        env:
+          ANTHROPIC_API_KEY: ci-dummy-key
+          SECRET_KEY: ci-dummy-secret
+          ADMIN_TOKEN: ci-dummy-admin-token
+
+      - name: Email alert on failure
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'EOF'
+          import json, os, urllib.request
+
+          key = os.environ.get("RESEND_API_KEY", "").strip()
+          to = [e.strip() for e in os.environ.get("ADMIN_EMAILS", "").split(",") if e.strip()]
+          if not key or not to:
+              print("No RESEND_API_KEY/ADMIN_EMAILS secret; the failed run is the only signal.")
+              raise SystemExit(0)
+          body = {
+              "from": os.environ.get("FROM_EMAIL", "tutor@yourdomain.com"),
+              "to": to,
+              "subject": "[tutor] retrieval-eval FAILED",
+              "text": ("The golden retrieval set fell below threshold: find_topic "
+                       "is returning worse results than the curated baseline.\n\n"
+                       "Run log: " + os.environ["RUN_URL"] + "\n"),
+          }
+          req = urllib.request.Request(
+              "https://api.resend.com/emails",
+              data=json.dumps(body).encode(),
+              headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+          )
+          try:
+              print("Resend response:", urllib.request.urlopen(req, timeout=15).status)
+          except urllib.error.HTTPError as e:
+              print("Resend rejected the email:", e.code, e.read().decode(errors="replace"))
+          EOF

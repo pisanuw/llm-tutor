@@ -1,0 +1,6 @@
+{
+  "_README": {
+    "about": "Deterministic test cases for code exercises, used by run_code when ENABLE_CODE_EXEC=true and courses.yaml sets tutor.code_language (the sandbox compiles C++). Keyed by an exercise id from curriculum/exercises.json. Each entry is {contract, tests:[{name, stdin, expected, match?}]}. 'contract' documents the stdin/stdout the exercise prompt promises; the runtime only reads 'tests'. 'match' is 'exact' (whitespace-normalised, default) or 'contains'. The example course has no code exercises, so there are no entries. Build or extend with: python -m pipeline build-exercise-tests.",
+    "tests": []
+  }
+}

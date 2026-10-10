@@ -1,0 +1,109 @@
+# Canonical CI gate (the only quality gate): lint + typecheck + import/boot +
+# the full network-free test suite, on every push and PR. Required on main via
+# branch protection (context: "tests"). deploy.yml does not chain off this run:
+# deploying is manual (Actions -> Deploy to Render -> Run workflow). It does
+# check that this workflow passed on the commit it is asked to ship, so this
+# job is still the gate — it just no longer pulls the trigger.
+#
+# The env vars are dummies: tutor/config.py requires them to exist, and any
+# test that accidentally reached the live API would fail loudly with them.
+
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The repository guards read every commit a push or pull request
+          # adds: full history, but commits and trees only. The checkout still
+          # fetches the files it needs; the history holds large student files
+          # until it is rewritten (plan decision 1).
+          fetch-depth: 0
+          filter: blob:none
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            requirements-web.txt
+            requirements-dev.txt
+
+      # Plan step 6.2c (findings F1, F18): Conventional Commit subjects, no
+      # file over 10 MB, no jump in the tracked-file count, and no path that
+      # looks like a student record, for every commit this push or pull request
+      # adds. Standard library only, so it runs before the install and a bulk
+      # import fails in seconds. It never prints a flagged path: they can name
+      # students, and this log is readable by anyone with access to the repo.
+      - name: Repository guards
+        run: python scripts/repo_guard.py --event-path "$GITHUB_EVENT_PATH"
+
+      # Everything pinned in requirements-dev.txt (plan step 6.3): the web
+      # app's runtime (the tutor import chain pulls chromadb et al.), the
+      # pipeline modules the tests and the CLI import, and the test, lint, and
+      # type tools. `pip install -r requirements-dev.txt` reproduces this job.
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Lint (ruff)
+        run: ruff check tutor/ pipeline/ scripts/
+
+      # The stylesheet is precompiled and committed (no Tailwind CDN in prod;
+      # see ROADMAP stability item 2). Rebuild with the pinned binary and fail
+      # if a template/class change forgot to run scripts/build_css.sh.
+      - name: Tailwind CSS freshness
+        run: |
+          curl -fsSL --retry 3 -o /tmp/tailwindcss \
+            https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.17/tailwindcss-linux-x64
+          echo "7d24f7fa191d2193b78cd5f5a42a6093e14409521908529f42d80b11fde1f1d4  /tmp/tailwindcss" | sha256sum -c -
+          chmod +x /tmp/tailwindcss
+          TAILWIND_BIN=/tmp/tailwindcss ./scripts/build_css.sh
+          git diff --exit-code -- tutor/web/static/vendor/tailwind.css || {
+            echo "::error::tailwind.css is stale. Run scripts/build_css.sh and commit the result."
+            exit 1
+          }
+
+      - name: Typecheck (mypy)
+        run: mypy
+
+      - name: Import / boot gate
+        # Proves the FastAPI app and the pipeline CLI import cleanly (catches
+        # broken imports a unit test might not exercise).
+        run: |
+          python -c "import tutor.main; print('tutor.main import OK')"
+          python -m pipeline --help > /dev/null && echo "pipeline CLI import OK"
+        env:
+          ANTHROPIC_API_KEY: ci-dummy-key
+          SECRET_KEY: ci-dummy-secret
+          ADMIN_TOKEN: ci-dummy-admin-token
+
+      # The code sandbox (plan step 6.9) runs the compiler and each test
+      # program in unprivileged user, mount, PID, and network namespaces.
+      # Ubuntu 24.04 forbids those to unprivileged users through AppArmor;
+      # allow them on this throwaway runner so the containment tests run here
+      # instead of skipping (test_ci_runs_the_real_sandbox fails if they would).
+      - name: Allow unprivileged user namespaces (the code sandbox)
+        run: |
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+          unshare --user --map-root-user --mount --pid --fork --net true
+          echo "unprivileged user namespaces: available"
+
+      # pytest-randomly shuffles the test order (plan step 6.3). The seed is
+      # this run's id, so a failure replays locally with
+      #   pytest -p randomly --randomly-seed=<run id>
+      # and a re-run of the same run keeps the same order.
+      - name: Run test suite
+        run: |
+          echo "test order seed: $GITHUB_RUN_ID"
+          python -m pytest tests/ -q -p randomly --randomly-seed="$GITHUB_RUN_ID"
+        env:
+          ANTHROPIC_API_KEY: ci-dummy-key
+          SECRET_KEY: ci-dummy-secret
+          ADMIN_TOKEN: ci-dummy-admin-token

@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+{% from "_nav.html" import site_header %}
+{% from "_avatar.html" import avatar %}
+{% block title %}{{ tutor.name }} — Chat{% endblock %}
+{% block content %}
+
+<!-- Per-deploy cache-buster for slide-deck iframes (see chat.py SLIDE_VERSION) -->
+<script>window.SLIDE_VERSION = "{{ slide_version }}";</script>
+<!-- Lecture titles by course for the header dropdown (from the curriculum plans). -->
+<script>window.LECTURE_TITLES = {{ lecture_titles|tojson }};</script>
+<script>window.TUTOR_DECKS = {{ decks|tojson }};</script>
+<script>window.TUTOR_STUDENT_ID = {{ student.id|tojson }};</script>
+<!-- Whether the cloned voice is configured: no speak button without it (plan
+     step 3.5, finding D16). -->
+<script>window.TUTOR_TTS = {{ tts_enabled|tojson }};</script>
+<script>window.TUTOR_MAX_MESSAGE = {{ max_message_chars|tojson }};</script>
+<!-- Who the tutor is (courses.yaml): the reply bubbles' avatar, the names in
+     the page script's sentences, and the code box's language ("" for none). -->
+<script>window.TUTOR_AVATAR = {{ {"url": tutor.avatar_url, "initial": tutor.initial, "name": tutor.name}|tojson }};</script>
+<script>window.TUTOR_NAME = {{ tutor.name|tojson }};</script>
+<script>window.TUTOR_INSTRUCTOR = {{ tutor.instructor_short|tojson }};</script>
+<script>window.TUTOR_CODE_LANGUAGE = {{ tutor.code_language|tojson }};</script>
+<!-- Each course's label ("AST 101") and lecture count, by course id. -->
+{%- set course_labels = {} %}
+{%- set lecture_counts = {} %}
+{%- for c in course_list %}
+  {%- set _ = course_labels.update({c.id: c.label}) %}
+  {%- set _ = lecture_counts.update({c.id: c.lectures}) %}
+{%- endfor %}
+<script>window.TUTOR_COURSE_LABELS = {{ course_labels|tojson }};</script>
+<script>window.TUTOR_LECTURE_COUNTS = {{ lecture_counts|tojson }};</script>
+
+<!-- Vendored libs (see /static/vendor/VENDOR.md). Prism's autoloader is
+     dropped: it fetches language grammars at runtime, which reintroduces a
+     network dependency. The course languages load statically instead;
+     unknown languages simply render unhighlighted. -->
+<script src="/static/vendor/marked.min.js"></script>
+<script src="/static/vendor/purify.min.js"></script>
+<link  href="/static/vendor/prism/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="/static/vendor/prism/prism-core.min.js"></script>
+<script src="/static/vendor/prism/prism-clike.min.js"></script>
+<script src="/static/vendor/prism/prism-c.min.js"></script>
+<script src="/static/vendor/prism/prism-cpp.min.js"></script>
+<script src="/static/vendor/prism/prism-java.min.js"></script>
+<script src="/static/vendor/prism/prism-python.min.js"></script>
+
+<style>
+  [x-cloak] { display: none !important; }
+  /* Ensure code blocks from marked use Prism styling */
+  .msg-content pre { margin: 0.5rem 0; border-radius: 0.375rem; overflow-x: auto; }
+  .msg-content code:not([class]) {
+    background: #f3f4f6; padding: 0.1rem 0.3rem; border-radius: 0.2rem;
+    font-family: monospace; font-size: 0.85em;
+  }
+  .msg-content p { margin-bottom: 0.5rem; }
+  .msg-content ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 0.5rem; }
+  .msg-content ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 0.5rem; }
+  /* Long tokens (URLs, template errors) wrap instead of widening the page. */
+  .msg-content { overflow-wrap: anywhere; }
+  /* Blinking cursor while streaming */
+  .cursor::after { content: "▋"; animation: blink 0.8s step-start infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  /* "Thinking ..." under a reply that has not started yet, or has paused
+     (a course-materials search mid-reply); startThinking in chat.js. */
+  .thinking { color: #6b7280; font-style: italic; overflow-wrap: anywhere; padding-left: 2.75rem; }
+  .thinking:empty { display: none; }
+  /* Phone layout: the two half-width panels become one full-width panel with a
+     header toggle (mobilePanel in tutorApp). Deterministic !important overrides
+     inside a max-width query so desktop is untouched and there is no fight
+     over Tailwind's display-utility ordering. */
+  @media (max-width: 767px) {
+    .m-panel-on  { display: flex !important; }
+    .m-panel-off { display: none !important; }
+  }
+</style>
+
+<div class="app-vh flex flex-col" x-data="tutorApp()" data-course="{{ course }}">
+
+  <!-- Top bar: the shared site header (templates/_nav.html) with this
+       page's controls in its slot. -->
+  {% call site_header("chat", "Chat with the tutor", student=student, is_admin=is_admin,
+                      is_instructor=is_instructor, course=course, alpine_course=True,
+                      help_modal=True, inline_at="2xl") %}
+      <!-- The phone header is one row (plan step 3.3, finding D17): the panel
+           toggle, the course, and the menu. The lecture picker sits in the
+           slides panel it drives; the track link is in the Ideas sheet; the
+           blinking reply shows the tutor is thinking. -->
+      <!-- Phone only: swap between the slides panel and the chat panel. A dot
+           marks a slide the tutor brought up while the chat was showing. -->
+      <button data-track="panel-toggle" type="button" @click="togglePanel()"
+              class="md:hidden relative shrink-0 text-sm bg-blue-600 border border-blue-500 rounded px-2 min-h-[44px]">
+        <span x-text="mobilePanel === 'chat' ? '📽 Slides' : '💬 Chat'"></span>
+        <span x-show="slideBadge" x-cloak data-slide-badge aria-hidden="true"
+              class="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400 ring-2 ring-blue-700"></span>
+        <span x-show="slideBadge" x-cloak class="sr-only">(new slide)</span>
+      </button>
+
+      <select x-model="course" @change="onCourseChange()" data-track="course-picker" aria-label="Course"
+              class="shrink-0 text-sm bg-blue-600 border border-blue-500 rounded px-2 min-h-[44px] focus:outline-none">
+        {%- for c in course_list %}
+        <option value="{{ c.id }}">{{ c.label }}</option>
+        {%- endfor %}
+      </select>
+
+      <a :href="`/track-picker?course=${course}`" data-track-chip
+         class="hidden md:flex text-sm bg-blue-600 border border-blue-500 rounded px-2 min-h-[44px] text-blue-50
+                hover:bg-blue-500 no-underline items-center gap-1 max-w-[11rem] truncate"
+         :title="'Order of suggestions: ' + (trackLabel || 'Lecture order') + '. Change it'">
+        🧭 <span x-text="'Order: ' + (trackLabel || 'Lecture order')"></span>
+      </a>
+
+      <span x-show="streaming"
+            class="hidden md:inline text-xs bg-blue-600 px-2 py-0.5 rounded animate-pulse">
+        Thinking...
+      </span>
+  {% endcall %}
+
+  <!-- Help modal: the same text as the public /help page. Esc or the
+       backdrop closes it; focus returns to the ? button, and Tab stays
+       inside while it is open (plan step 3.4, finding D11). -->
+  <div id="help-modal" x-show="showHelp" x-cloak
+       @keydown.escape.window="closeHelp()" @keydown.tab="trapHelpFocus($event)"
+       class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-6"
+       role="dialog" aria-modal="true" aria-labelledby="help-title">
+    <div @click.outside="closeHelp()" x-ref="helpDialog"
+         class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[88vh] overflow-y-auto p-5 sm:p-7 relative">
+      <div class="flex items-center justify-between mb-3">
+        <span id="help-title" class="text-xs font-semibold uppercase tracking-wide text-gray-500">Help</span>
+        <button @click="closeHelp()" x-ref="helpClose"
+                class="-mr-2 -my-2 w-11 h-11 inline-flex items-center justify-center rounded-full
+                       text-gray-400 hover:text-gray-700 hover:bg-gray-100 text-2xl leading-none"
+                aria-label="Close help">&times;</button>
+      </div>
+      {% include "_help_content.html" %}
+      <p class="text-xs text-gray-400 mt-5">This page is also at <a href="/help" class="underline">/help</a>.</p>
+    </div>
+  </div>
+
+  <!-- Main: slide panel + chat panel -->
+  <main class="flex flex-1 overflow-hidden">
+
+    <!-- LEFT: slide viewer (Reveal.js iframe). Hidden on phones unless the
+         header toggle selects it (m-panel-on beats `hidden` below md). -->
+    <section class="hidden md:flex w-full md:w-1/2 bg-gray-900 flex-col overflow-hidden"
+             :class="mobilePanel === 'slides' ? 'm-panel-on' : ''">
+      <div class="flex items-center justify-between gap-2 px-3 sm:px-4 py-1.5 bg-gray-800 text-gray-300 text-sm shrink-0">
+        <!-- The lecture picker drives this panel only, so it lives here. -->
+        <select x-model.number="lectureNum" @change="pickLecture()" data-track="lecture-picker"
+                aria-label="Lecture" title="Which lecture's slides to show"
+                class="min-w-0 flex-1 max-w-[20rem] text-sm bg-gray-700 border border-gray-600 text-gray-100
+                       rounded px-2 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <!-- :selected too: the options render after x-model sets the value. -->
+          <template x-for="n in Array.from({length: lectureCount(deckCourse)},(_,i)=>i+1)" :key="n">
+            <option :value="n" :selected="n === lectureNum" x-text="lectureLabel(n)"></option>
+          </template>
+        </select>
+        <a :href="slideUrl" target="_blank"
+           x-show="slideUrl && !deckMissing"
+           class="shrink-0 inline-flex items-center min-h-[44px] text-xs text-blue-300 hover:text-blue-100 hover:underline">
+          Open full screen ↗
+        </a>
+      </div>
+
+      <div id="slide-container" class="flex-1 min-h-0 relative">
+        <template x-if="slideUrl && !deckKnownMissing">
+          <iframe :src="slideUrl"
+                  @load="relayoutDeck($event.target)"
+                  x-show="!deckMissing"
+                  class="absolute inset-0 w-full h-full border-0"
+                  allowfullscreen
+                  title="Lecture slides"></iframe>
+        </template>
+        <!-- A deck that is not there (not generated, or a failed seed) gets
+             a sentence, not the server's JSON (plan step 3.5, finding D15). -->
+        <div x-show="deckMissing" x-cloak data-deck-missing
+             class="absolute inset-0 flex items-center justify-center p-6 text-center">
+          <p class="text-gray-300 text-sm max-w-xs">
+            The slides for <span x-text="courseLabel(deckCourse)"></span>, lecture
+            <span x-text="lectureNum"></span> are not available yet. You can still ask about
+            the topic in the chat.
+          </p>
+        </div>
+        <template x-if="!slideUrl">
+          <div class="flex items-center justify-center h-full">
+            <p class="text-gray-500 text-sm">Select a lecture and ask a question.</p>
+          </div>
+        </template>
+      </div>
+
+      <!-- Slide caption (updated when agent cites a slide) -->
+      <div id="slide-caption"
+           class="px-4 py-1 bg-gray-800 text-gray-400 text-xs text-center min-h-[1.5rem]"></div>
+
+      <!-- Progress panel (light background — the card markup uses dark text) -->
+      <div id="progress-panel"
+           class="bg-white border-t border-gray-300 shrink-0 max-h-36 overflow-y-auto">
+        <p class="text-gray-500 text-xs px-3 py-2">Loading progress...</p>
+      </div>
+    </section>
+
+    <!-- RIGHT: chat panel. Full width on phones; hidden there only while the
+         slides panel is selected. -->
+    <section class="flex w-full md:w-1/2 flex-col bg-white md:border-l border-gray-200"
+             :class="mobilePanel === 'chat' ? '' : 'm-panel-off'">
+
+      <!-- Screen readers hear replies, scores, and errors here (plan step
+           3.4, finding D10); announce() in the script fills it. -->
+      <div id="sr-status" class="sr-only" role="status" aria-live="polite" aria-atomic="false"></div>
+
+      <!-- Messages. The list follows new text only while the student is at
+           the bottom; scrolled up to re-read, they get a "New" pill instead
+           (plan step 3.5, finding D14). -->
+      <div class="relative flex-1 min-h-0 flex flex-col">
+      <div id="messages"
+           class="flex-1 overflow-y-auto overscroll-contain px-3 sm:px-4 py-4 space-y-4">
+
+        <!-- Welcome bubble -->
+        <div class="flex gap-3">
+          {{ avatar("w-8 h-8 shrink-0", "text-sm") }}
+          <div class="bg-blue-50 rounded-2xl rounded-tl-none px-4 py-3 max-w-prose min-w-0 text-sm text-gray-800 msg-content">
+            <p>Hi{% if first_name %} {{ first_name }}{% endif %}. I'm {{ tutor.name }}, {{ tutor.instructor_short }}'s tutor for
+              <span x-text="courseLabel(course)"></span>.</p>
+            <p>Ask about any topic in your own words, paste code with <span class="font-mono">&lt;/&gt;</span>
+              for feedback, or ask for an exercise. I show the slide when there is one, and I give
+              one hint at a time rather than the full solution.</p>
+            <p class="text-gray-600">Not sure where to start? Tap a suggestion below the chat, the
+              💡 button any time, or ❓ Help at the top of the page.</p>
+          </div>
+        </div>
+
+      </div>
+      <button type="button" id="new-pill" onclick="scrollMessages(true)"
+              class="hidden absolute bottom-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1
+                     min-h-[44px] px-4 rounded-full bg-blue-700 text-white text-sm shadow-lg">
+        <span aria-hidden="true">↓</span> New reply
+      </button>
+      </div>
+
+      <!-- Starter prompts: shown on a first conversation in the course and
+           whenever the 💡 button is on. Personalized + curated; see
+           /chat/starters. A tap sends the prompt (or serves the cached
+           teach-me opener with no API call). -->
+      <div x-show="showStarters" x-collapse
+           class="border-t border-gray-200 bg-amber-50/60 px-3 sm:px-4 py-2 shrink-0">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-xs font-semibold text-amber-800">Try asking</span>
+          <button data-track="starters-hide" @click="showStarters = false" aria-label="Hide suggestions"
+                  class="-mr-2 -my-2 w-11 h-11 inline-flex items-center justify-center rounded-full
+                         text-gray-400 hover:text-gray-600 hover:bg-amber-100 text-lg leading-none">&times;</button>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <template x-for="s in starters" :key="s.message">
+            <button data-track="starter" @click="pickStarter(s)" :disabled="streaming"
+                    class="text-left text-sm px-3 py-2 min-h-[44px] rounded-full border bg-white
+                           hover:bg-amber-100 disabled:opacity-50 max-w-full break-words"
+                    :class="s.kind === 'next' ? 'border-violet-300 text-violet-800' : 'border-amber-300 text-amber-900'"
+                    x-text="s.label"></button>
+          </template>
+          <span x-show="!starters.length" class="text-xs text-gray-400">Loading suggestions...</span>
+        </div>
+        <!-- Phones: the progress panel sits under the slides, out of sight
+             while chatting, so the sheet carries a copy: progress, What's
+             next, the review nudge, and the track (plan step 3.3, finding D5). -->
+        <div class="md:hidden mt-2 border-t border-amber-200">
+          <div id="progress-panel-m" class="max-h-40 overflow-y-auto"></div>
+          <a :href="`/track-picker?course=${course}`" data-track-link
+             class="flex items-center gap-1 min-h-[44px] px-2 text-xs text-purple-700 no-underline hover:underline">
+            <span aria-hidden="true">🧭</span>
+            <span>Order: <span x-text="trackLabel || 'Lecture order'"></span> (change)</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Code submission panel (collapsible) -->
+      <div x-show="showCode" x-collapse
+           class="border-t border-gray-200 bg-gray-50 px-4 py-3 shrink-0">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Submit Code</span>
+          <div class="flex items-center gap-2">
+            <!-- Photo -> code. The camera (touch screens) or an existing
+                 picture, such as a screenshot (plan step 3.5, finding D23).
+                 The transcription fills the box below for REVIEW; nothing is
+                 graded until the student presses Evaluate. -->
+            <span x-show="photoBusy" class="text-xs text-gray-500">⏳ Reading...</span>
+            <button data-track="photo-camera" x-show="!photoBusy && touchScreen" @click="$refs.cameraInput.click()"
+                    class="text-xs px-3 min-h-[44px] border border-gray-300 rounded-lg bg-white
+                           text-gray-600 hover:border-green-400"
+                    title="Photograph handwritten or whiteboard code">📷 Camera</button>
+            <button data-track="photo-file" x-show="!photoBusy" @click="$refs.photoInput.click()"
+                    class="text-xs px-3 min-h-[44px] border border-gray-300 rounded-lg bg-white
+                           text-gray-600 hover:border-green-400"
+                    title="Read code from a photo or screenshot">🖼 Choose photo</button>
+            <input type="file" accept="image/*" capture="environment" class="hidden"
+                   x-ref="cameraInput" @change="photoToCode($event)" aria-label="Take a photo of your code">
+            <input type="file" accept="image/*" class="hidden"
+                   x-ref="photoInput" @change="photoToCode($event)" aria-label="Choose a photo of your code">
+            <button data-track="code-close" @click="showCode = false" aria-label="Close the code panel"
+                    class="-mr-2 w-11 h-11 inline-flex items-center justify-center rounded-full
+                           text-gray-400 hover:text-gray-600 hover:bg-gray-200 text-lg leading-none">&times;</button>
+          </div>
+        </div>
+        <p x-show="photoError" x-cloak role="alert"
+           class="mb-2 text-xs text-red-700 bg-red-50 border border-red-200 rounded px-2 py-1">
+          <span x-text="photoError" data-photo-error></span>
+          <a x-show="photoExpired" :href="'/auth/login?next=' + encodeURIComponent('/chat?course=' + course)"
+             class="underline font-medium">Sign in again</a>
+        </p>
+        <textarea
+          id="code-input"
+          rows="8"
+          aria-label="Your code"
+          placeholder="Paste your {% if tutor.code_language %}{{ tutor.code_language }} {% endif %}code here..."
+          spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" @input="inputNote = ''"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono
+                 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y bg-gray-900
+                 text-green-300"
+        ></textarea>
+        <div class="flex gap-2 mt-2">
+          <input
+            id="problem-input"
+            type="text"
+            aria-label="The problem or exercise (optional)"
+            placeholder="Problem / exercise description (optional)"
+            class="flex-1 min-w-0 min-h-[44px] border border-gray-300 rounded-lg px-3 py-1.5 text-xs
+                   focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <button data-track="code-submit" @click="submitCode()" :disabled="streaming || !!quotaBlocked"
+                  class="px-4 min-h-[44px] bg-green-700 text-white rounded-lg text-sm
+                         font-medium hover:bg-green-800 transition disabled:opacity-50">
+            Evaluate
+          </button>
+        </div>
+        <!-- Predict-your-score (ROADMAP pedagogy 11): one tap, then the code
+             submits. The prediction is recorded server-side against the real
+             score; the grader never sees it. -->
+        <div x-show="predictOpen" x-collapse class="mt-2 text-xs text-gray-600" data-predict>
+          <!-- The scale comes before the question's buttons, and the row
+               never wraps (plan step 3.5, finding D18). -->
+          <p class="font-medium">Before I grade it, what score do you expect?</p>
+          <p class="text-gray-500 mt-0.5" data-predict-legend>
+            0 does not compile · 1 incorrect · 2 partial · 3 correct · 4 excellent
+          </p>
+          <div class="mt-1 flex flex-nowrap items-center gap-2 overflow-x-auto" data-predict-row>
+            <template x-for="n in [0,1,2,3,4]" :key="n">
+              <button data-track="predict" @click="pickPrediction(n)" :aria-label="`I expect ${n} out of 4: ${SCORE_WORDS[n]}`"
+                      class="shrink-0 w-11 h-11 rounded-full border border-gray-300 font-semibold text-sm
+                             hover:border-green-500 hover:bg-green-50"
+                      x-text="n"></button>
+            </template>
+            <button data-track="predict-skip" @click="pickPrediction(null)"
+                    class="shrink-0 min-w-[44px] min-h-[44px] px-3 text-gray-500 underline hover:text-gray-700">skip</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input bar -->
+      <div class="border-t border-gray-200 px-3 sm:px-4 pt-3 pad-safe-b flex gap-2 shrink-0">
+        <button data-track="starters-toggle" @click="toggleStarters()" :aria-expanded="showStarters"
+                :class="showStarters ? 'bg-amber-100 text-amber-700 border-amber-300' :
+                                       'bg-gray-100 text-gray-500 border-gray-300'"
+                class="min-w-[44px] min-h-[44px] px-2 sm:px-3 border rounded-lg text-sm shrink-0 self-end"
+                title="Ideas for what to ask" aria-label="Ideas for what to ask">
+          <span aria-hidden="true">💡</span>
+        </button>
+        <button data-track="code-toggle" @click="showCode = !showCode" :aria-expanded="showCode"
+                :class="showCode ? 'bg-green-100 text-green-700 border-green-300' :
+                                   'bg-gray-100 text-gray-500 border-gray-300'"
+                class="min-w-[44px] min-h-[44px] px-2 sm:px-3 border rounded-lg text-xs font-medium
+                       hover:bg-green-50 transition shrink-0 self-end"
+                title="Submit code for feedback" aria-label="Submit code for feedback">
+          <span aria-hidden="true">&lt;/&gt;</span>
+        </button>
+        <textarea
+          id="msg-input"
+          name="message"
+          rows="2"
+          aria-label="Message to the tutor"
+          placeholder="Ask a question, request an exercise, or use &lt;/&gt; to submit code..."
+          @keydown.enter="enterKey($event)" @input="inputNote = ''"
+          class="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 py-2 text-sm
+                 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+        ></textarea>
+        <button data-track="dictate" x-show="speechAvailable" @click="toggleDictation()"
+                :class="listening ? 'bg-red-100 text-red-600 border-red-300 animate-pulse' :
+                                    'bg-gray-100 text-gray-500 border-gray-300'"
+                class="min-w-[44px] min-h-[44px] px-3 border rounded-lg text-sm shrink-0 self-end"
+                :title="listening ? 'Stop dictation' : 'Dictate your question'"
+                :aria-label="listening ? 'Stop dictation' : 'Dictate your question'">
+          <span aria-hidden="true">🎤</span>
+        </button>
+        <button data-track="send" @click="sendMessage()" :disabled="streaming || !!quotaBlocked"
+                aria-describedby="quota-note"
+                class="px-4 min-h-[44px] bg-blue-700 text-white rounded-lg text-sm font-medium
+                       hover:bg-blue-800 transition disabled:opacity-50 self-end">
+          Send
+        </button>
+      </div>
+      <!-- The tutor budget (tutor/quotas.py): shown from 80% of a quota, and
+           when one is used up, with when it comes back. -->
+      <p x-show="inputNote" x-cloak x-text="inputNote" data-input-note role="alert"
+         class="px-3 sm:px-4 pb-2 text-xs text-amber-800 break-words shrink-0"></p>
+      <p id="quota-note" x-show="quotaNote" x-cloak x-text="quotaNote" data-quota-note role="status"
+         :class="quotaBlocked ? 'text-red-700' : 'text-amber-700'"
+         class="px-3 sm:px-4 pb-2 text-xs break-words shrink-0"></p>
+    </section>
+
+  </main>
+</div>
+
+<!-- The chat's script lives in /static/chat.js (plan step 5.5). It must stay
+     a classic, blocking script here: tutorApp has to exist before the
+     deferred Alpine starts. -->
+<script>window.TUTOR_COURSE = {{ course|tojson }};</script>
+<script src="{{ asset_url('chat.js') }}"></script>
+{% endblock %}

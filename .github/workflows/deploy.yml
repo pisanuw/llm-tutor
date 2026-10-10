@@ -1,0 +1,157 @@
+# Deploy gate: MANUAL. Nothing deploys because a commit was pushed.
+#
+# Run it from the Actions tab ("Deploy to Render" -> Run workflow), or with
+#   gh workflow run deploy.yml                          # current tip of main
+#   gh workflow run deploy.yml -f ref=<sha>             # a specific commit
+#
+# It still refuses to ship anything the canonical CI workflow ("tests") has
+# not passed on, so "manual" means you choose *when*, not *whether it was
+# tested*. Pass allow_untested=true to override that, which is for an
+# emergency and says so in the run log.
+#
+# This hook is the ONLY deploy path: Render's own auto-deploy is Off
+# (autoDeploy "no" / autoDeployTrigger "off" on your Render service, and
+# the dashboard: Settings, Build & Deploy, Auto-Deploy). Changing an
+# environment variable in the Render dashboard or API also redeploys the
+# service -- that path is outside this workflow.
+#
+# History: this used to run automatically on `workflow_run` after a green
+# `tests` on main, so every push to main went live a few minutes later. That
+# surprised people, and a docs-only commit would restart production for no
+# reason, so the trigger is now explicit.
+
+name: Deploy to Render
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Commit SHA to deploy (blank = current tip of main)"
+        required: false
+        default: ""
+      allow_untested:
+        description: "Deploy even if `tests` has not passed on that commit"
+        type: boolean
+        required: false
+        default: false
+
+# One deploy at a time; a newer queued run replaces an older queued one.
+concurrency:
+  group: render-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Pick the commit, and check that it passed tests
+        id: tip
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          WANTED: ${{ inputs.ref }}
+          ALLOW_UNTESTED: ${{ inputs.allow_untested }}
+        run: |
+          set -euo pipefail
+          tip=$(curl -fsS -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.sha" \
+            "https://api.github.com/repos/$REPO/commits/main")
+          sha="${WANTED:-$tip}"
+          echo "requested: ${WANTED:-(tip of main)}"
+          echo "deploying: $sha"
+          echo "main tip:  $tip"
+          [ "$sha" = "$tip" ] || echo "::warning::$sha is not the current tip of main."
+
+          passed=$(curl -fsS -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/$REPO/actions/workflows/tests.yml/runs?head_sha=$sha&status=success" \
+            | python3 -c "import sys,json; print(json.load(sys.stdin).get('total_count', 0))")
+          echo "green 'tests' runs for this commit: $passed"
+          if [ "$passed" -eq 0 ]; then
+            if [ "$ALLOW_UNTESTED" = "true" ]; then
+              echo "::warning::No green 'tests' run for $sha; deploying anyway because allow_untested was set."
+            else
+              echo "::error::No green 'tests' run for $sha. Wait for CI, or re-run with allow_untested=true."
+              exit 1
+            fi
+          fi
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "deploy=true" >> "$GITHUB_OUTPUT"
+
+      # Supabase's Free Plan pauses the project after ~7 days with no activity
+      # (https://supabase.com/docs/guides/platform/free-project-pausing). A
+      # paused DB makes the app fail at boot in ensure_schema()/ensure_rls()
+      # (SQLAlchemy raw_connection() -> pool checkout -> connect refused).
+      # Restore is idempotent: calling it on an already-active project is a
+      # harmless no-op, so this step is safe to run on every deploy.
+      #
+      # Requires repo secrets SUPABASE_ACCESS_TOKEN (a Supabase personal
+      # access token, Account Settings -> Access Tokens) and
+      # SUPABASE_PROJECT_REF (the reference id of the project this app's
+      # DATABASE_URL points at). Fails soft: if either secret is
+      # unset, or the API call fails, this logs a warning and the deploy
+      # proceeds rather than blocking on an infra hiccup unrelated to the code
+      # change being deployed.
+      # NOTE: the `secrets` context is NOT allowed in a step/job-level `if:`
+      # (it invalidates the whole workflow file, which fails the run in 0s).
+      # Pass the secrets in via `env` and do the "are they set?" check inside
+      # the script instead.
+      - name: Restore Supabase project if paused
+        if: steps.tip.outputs.deploy == 'true'
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          set +e
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ] || [ -z "$SUPABASE_PROJECT_REF" ]; then
+            echo "Supabase secrets unset — skipping restore."
+            exit 0
+          fi
+          REF="$SUPABASE_PROJECT_REF"
+          AUTH="Authorization: Bearer $SUPABASE_ACCESS_TOKEN"
+
+          status=$(curl -fsS -H "$AUTH" "https://api.supabase.com/v1/projects/$REF" \
+            | python3 -c "import sys,json; print(json.load(sys.stdin).get('status',''))" 2>/dev/null)
+          echo "Supabase project status: ${status:-unknown}"
+
+          if [ "$status" = "ACTIVE_HEALTHY" ]; then
+            echo "Already active — skipping restore."
+            exit 0
+          fi
+
+          echo "Requesting restore..."
+          curl -fsS -X POST -H "$AUTH" "https://api.supabase.com/v1/projects/$REF/restore" \
+            -o /dev/null -w "restore request: HTTP %{http_code}\n"
+
+          echo "Waiting for the database to come back (up to 5 min)..."
+          for i in $(seq 1 30); do
+            sleep 10
+            status=$(curl -fsS -H "$AUTH" "https://api.supabase.com/v1/projects/$REF" \
+              | python3 -c "import sys,json; print(json.load(sys.stdin).get('status',''))" 2>/dev/null)
+            echo "  [$i/30] status: ${status:-unknown}"
+            if [ "$status" = "ACTIVE_HEALTHY" ]; then
+              echo "Restored."
+              exit 0
+            fi
+          done
+          echo "::warning::Supabase did not report ACTIVE_HEALTHY within 5 min; proceeding with deploy anyway (entrypoint.sh also retries the DB connection at boot)."
+          exit 0
+
+      - name: Trigger Render deploy
+        if: steps.tip.outputs.deploy == 'true'
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          TESTED_SHA: ${{ steps.tip.outputs.sha }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::error::RENDER_DEPLOY_HOOK_URL secret unset; nothing deployed."
+            exit 1
+          fi
+          # The hook URL already carries ?key=...; ref pins the tested commit.
+          case "$HOOK" in *\?*) sep='&' ;; *) sep='?' ;; esac
+          curl -fsS "${HOOK}${sep}ref=${TESTED_SHA}" \
+            -o /dev/null \
+            -w "HTTP %{http_code}\n"

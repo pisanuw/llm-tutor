@@ -1,0 +1,1527 @@
+{% extends "base.html" %}
+{% from "_nav.html" import site_header %}
+{% from "_conversations_list.html" import conversations_list %}
+{% from "_conversation_bubbles.html" import thread_messages %}
+{% block title %}{{ tutor.name }} Admin{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+
+  <!-- The shared site header (templates/_nav.html), then this page's
+       section tabs as a second row. -->
+  {{ site_header("admin", "Admin", is_admin=True, is_instructor=True) }}
+  <div class="bg-blue-800 text-white shadow">
+    <!-- Section tabs in groups (plan step 4.1, finding D22); they wrap on a
+         narrow screen instead of widening the page. -->
+    <nav aria-label="Admin sections"
+         class="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm max-w-6xl mx-auto px-4 sm:px-6 py-1">
+      {% for group, items in tab_groups %}
+      <div class="flex flex-wrap items-center gap-x-3" {% if group %}role="group" aria-label="{{ group }}"{% endif %}>
+        {% if group %}<span class="text-xs uppercase tracking-wide text-blue-300" aria-hidden="true">{{ group }}</span>{% endif %}
+        {% for key, label in items %}
+        <a href="/admin?tab={{ key }}"
+           class="inline-flex items-center min-h-[44px] {% if tab == key %}text-white font-semibold underline{% else %}text-blue-200 hover:text-white{% endif %}"{% if tab == key %} aria-current="page"{% endif %}>
+          {{ label }}
+        </a>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </nav>
+  </div>
+
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+
+    <!-- All-time stats: the Students tab only; two columns on a phone. -->
+    {% if stats %}
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      {% for label, value, color in stats %}
+      <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 {{ color }}">
+        <div class="text-2xl font-bold text-gray-800">{{ value }}</div>
+        <div class="text-sm text-gray-500">{{ label }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Today (plan step 4.1, decision 13's default): the three Monday
+         questions (who is active, who is absent or stuck, what the class
+         is asking) per open class, the flagged replies, and a health dot. -->
+    {% if tab == 'today' and today %}
+    <section aria-labelledby="today-heading" class="space-y-6" data-today>
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h2 id="today-heading" class="text-lg font-semibold text-gray-800">
+          The last {{ today.days }} days
+        </h2>
+        <a href="/admin?tab=health" data-health-dot
+           class="inline-flex items-center gap-2 min-h-[44px] text-sm text-gray-700 hover:underline">
+          <span class="w-3 h-3 rounded-full {{ 'bg-green-500' if today.health_ok else 'bg-amber-500' }}"
+                aria-hidden="true"></span>
+          {{ today.health_text }}
+        </a>
+      </div>
+      <p class="text-sm text-gray-600">
+        {{ today.active_anywhere }} student{{ '' if today.active_anywhere == 1 else 's' }} asked the tutor
+        something, in a class or not.
+      </p>
+
+      {% if not today.classes %}
+      <p class="bg-white rounded-xl shadow-sm p-4 text-sm text-gray-600">
+        No open classes yet. Add one on the <a class="underline" href="/admin?tab=classes">Classes</a>
+        tab to see who is active, who went quiet, and what the class is asking.
+      </p>
+      {% endif %}
+
+      <div class="grid gap-4 md:grid-cols-2">
+        {% for c in today.classes %}
+        <article class="bg-white rounded-xl shadow-sm p-4 min-w-0" data-today-class="{{ c.summary.class_id }}">
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h3 class="font-semibold text-gray-800">{{ c.summary.label }}
+              <span class="text-sm font-normal text-gray-500">{{ course_label(c.summary.course) }}</span></h3>
+            <a href="/instructor?class_id={{ c.summary.class_id }}"
+               class="inline-flex items-center min-h-[44px] text-sm text-blue-700 hover:underline">
+              Open the class →
+            </a>
+          </div>
+          <dl class="grid grid-cols-3 gap-2 mt-2 text-center">
+            <div class="rounded-lg bg-green-50 p-2">
+              <dt class="text-xs text-gray-600">Active</dt>
+              <dd class="text-2xl font-bold text-green-800">{{ c.summary.active }}</dd>
+            </div>
+            <div class="rounded-lg bg-amber-50 p-2">
+              <dt class="text-xs text-gray-600">Went quiet</dt>
+              <dd class="text-2xl font-bold text-amber-800">{{ c.summary.dormant }}</dd>
+            </div>
+            <div class="rounded-lg bg-gray-100 p-2">
+              <dt class="text-xs text-gray-600">Never started</dt>
+              <dd class="text-2xl font-bold text-gray-800">{{ c.summary.never }}</dd>
+            </div>
+          </dl>
+          {% if c.summary.reading %}<p class="mt-2 text-xs text-gray-500">Reading only (came, asked nothing): {{ c.summary.reading }}</p>{% endif %}
+          {% for heading, people in (("Could not sign in", c.locked_out), ("Went quiet", c.quiet), ("Signed in, never asked", c.signed_in), ("Never started", c.never)) if people %}
+          <p class="mt-3 text-xs font-semibold text-gray-600">{{ heading }}</p>
+          <ul class="flex flex-wrap gap-x-3 text-sm">
+            {% for r in people[:6] %}
+            <li><a class="inline-flex items-center min-h-[44px] text-blue-700 hover:underline break-all"
+                   href="/instructor?class_id={{ c.summary.class_id }}&student={{ r.email|urlencode }}">{{ r.name or r.email }}</a></li>
+            {% endfor %}
+            {% if people|length > 6 %}<li class="inline-flex items-center min-h-[44px] text-gray-500">and {{ people|length - 6 }} more</li>{% endif %}
+          </ul>
+          {% endfor %}
+          <p class="mt-3 text-xs font-semibold text-gray-600">Most asked about</p>
+          {% if c.lectures %}
+          <ol class="text-sm text-gray-700 list-decimal pl-5">
+            {% for l in c.lectures %}
+            <li>Lecture {{ l.num }}{% if l.title %}: {{ l.title }}{% endif %}
+              <span class="text-gray-500">({{ l.asked }} question{{ '' if l.asked == 1 else 's' }})</span></li>
+            {% endfor %}
+          </ol>
+          {% else %}
+          <p class="text-sm text-gray-500">No questions this week.</p>
+          {% endif %}
+        </article>
+        {% endfor %}
+      </div>
+
+      <!-- Where students stand (review step 0.9): the rollup's two highest
+           and two lowest per measure, a rank and never a judgement. -->
+      <div class="bg-white rounded-xl shadow-sm p-4" data-today-outliers>
+        <h3 class="font-semibold text-gray-800">Where students stand, last {{ today.days }} days</h3>
+        <p class="mt-1 text-xs text-gray-500">The two highest and two lowest per measure among students with any; a rank, not a judgement. Instructors and admins are left out.</p>
+        {% if today.outliers %}
+        <ul class="mt-2 divide-y divide-gray-100 text-sm">
+          {% for m in today.outliers %}
+          <li class="py-2 min-w-0 break-words" data-outlier="{{ m.key }}">
+            <span class="font-medium text-gray-800">{{ m.label }}:</span>
+            {% if m.highest %}<span class="text-gray-500">most</span>
+              {% for who in m.highest %}<a href="/instructor?class_id={{ who.class_id }}&student={{ who.email|urlencode }}" class="text-blue-700 hover:underline">{{ who.name }}</a> ({{ who.value|round(1) if m.key in ('active_min', 'deck_min', 'narration_min') else who.value|int }}){% if not loop.last %}, {% endif %}{% endfor %}{% endif %}
+            {% if m.lowest %}<span class="text-gray-500">· fewest</span>
+              {% for who in m.lowest %}<a href="/instructor?class_id={{ who.class_id }}&student={{ who.email|urlencode }}" class="text-blue-700 hover:underline">{{ who.name }}</a> ({{ who.value|round(1) if m.key in ('active_min', 'deck_min', 'narration_min') else who.value|int }}){% if not loop.last %}, {% endif %}{% endfor %}{% endif %}
+            {% if m.without %}<span class="text-gray-500">· {{ m.without }} with none</span>{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="mt-1 text-sm text-gray-500">Nothing recorded yet.</p>
+        {% endif %}
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm p-4" data-today-quotas>
+        <h3 class="font-semibold text-gray-800">Students who hit a tutor quota, last 24 hours ({{ today.quota_hits_total }})</h3>
+        {% if today.quota_hits %}
+        <ul class="mt-2 divide-y divide-gray-100 text-sm">
+          {% for h in today.quota_hits %}
+          <li class="py-2 min-w-0 break-words">
+            <span class="font-medium text-gray-800">{{ h.name or h.email }}</span>
+            <span class="text-gray-500">· {% if h.limit_usd %}{{ h.window }} quota of ${{ '%.2f'|format(h.limit_usd) }}{% else %}{{ h.window }} cap{% endif %} · {{ h.ts.strftime('%H:%M') }} UTC</span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="mt-1 text-sm text-gray-500">Nobody.</p>
+        {% endif %}
+        <a href="/admin?tab=supervision" class="inline-flex items-center min-h-[44px] text-sm text-blue-700 hover:underline">Quotas and spend →</a>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm p-4" data-today-errors>
+        <h3 class="font-semibold text-gray-800">Errors students hit, last 24 hours ({{ today.errors.total }})</h3>
+        {% if today.errors.total or today.errors.reports %}
+        <p class="mt-1 text-sm text-gray-500">
+          {% for kind, n in today.errors.by_kind.items() %}{{ n }} {{ kind }}{% if not loop.last %} · {% endif %}{% endfor %}
+          {% if today.errors.students %} · {{ today.errors.students }} student{{ '' if today.errors.students == 1 else 's' }}{% endif %}
+          {% if today.errors.bots %} · {{ today.errors.bots }} from bots or scanners (not counted){% endif %}
+        </p>
+        <ul class="mt-2 divide-y divide-gray-100 text-sm">
+          {% for t in today.errors.top %}
+          <li class="py-2 min-w-0 break-words">
+            <span class="font-mono text-gray-800">{{ t.path }}</span>
+            <span class="text-gray-500">· {{ t.status }} · {{ t.hits }} hit{{ '' if t.hits == 1 else 's' }}{% if t.students %} · {{ t.students }} student{{ '' if t.students == 1 else 's' }}{% endif %}{% if t.referrers %} · from {{ t.referrers|join(', ') }}{% endif %}</span>
+          </li>
+          {% endfor %}
+          {% for ts, who, path in today.errors.reports %}
+          <li class="py-2 min-w-0 break-words">
+            <span class="font-medium text-amber-900">{{ who }} pressed Tell {{ tutor.instructor_short }}</span>
+            <span class="text-gray-500">· <span class="font-mono">{{ path }}</span> · {{ ts.strftime('%H:%M') }} UTC</span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="mt-1 text-sm text-gray-500">None{% if today.errors.bots %} ({{ today.errors.bots }} from bots or scanners){% endif %}.</p>
+        {% endif %}
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm p-4" data-today-flagged>
+        <h3 class="font-semibold text-gray-800">Replies students flagged ({{ today.flagged_total }}{% if today.flagged_total %}, {{ today.flagged_unseen }} unseen{% endif %})</h3>
+        {% if today.flagged %}
+        <ul class="mt-2 divide-y divide-gray-100 text-sm">
+          {% for item in today.flagged %}
+          <li class="py-2 min-w-0 {% if item.f.seen_at %}opacity-60{% endif %}" data-flag="{{ item.f.feedback_id }}">
+            <a href="{{ item.link }}" class="text-blue-700 hover:underline break-all">{{ item.f.student_email }}</a>
+            <span class="text-gray-500">· {{ course_label(item.f.course) }}{% if item.f.lecture_num %} lecture {{ item.f.lecture_num }}{% endif %}</span>
+            <form method="post" action="/admin/feedback/{{ item.f.feedback_id }}/seen" class="inline ml-2">
+              <input type="hidden" name="seen" value="{{ '0' if item.f.seen_at else '1' }}">
+              <button type="submit" class="inline-flex items-center min-h-[44px] px-2 text-xs text-gray-500 hover:text-gray-800 hover:underline">{{ 'Mark unseen' if item.f.seen_at else 'Mark seen' }}</button>
+            </form>
+            {% if item.f.comment %}<p class="text-gray-800">“{{ item.f.comment }}”</p>{% endif %}
+            <p class="text-gray-500 break-words">{{ item.f.reply_excerpt }}</p>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="mt-1 text-sm text-gray-500">None this week.</p>
+        {% endif %}
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- Students tab -->
+    {% if tab == 'students' %}
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h2 class="font-semibold text-gray-700">Students ({{ students|length }})</h2>
+      </div>
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+          <tr>
+            <th class="px-4 py-3 text-left">Email</th>
+            <th class="px-4 py-3 text-left">Name</th>
+            <th class="px-4 py-3 text-right">Messages</th>
+            <th class="px-4 py-3 text-right">Exercises</th>
+            <th class="px-4 py-3 text-right">Avg Score</th>
+            <th class="px-4 py-3 text-right">Topics</th>
+            <th class="px-4 py-3 text-right">Logins</th>
+            <th class="px-4 py-3 text-left">Last Login</th>
+            <th class="px-4 py-3 text-left">Last Seen</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          {% for s in students %}
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3 font-mono text-xs text-gray-700">{{ s.email }}</td>
+            <td class="px-4 py-3 text-gray-700">{{ s.name or '—' }}</td>
+            <td class="px-4 py-3 text-right text-gray-600">{{ s.msg_count }}</td>
+            <td class="px-4 py-3 text-right text-gray-600">{{ s.ex_count }}</td>
+            <td class="px-4 py-3 text-right">
+              {% if s.avg_score is not none %}
+              <span class="px-2 py-0.5 rounded-full text-xs font-semibold
+                {% if s.avg_score >= 3 %}bg-green-100 text-green-700
+                {% elif s.avg_score >= 2 %}bg-yellow-100 text-yellow-700
+                {% else %}bg-red-100 text-red-700{% endif %}">
+                {{ '%.1f'|format(s.avg_score) }}
+              </span>
+              {% else %}—{% endif %}
+            </td>
+            <td class="px-4 py-3 text-right text-gray-600">{{ s.topic_count }}</td>
+            <td class="px-4 py-3 text-right text-gray-600">{{ s.login_count }}</td>
+            <td class="px-4 py-3 text-gray-400 text-xs">{{ s.last_login.strftime('%Y-%m-%d %H:%M') if s.last_login else '—' }}</td>
+            <td class="px-4 py-3 text-gray-400 text-xs">{{ s.last_seen.strftime('%Y-%m-%d %H:%M') if s.last_seen else '—' }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="9" class="px-4 py-8 text-center text-gray-400">No students yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Exercises tab -->
+    {% if tab == 'exercises' %}
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h2 class="font-semibold text-gray-700">Recent Exercise Attempts ({{ attempts|length }})</h2>
+      </div>
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+          <tr>
+            <th class="px-4 py-3 text-left">Student</th>
+            <th class="px-4 py-3 text-left">Exercise</th>
+            <th class="px-4 py-3 text-right">Score</th>
+            <th class="px-4 py-3 text-center">Passed</th>
+            <th class="px-4 py-3 text-left">Feedback (excerpt)</th>
+            <th class="px-4 py-3 text-left">When</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          {% for a in attempts %}
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3 text-xs text-gray-600">{{ a.student_email }}</td>
+            <td class="px-4 py-3 text-xs font-mono text-gray-500">{{ a.exercise_id[:30] }}</td>
+            <td class="px-4 py-3 text-right">
+              <span class="px-2 py-0.5 rounded-full text-xs font-semibold
+                {% if a.score >= 3 %}bg-green-100 text-green-700
+                {% elif a.score >= 2 %}bg-yellow-100 text-yellow-700
+                {% else %}bg-red-100 text-red-700{% endif %}">
+                {{ a.score }}/4
+              </span>
+            </td>
+            <td class="px-4 py-3 text-center">
+              {% if a.passed %}<span class="text-green-600">&#10003;</span>
+              {% else %}<span class="text-red-400">&#10007;</span>{% endif %}
+            </td>
+            <td class="px-4 py-3 text-xs text-gray-500 max-w-xs truncate">{{ a.feedback[:80] }}</td>
+            <td class="px-4 py-3 text-xs text-gray-400">{{ a.created_at.strftime('%m-%d %H:%M') }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">No exercise attempts yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Topics tab -->
+    {% if tab == 'topics' %}
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h2 class="font-semibold text-gray-700">Topic Access Log</h2>
+      </div>
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+          <tr>
+            <th class="px-4 py-3 text-left">Student</th>
+            <th class="px-4 py-3 text-right">Lecture</th>
+            <th class="px-4 py-3 text-left">Topic Query</th>
+            <th class="px-4 py-3 text-left">When</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          {% for t in topics %}
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3 text-xs text-gray-600">{{ t.student_email }}</td>
+            <td class="px-4 py-3 text-right text-gray-500">L{{ '%02d'|format(t.lecture_num) }}</td>
+            <td class="px-4 py-3 text-xs text-gray-700">{{ t.topic_tag }}</td>
+            <td class="px-4 py-3 text-xs text-gray-400">{{ t.accessed_at.strftime('%m-%d %H:%M') }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" class="px-4 py-8 text-center text-gray-400">No topic access recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Logins tab -->
+    {% if tab == 'logins' %}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Sign-in problems (review step 0.6): the trail folded into who
+           could not get in, before the trail itself. -->
+      <div class="bg-white rounded-xl shadow-sm p-4 lg:col-span-2" data-login-problems>
+        <h2 class="font-semibold text-gray-700">Sign-in problems, last {{ logins.attempt_days }} days</h2>
+        {% set p = logins.problems %}
+        {% if p.empty %}
+        <p class="mt-1 text-sm text-gray-500">None: {{ p.ok }} sign-in{{ '' if p.ok == 1 else 's' }}, nobody failed and stayed out.</p>
+        {% else %}
+        <ul class="mt-2 divide-y divide-gray-100 text-sm">
+          {% for q in p.unresolved %}
+          <li class="py-2 min-w-0 break-words" data-problem="{{ q.email }}">
+            <a href="/admin?tab=logins&student={{ q.email|urlencode }}" class="font-medium text-red-800 hover:underline">{{ q.name or q.email }}</a>
+            <span class="text-gray-500">· {{ q.failures }} failure{{ '' if q.failures == 1 else 's' }} ({{ q.outcomes[-4:]|join(', ') }}) · last {{ q.when }} · not signed in since</span>
+          </li>
+          {% endfor %}
+          {% for q in p.problems if q.got_in_after %}
+          <li class="py-2 min-w-0 break-words text-gray-500">{{ q.name or q.email }} failed {{ q.failures }} time{{ '' if q.failures == 1 else 's' }}, then got in.</li>
+          {% endfor %}
+          {% if p.unknown %}
+          <li class="py-2 min-w-0 break-words text-gray-700">Not on the whitelist and tried:
+            {% for q in p.unknown[:10] %}<span class="font-mono text-xs">{{ q.email }}</span> ({{ q.failures }}){% if not loop.last %}, {% endif %}{% endfor %}</li>
+          {% endif %}
+          {% if p.anonymous_failures %}<li class="py-2 text-gray-700">Failures with no address (a dead link from an unknown browser): {{ p.anonymous_failures }}</li>{% endif %}
+          {% if p.rate_limited %}<li class="py-2 text-gray-700">Rate-limited requests: {{ p.rate_limited }}</li>{% endif %}
+          {% if p.unfinished_magic or p.unfinished_google %}<li class="py-2 text-gray-700">Started and not completed: {{ p.unfinished_magic }} magic link{{ '' if p.unfinished_magic == 1 else 's' }}, {{ p.unfinished_google }} Google sign-in{{ '' if p.unfinished_google == 1 else 's' }}</li>{% endif %}
+          {% if p.access_removed %}<li class="py-2 text-gray-700">Signed-in students taken off the whitelist: {{ p.access_removed }}</li>{% endif %}
+          {% if p.scanner_taps %}<li class="py-2 text-gray-500">Mail scanner taps on links (harmless): {{ p.scanner_taps }}</li>{% endif %}
+        </ul>
+        {% endif %}
+      </div>
+
+      <!-- Login attempts: every step of every sign-in, failures included
+           (tutor.auth.attempts). The browser column tells a student's own
+           click from the mail scanner that opened their link first. -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden lg:col-span-2">
+        <div class="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center gap-3">
+          <h2 class="font-semibold text-gray-700">Login attempts ({{ logins.attempts|length }})</h2>
+          <form method="get" action="/admin" class="flex items-center gap-2 ml-auto">
+            <input type="hidden" name="tab" value="logins">
+            <label for="attempt-filter" class="sr-only">Filter by email</label>
+            <input type="search" name="student" id="attempt-filter" value="{{ logins.attempt_filter }}"
+                   placeholder="filter by email"
+                   class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="submit" class="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 text-sm hover:bg-gray-200">Filter</button>
+          </form>
+        </div>
+        <div class="px-6 py-3 text-xs text-gray-500 space-y-1 border-b border-gray-100">
+          <p>
+            Last {{ logins.attempt_days }} days:
+            {% for outcome, n in logins.attempt_counts %}
+            <span class="inline-block mr-2 font-mono">{{ outcome }} <span class="text-gray-700">{{ n }}</span></span>
+            {% else %}<span>nothing yet</span>{% endfor %}
+          </p>
+          <p class="text-gray-400">
+            A <span class="font-mono">link_opened</span> row seconds after <span class="font-mono">link_sent</span>,
+            from a browser the student does not use, is the university's mail scanner opening the link.
+            It spends nothing: the link needs a Continue click, and the code is typed on the login page.
+            A Google <span class="font-mono">started</span> with no row after it means Google never sent the student back.
+          </p>
+        </div>
+        <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+            <tr>
+              <th class="px-4 py-3 text-left">When (local time)</th>
+              <th class="px-4 py-3 text-left">Email</th>
+              <th class="px-4 py-3 text-left">Method</th>
+              <th class="px-4 py-3 text-left">Outcome</th>
+              <th class="px-4 py-3 text-left">Host</th>
+              <th class="px-4 py-3 text-left">Browser</th>
+              <th class="px-4 py-3 text-left">Detail</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            {% for a in logins.attempts %}
+            <tr class="hover:bg-gray-50 align-top">
+              <td class="px-4 py-2 text-xs text-gray-400 whitespace-nowrap">{{ a.when }}</td>
+              <td class="px-4 py-2 font-mono text-xs text-gray-700">{{ a.email }}</td>
+              <td class="px-4 py-2 text-xs text-gray-600">{{ a.method }}</td>
+              <td class="px-4 py-2 text-xs">
+                <span class="px-2 py-0.5 rounded-full text-xs font-mono
+                  {% if a.tone == 'ok' %}bg-green-100 text-green-700
+                  {% elif a.tone == 'progress' %}bg-gray-100 text-gray-600
+                  {% else %}bg-red-100 text-red-700{% endif %}">{{ a.outcome }}</span>
+              </td>
+              <td class="px-4 py-2 text-xs text-gray-500 whitespace-nowrap">{{ a.host }}</td>
+              <td class="px-4 py-2 text-xs text-gray-500 max-w-xs truncate" title="{{ a.user_agent }}">{{ a.browser }}</td>
+              <td class="px-4 py-2 text-xs text-gray-500">{{ a.detail }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" class="px-4 py-8 text-center text-gray-400">No login attempts recorded yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <!-- Per-student login summary -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100">
+          <h2 class="font-semibold text-gray-700">Per-student logins</h2>
+        </div>
+        <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+            <tr>
+              <th class="px-4 py-3 text-left">Email</th>
+              <th class="px-4 py-3 text-right">Count</th>
+              <th class="px-4 py-3 text-left">Last login</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            {% for s in logins.summary %}
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-3 font-mono text-xs text-gray-700">{{ s.email }}</td>
+              <td class="px-4 py-3 text-right text-gray-600">{{ s.login_count }}</td>
+              <td class="px-4 py-3 text-xs text-gray-400">{{ s.last_login.strftime('%Y-%m-%d %H:%M') if s.last_login else 'never' }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="3" class="px-4 py-8 text-center text-gray-400">No students yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <!-- Recent login feed -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100">
+          <h2 class="font-semibold text-gray-700">Recent logins ({{ logins.feed|length }})</h2>
+        </div>
+        <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+            <tr>
+              <th class="px-4 py-3 text-left">When (local time)</th>
+              <th class="px-4 py-3 text-left">Email</th>
+              <th class="px-4 py-3 text-left">Method</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            {% for f in logins.feed %}
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">{{ f.when }}</td>
+              <td class="px-4 py-3 font-mono text-xs text-gray-700">{{ f.email }}</td>
+              <td class="px-4 py-3 text-xs">
+                <span class="px-2 py-0.5 rounded-full text-xs
+                  {% if f.method == 'google' %}bg-blue-100 text-blue-700
+                  {% elif f.method == 'magic' %}bg-purple-100 text-purple-700
+                  {% else %}bg-gray-100 text-gray-500{% endif %}">{{ f.method }}</span>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="3" class="px-4 py-8 text-center text-gray-400">No logins recorded yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+    </div>
+    {% endif %}
+
+    <!-- Activity tab (counts over the last 14 days) -->
+    {% if tab == 'activity' %}
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h2 class="font-semibold text-gray-700">Daily activity (last 14 days)</h2>
+      </div>
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+          <tr>
+            <th class="px-4 py-3 text-left">Date</th>
+            <th class="px-4 py-3 text-right">Active students</th>
+            <th class="px-4 py-3 text-right">Logins</th>
+            <th class="px-4 py-3 text-right">Messages</th>
+            <th class="px-4 py-3 text-right">Chat turns</th>
+            <th class="px-4 py-3 text-right">Cost (USD)</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          {% for r in activity_rows %}
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3 text-gray-700 font-mono text-xs">{{ r.date }}</td>
+            <td class="px-4 py-3 text-right text-gray-600">{{ r.active }}</td>
+            <td class="px-4 py-3 text-right text-gray-600">{{ r.logins }}</td>
+            <td class="px-4 py-3 text-right text-gray-600">{{ r.messages }}</td>
+            <td class="px-4 py-3 text-right text-gray-600">{{ r.turns }}</td>
+            <td class="px-4 py-3 text-right text-gray-600">${{ '%.4f'|format(r.cost) }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">No activity in the last 14 days.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      <p class="px-6 py-3 text-xs text-gray-400">Active students = distinct students who sent a message that day. Cost sums all supervised-turn token spend (chat + supervisor calls).</p>
+    </div>
+    {% endif %}
+
+    <!-- Conversations tab -->
+    {% if tab == 'conversations' %}
+    {% if not conversations.selected_student %}
+    {{ conversations_list(conversations) }}
+    {% else %}
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h2 class="font-semibold text-gray-700">
+          Conversation
+          {% if conversations.selected_student %}<span class="text-sm text-gray-400">— {{ conversations.selected_student }} ({{ conversations.messages|length }} messages)</span>{% endif %}
+        </h2>
+        <form method="get" action="/admin" class="flex gap-2">
+          <input type="hidden" name="tab" value="conversations">
+          <input list="convo-emails" name="student" value="{{ conversations.selected_student or '' }}" placeholder="student@example.edu"
+            class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm" />
+          <datalist id="convo-emails">
+            {% for s in all_students %}<option value="{{ s.email }}">{% endfor %}
+          </datalist>
+          <button type="submit" class="px-3 py-1.5 bg-gray-700 text-white rounded-lg text-sm">View</button>
+          <a href="/admin?tab=conversations" class="px-3 py-1.5 text-sm text-blue-700 hover:underline" data-back-to-list>← Recent conversations</a>
+          {% if conversations.selected_student %}
+          <a href="/admin/conversations/export?student={{ conversations.selected_student|urlencode }}&amp;format=md"
+             class="px-3 py-1.5 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800 no-underline"
+             title="Download the full transcript (all messages, not just the last 300) as Markdown">Export .md</a>
+          <a href="/admin/conversations/export?student={{ conversations.selected_student|urlencode }}&amp;format=json"
+             class="px-3 py-1.5 bg-gray-100 text-gray-700 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 no-underline"
+             title="Download the full transcript as JSON (with per-message tool notes)">Export .json</a>
+          {% endif %}
+        </form>
+      </div>
+      {% if not conversations.messages %}
+      <p class="px-6 py-8 text-center text-gray-400">No messages for this student.</p>
+      {% else %}
+      <div class="px-6 py-4 space-y-3 max-h-[70vh] overflow-y-auto">
+        {{ thread_messages(conversations.messages) }}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {% if tab == 'timeline' %}
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-2">
+        <h2 class="font-semibold text-gray-700">
+          Timeline
+          {% if timeline.selected_student %}<span class="text-sm text-gray-400">— {{ timeline.selected_student }}, the last {{ timeline.hours }} hours ({{ timeline.rows|length }} signals)</span>{% endif %}
+        </h2>
+        <form method="get" action="/admin" class="flex gap-2">
+          <input type="hidden" name="tab" value="timeline">
+          <input list="timeline-emails" name="student" value="{{ timeline.selected_student or '' }}" placeholder="student@example.edu"
+            class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm" />
+          <datalist id="timeline-emails">
+            {% for s in all_students %}<option value="{{ s.email }}">{% endfor %}
+          </datalist>
+          <button type="submit" class="px-3 py-1.5 bg-gray-700 text-white rounded-lg text-sm">View</button>
+        </form>
+      </div>
+      {% if not timeline.selected_student %}
+      <p class="px-6 py-8 text-center text-gray-400">Enter a student email to see what they did, signal by signal.
+        For a chosen day, or a whole class, use the offline reports (docs/analytics-cookbook.md).</p>
+      {% elif not timeline.rows %}
+      <p class="px-6 py-8 text-center text-gray-400">Nothing recorded for this student in the last {{ timeline.hours }} hours.</p>
+      {% else %}
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" data-timeline>
+          <thead class="bg-gray-50 text-gray-500 text-left">
+            <tr><th class="px-3 py-2">Visit</th><th class="px-3 py-2">Time (UTC)</th><th class="px-3 py-2">What</th>
+                <th class="px-3 py-2">Where</th><th class="px-3 py-2">Slide</th><th class="px-3 py-2">Turn</th><th class="px-3 py-2">Note</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {% for r in timeline.rows %}
+            <tr class="{% if r.what in ('question', 'reply') %}bg-blue-50/40{% endif %}">
+              <td class="px-3 py-1 text-gray-500">{{ r.visit }}</td>
+              <td class="px-3 py-1 whitespace-nowrap font-mono text-xs">{{ r.time }}</td>
+              <td class="px-3 py-1 whitespace-nowrap">{{ r.what }}</td>
+              <td class="px-3 py-1 break-all">{{ r.where }}</td>
+              <td class="px-3 py-1">{{ r.slide }}</td>
+              <td class="px-3 py-1 font-mono text-xs">{{ r.turn }}</td>
+              <td class="px-3 py-1 break-words">{{ r.note }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Access (whitelist) tab -->
+    {% if tab == 'misconceptions' %}
+    <!-- Cohort misconception library (ROADMAP 12). Rows are mined weekly from
+         per-student misconception notes; ONLY approved rows reach prompts and
+         review probes. Approve/reject is sticky across re-mining. -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <h2 class="font-semibold text-gray-700">Misconception library ({{ misconceptions|length }})</h2>
+      <p class="text-sm text-gray-500 mt-1">
+        Candidates are inert until approved. Approved entries are shown to the tutor for
+        goals in scope, told to the exam and review graders, and turned into
+        "what is wrong with this?" review probes when they carry a distractor.
+        Mining runs Sundays (misconception-mining workflow) or via
+        <code class="text-xs">python -m scripts.mine_misconceptions --days 14</code>.
+      </p>
+      {% if not misconceptions %}
+        <p class="text-sm text-gray-400 mt-4">Library empty. Mining needs 4+ distinct students with notes on a goal.</p>
+      {% else %}
+      <div class="overflow-x-auto mt-4">
+        <table class="min-w-full text-sm">
+          <thead>
+            <tr class="text-left text-gray-500 border-b">
+              <th class="py-2 pr-3">Status</th>
+              <th class="py-2 pr-3">Goal</th>
+              <th class="py-2 pr-3">Misconception</th>
+              <th class="py-2 pr-3">Distractor</th>
+              <th class="py-2 pr-3">n</th>
+              <th class="py-2 pr-3">Run</th>
+              <th class="py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in misconceptions %}
+            <tr class="border-b align-top">
+              <td class="py-2 pr-3">
+                <span class="px-2 py-0.5 rounded-full text-xs font-semibold
+                  {% if m.status == 'approved' %}bg-green-100 text-green-800
+                  {% elif m.status == 'rejected' %}bg-gray-200 text-gray-600
+                  {% else %}bg-amber-100 text-amber-800{% endif %}">{{ m.status }}</span>
+              </td>
+              <td class="py-2 pr-3 font-mono text-xs whitespace-nowrap">{{ m.goal_id }}</td>
+              <td class="py-2 pr-3 max-w-md">{{ m.description }}</td>
+              <td class="py-2 pr-3 max-w-xs font-mono text-xs text-gray-600">{{ m.distractor or '—' }}</td>
+              <td class="py-2 pr-3 text-gray-600">{{ m.evidence }}</td>
+              <td class="py-2 pr-3 text-gray-400 text-xs whitespace-nowrap">{{ m.run_label }}</td>
+              <td class="py-2">
+                <div class="flex gap-2">
+                  {% if m.status != 'approved' %}
+                  <form method="post" action="/admin/misconceptions/set">
+                    <input type="hidden" name="row_id" value="{{ m.id }}">
+                    <input type="hidden" name="status" value="approved">
+                    <button type="submit" class="px-2 py-1 rounded-lg text-xs font-medium text-white bg-green-600 hover:bg-green-700">Approve</button>
+                  </form>
+                  {% endif %}
+                  {% if m.status != 'rejected' %}
+                  <form method="post" action="/admin/misconceptions/set">
+                    <input type="hidden" name="row_id" value="{{ m.id }}">
+                    <input type="hidden" name="status" value="rejected">
+                    <button type="submit" class="px-2 py-1 rounded-lg text-xs font-medium text-white bg-gray-500 hover:bg-gray-600">Reject</button>
+                  </form>
+                  {% endif %}
+                  {% if m.status != 'candidate' %}
+                  <form method="post" action="/admin/misconceptions/set">
+                    <input type="hidden" name="row_id" value="{{ m.id }}">
+                    <input type="hidden" name="status" value="candidate">
+                    <button type="submit" class="px-2 py-1 rounded-lg text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-300">Revert</button>
+                  </form>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Classes tab: instructors + their class rosters -->
+    {% if tab == 'classes' and classes_ctx %}
+
+    <!-- Instructors -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <h2 class="font-semibold text-gray-700 mb-1">Instructors</h2>
+      <p class="text-sm text-gray-500 mb-4">
+        An instructor sees <a href="/instructor" class="text-blue-600 hover:underline">/instructor</a>
+        for the classes they own: who is using the tutor, who is not, and their conversations.
+        Admins can open every class. Demoting leaves a person's classes in place — reassign or
+        archive them below.
+      </p>
+
+      <form method="post" action="/admin/instructors/set" class="flex flex-wrap gap-2 items-center mb-4">
+        <input type="hidden" name="enabled" value="on" />
+        <input list="admin-student-emails" name="email" required placeholder="student@example.edu"
+               class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-72" />
+        <button type="submit"
+                class="px-4 py-1.5 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800">
+          Make instructor
+        </button>
+      </form>
+      <datalist id="admin-student-emails">
+        {% for e in classes_ctx.all_emails %}<option value="{{ e }}"></option>{% endfor %}
+      </datalist>
+
+      {% if classes_ctx.instructors %}
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-gray-500 text-left">
+            <tr><th class="px-3 py-2">Email</th><th class="px-3 py-2">Name</th>
+                <th class="px-3 py-2">Classes</th><th class="px-3 py-2">Last login</th>
+                <th class="px-3 py-2"></th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {% for i in classes_ctx.instructors %}
+            <tr>
+              <td class="px-3 py-2 font-mono text-xs">{{ i.email }}</td>
+              <td class="px-3 py-2">{{ i.name or "—" }}</td>
+              <td class="px-3 py-2">{{ i.classes }}</td>
+              <td class="px-3 py-2 text-gray-500">{{ i.last_login.strftime("%Y-%m-%d") if i.last_login else "never" }}</td>
+              <td class="px-3 py-2 text-right">
+                <form method="post" action="/admin/instructors/set">
+                  <input type="hidden" name="email" value="{{ i.email }}" />
+                  <input type="hidden" name="enabled" value="off" />
+                  <button type="submit" class="text-xs text-red-600 hover:underline">Remove role</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-sm text-gray-400 italic">No instructors yet.</p>
+      {% endif %}
+    </div>
+
+    <!-- Create a class -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <h2 class="font-semibold text-gray-700 mb-3">Create a class</h2>
+      <form method="post" action="/admin/classes/create" class="flex flex-wrap gap-2 items-center">
+        <input name="name" required placeholder="{{ course_list[0].label }} A"
+               class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-44" />
+        <select name="course" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm">
+          {% for c in classes_ctx.courses %}<option value="{{ c }}">{{ course_label(c) }}</option>{% endfor %}
+        </select>
+        <input name="term" placeholder="Autumn 2026"
+               class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-40" />
+        <label class="text-xs text-gray-500">from
+          <input type="date" name="quarter_start" required title="First day of the quarter"
+                 class="border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900" /></label>
+        <label class="text-xs text-gray-500">to
+          <input type="date" name="quarter_end" required title="Last day of the quarter"
+                 class="border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900" /></label>
+        <input list="admin-student-emails" name="instructor_email" required placeholder="instructor@example.edu"
+               class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-64" />
+        <button type="submit"
+                class="px-4 py-1.5 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800">
+          Create
+        </button>
+      </form>
+      <p class="text-xs text-gray-400 mt-2">
+        The instructor must already have logged in once (so they have an account) — promote them above first.
+        The quarter dates bound the weekly email: it goes out only on days inside them.
+      </p>
+    </div>
+
+    <!-- Classes -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500 text-left">
+          <tr><th class="px-3 py-2">Class</th><th class="px-3 py-2">Course</th>
+              <th class="px-3 py-2">Instructors</th><th class="px-3 py-2">Students</th>
+              <th class="px-3 py-2">Quarter</th>
+              <th class="px-3 py-2">Weekly email</th><th class="px-3 py-2">Status</th>
+              <th class="px-3 py-2"></th></tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {% for c in classes_ctx.classes %}
+          <tr class="{% if c.archived %}text-gray-400{% endif %}">
+            <td class="px-3 py-2">
+              <a href="/admin?tab=classes&class_id={{ c.id }}" class="text-blue-600 hover:underline">{{ c.label }}</a>
+            </td>
+            <td class="px-3 py-2">{{ course_label(c.course) }}</td>
+            <td class="px-3 py-2 font-mono text-xs">{{ c.instructor }}</td>
+            <td class="px-3 py-2">{{ c.students }}</td>
+            <td class="px-3 py-2">
+              <form method="post" action="/admin/classes/update" class="flex items-center gap-1 whitespace-nowrap">
+                <input type="hidden" name="class_id" value="{{ c.id }}" />
+                <input type="date" name="quarter_start" value="{{ c.quarter_start.isoformat() if c.quarter_start else '' }}"
+                       class="border border-gray-200 rounded px-1 py-0.5 text-xs" />
+                <span class="text-gray-400 text-xs">to</span>
+                <input type="date" name="quarter_end" value="{{ c.quarter_end.isoformat() if c.quarter_end else '' }}"
+                       class="border border-gray-200 rounded px-1 py-0.5 text-xs" />
+                <button type="submit" class="text-xs text-blue-600 hover:underline">save</button>
+              </form>
+            </td>
+            <td class="px-3 py-2">
+              <form method="post" action="/admin/classes/update">
+                <input type="hidden" name="class_id" value="{{ c.id }}" />
+                <input type="hidden" name="weekly_report" value="{{ 'off' if c.weekly_report else 'on' }}" />
+                <button type="submit" class="text-xs {% if c.weekly_report %}text-green-700{% else %}text-gray-400{% endif %} hover:underline">
+                  {{ "on" if c.weekly_report else "off" }}
+                </button>
+              </form>
+            </td>
+            <td class="px-3 py-2">
+              <form method="post" action="/admin/classes/update">
+                <input type="hidden" name="class_id" value="{{ c.id }}" />
+                <input type="hidden" name="archived" value="{{ 'off' if c.archived else 'on' }}" />
+                <button type="submit" class="text-xs hover:underline">
+                  {{ "archived — restore" if c.archived else "active — archive" }}
+                </button>
+              </form>
+            </td>
+            <td class="px-3 py-2 text-right">
+              <form method="post" action="/admin/classes/delete"
+                    data-confirm="Delete {{ c.label }}? The roster is removed; student data is untouched."
+                    onsubmit="return confirm(this.dataset.confirm)">
+                <input type="hidden" name="class_id" value="{{ c.id }}" />
+                <button type="submit" class="text-xs text-red-600 hover:underline">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="8" class="px-3 py-6 text-center text-gray-400 italic">No classes yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- One class's roster -->
+    {% if classes_ctx.selected %}
+    {% set sel = classes_ctx.selected %}
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="font-semibold text-gray-700">{{ sel.label }} — roster</h2>
+        <a href="/instructor?class_id={{ sel.id }}" class="text-sm text-blue-600 hover:underline">
+          Open instructor view ↗
+        </a>
+      </div>
+      <p class="text-sm text-gray-500 mb-4">
+        {{ course_label(sel.course) }} · {{ sel.roster|length }} student(s)
+      </p>
+
+      <!-- The class's instructors: add one (the role comes with it; the
+           whitelist does not), remove one (never yourself, never the last). -->
+      <div class="border border-gray-200 rounded-lg p-3 mb-4 text-sm" data-instructors>
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-gray-500">Instructors:</span>
+          {% for i in sel.instructors %}
+          <span class="inline-flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-full px-2 py-0.5"
+                data-instructor="{{ i.email }}">
+            <span class="font-mono text-xs">{{ i.email }}</span>
+            {% if i.lead %}<span class="text-xs text-gray-400" title="The instructor the class was created for">lead</span>{% endif %}
+            {% if i.email == acting_admin %}
+            <span class="text-xs text-gray-400">(you)</span>
+            {% elif sel.instructors|length > 1 %}
+            <form method="post" action="/admin/classes/instructors/remove" class="inline"
+                  data-confirm="Remove {{ i.email }} from {{ sel.label }}?"
+                  onsubmit="return confirm(this.dataset.confirm)">
+              <input type="hidden" name="class_id" value="{{ sel.id }}" />
+              <input type="hidden" name="email" value="{{ i.email }}" />
+              <button type="submit" class="text-xs text-red-600 hover:underline"
+                      aria-label="Remove {{ i.email }} from this class">remove</button>
+            </form>
+            {% endif %}
+          </span>
+          {% endfor %}
+          <form method="post" action="/admin/classes/instructors/add" class="flex items-center gap-1 ml-auto"
+                data-add-instructor>
+            <input type="hidden" name="class_id" value="{{ sel.id }}" />
+            <input list="admin-student-emails" name="email" required placeholder="colleague@example.edu"
+                   class="border border-gray-300 rounded-lg px-2 py-1 text-sm w-56" />
+            <button type="submit"
+                    class="px-3 py-1 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800">
+              Add instructor
+            </button>
+          </form>
+        </div>
+        <p class="text-xs text-gray-400 mt-2">
+          Every instructor of a class sees it on /instructor and gets its weekly email. Adding one grants
+          the instructor role; signing in still needs the
+          <a href="/admin?tab=access" class="underline hover:text-gray-600">Access</a> whitelist.
+          Nobody can remove themselves.
+        </p>
+        {% if classes_ctx.note %}
+        <p class="text-xs text-gray-700 mt-1" data-note>{{ classes_ctx.note }}</p>
+        {% endif %}
+      </div>
+
+      <form method="post" action="/admin/classes/enroll" class="flex flex-wrap gap-2 items-start mb-4">
+        <input type="hidden" name="class_id" value="{{ sel.id }}" />
+        <textarea name="emails" rows="2" required
+                  placeholder="Paste student emails — commas, spaces, or one per line"
+                  class="border border-gray-300 rounded-lg px-3 py-2 text-sm flex-1 min-w-[18rem]"></textarea>
+        <button type="submit"
+                class="px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-800">
+          Add students
+        </button>
+      </form>
+      <p class="text-xs text-gray-400 -mt-2 mb-4">
+        Every address is added right away, whether or not the student has ever logged in — a new
+        one joins the roster with no name and <span class="font-medium">0</span> logins, and fills
+        itself in when they first sign in. Only unusable addresses and duplicates are skipped.
+        Being on a roster does not by itself let someone log in: that is the
+        <a href="/admin?tab=access" class="underline hover:text-gray-600">Access</a> whitelist.
+      </p>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-gray-500 text-left">
+            <tr><th class="px-3 py-2">Email</th><th class="px-3 py-2">Name</th>
+                <th class="px-3 py-2">Logins</th><th class="px-3 py-2">Last login</th>
+                <th class="px-3 py-2"></th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {% for s in sel.roster %}
+            <tr>
+              <td class="px-3 py-2 font-mono text-xs">{{ s.email }}</td>
+              <td class="px-3 py-2">{{ s.name or "—" }}</td>
+              <td class="px-3 py-2">{{ s.login_count }}</td>
+              <td class="px-3 py-2 text-gray-500">{{ s.last_login.strftime("%Y-%m-%d") if s.last_login else "never" }}</td>
+              <td class="px-3 py-2 text-right">
+                <form method="post" action="/admin/classes/unenroll">
+                  <input type="hidden" name="class_id" value="{{ sel.id }}" />
+                  <input type="hidden" name="email" value="{{ s.email }}" />
+                  <button type="submit" class="text-xs text-red-600 hover:underline">Remove</button>
+                </form>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="px-3 py-6 text-center text-gray-400 italic">Nobody enrolled yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {% if tab == 'access' %}
+
+    <!-- Whitelist on/off -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6 flex items-center justify-between">
+      <div>
+        <h2 class="font-semibold text-gray-700">Login whitelist</h2>
+        <p class="text-sm text-gray-500 mt-1">
+          {% if whitelist_enabled %}
+            <span class="text-green-700 font-semibold">Enabled</span> — only admins and whitelisted emails can log in.
+          {% else %}
+            <span class="text-red-600 font-semibold">Disabled</span> — anyone can log in.
+          {% endif %}
+        </p>
+      </div>
+      <form method="post" action="/admin/whitelist/toggle">
+        <input type="hidden" name="enabled" value="{{ 'off' if whitelist_enabled else 'on' }}">
+        <button type="submit"
+          class="px-4 py-2 rounded-lg text-sm font-medium text-white
+            {% if whitelist_enabled %}bg-red-600 hover:bg-red-700{% else %}bg-green-600 hover:bg-green-700{% endif %}">
+          {{ 'Disable whitelist' if whitelist_enabled else 'Enable whitelist' }}
+        </button>
+      </form>
+    </div>
+
+    <!-- Admins (from .env, always allowed) -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <h2 class="font-semibold text-gray-700 mb-2">Admins <span class="text-xs text-gray-400">(ADMIN_EMAILS in .env — always allowed)</span></h2>
+      <div class="flex flex-wrap gap-2">
+        {% for a in admin_emails %}
+        <span class="px-2 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-mono">{{ a }}</span>
+        {% else %}
+        <span class="text-sm text-gray-400">None configured.</span>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Add email -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <h2 class="font-semibold text-gray-700 mb-3">Add email or domain to whitelist</h2>
+      <form method="post" action="/admin/whitelist/add" class="flex gap-2">
+        <input type="text" name="email" required placeholder="student@example.edu or @example.edu"
+          class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <button type="submit"
+          class="px-4 py-2 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800">
+          Add
+        </button>
+      </form>
+      <p class="mt-2 text-xs text-gray-500">
+        Enter a full email to allow one person, or a whole domain like
+        <span class="font-mono">@example.edu</span> to allow anyone with that email domain.
+      </p>
+    </div>
+
+    <!-- Whitelist table -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h2 class="font-semibold text-gray-700">Whitelisted emails &amp; domains ({{ whitelist|length }})</h2>
+      </div>
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+          <tr>
+            <th class="px-4 py-3 text-left">Email</th>
+            <th class="px-4 py-3 text-left">Added by</th>
+            <th class="px-4 py-3 text-left">Added</th>
+            <th class="px-4 py-3 text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          {% for w in whitelist %}
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3 font-mono text-xs text-gray-700">{{ w.email }}</td>
+            <td class="px-4 py-3 text-xs text-gray-500">{{ w.added_by }}</td>
+            <td class="px-4 py-3 text-xs text-gray-400">{{ w.created_at.strftime('%Y-%m-%d %H:%M') if w.created_at else '—' }}</td>
+            <td class="px-4 py-3 text-right">
+              <form method="post" action="/admin/whitelist/remove" class="inline">
+                <input type="hidden" name="email" value="{{ w.email }}">
+                <button type="submit" class="text-red-500 hover:text-red-700 text-xs font-medium">Remove</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" class="px-4 py-8 text-center text-gray-400">No emails whitelisted yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Supervision tab (Session 21 / Task 7) -->
+    {% if tab == 'supervision' %}
+
+    <!-- Controls: explain-mode + caps -->
+    <div class="grid grid-cols-2 gap-4 mb-6">
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <h2 class="font-semibold text-gray-700 mb-1">Explain mode</h2>
+        <p class="text-sm text-gray-500 mb-3">
+          Lets the actor reach H7 (full solutions) for a course. Off for normal teaching.
+          Current: <span class="font-mono font-semibold">{{ supervision.explain_value or 'off' }}</span>
+        </p>
+        <form method="post" action="/admin/settings/explain-mode" class="flex gap-2">
+          <select name="value" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm">
+            <option value=""    {% if supervision.explain_value == '' %}selected{% endif %}>off</option>
+            {%- for c in course_list %}
+            <option value="{{ c.id }}" {% if supervision.explain_value == c.id %}selected{% endif %}>{{ c.label }}</option>
+            {%- endfor %}
+            <option value="all" {% if supervision.explain_value == 'all' %}selected{% endif %}>all</option>
+          </select>
+          <button type="submit" class="px-4 py-2 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800">Save</button>
+        </form>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <h2 class="font-semibold text-gray-700 mb-1">Spend caps</h2>
+        <ul class="text-sm text-gray-600 mt-2 space-y-1">
+          <li>Daily exchange limit: <span class="font-mono">{{ supervision.caps.daily_exchange_limit or 'off' }}</span></li>
+          <li>Monthly cost cap: <span class="font-mono">${{ '%.2f'|format(supervision.caps.monthly_cost_cap_usd) }}</span></li>
+          <li>This month so far: <span class="font-mono">${{ '%.4f'|format(supervision.caps.month_cost_usd) }}</span></li>
+        </ul>
+        <p class="text-xs text-gray-400 mt-2">These two live in the Render environment; the per-student quotas below are set here.</p>
+      </div>
+    </div>
+
+    <!-- Per-student dollar quotas (tutor/quotas.py) -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6" data-quotas>
+      <h2 class="font-semibold text-gray-700 mb-1">Per-student quotas</h2>
+      <p class="text-sm text-gray-500 mb-3">
+        Dollars of model spend one student may use in a calendar day, week (from Monday), and month, in the class's local time.
+        0 turns a quota off. A student who reaches one is told when it comes back; the chat shows the remaining
+        budget from 80%. Admins are exempt. The class-wide monthly cap above still stops everyone.
+      </p>
+      <form method="post" action="/admin/quotas" class="grid gap-3 sm:grid-cols-3">
+        {% for window, label in (("day", "Per day"), ("week", "Per week"), ("month", "Per month")) %}
+        <label class="text-sm text-gray-700">{{ label }} (USD)
+          <input type="number" name="{{ window }}" min="0" step="0.25" inputmode="decimal"
+                 value="{{ '%.2f'|format(supervision.quotas.values[window]) }}"
+                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono" />
+          <span class="text-xs text-gray-400">default ${{ '%.2f'|format(supervision.quotas.defaults[window]) }}</span>
+        </label>
+        {% endfor %}
+        <fieldset class="sm:col-span-3 text-sm text-gray-700">
+          <legend class="text-gray-500">Email me who hit a quota</legend>
+          <div class="flex flex-wrap gap-4 mt-1">
+            {% for period, label in (("daily", "every morning (yesterday)"), ("weekly", "Mondays (last week)"), ("monthly", "the 1st (last month)")) %}
+            <label class="inline-flex items-center gap-2 min-h-[44px]">
+              <input type="checkbox" name="notify_{{ period }}" {% if supervision.quotas.notify[period] %}checked{% endif %}>
+              {{ label }}
+            </label>
+            {% endfor %}
+          </div>
+        </fieldset>
+        <div class="sm:col-span-3">
+          <button type="submit" class="px-4 py-2 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800">Save quotas</button>
+        </div>
+      </form>
+
+      <h3 class="font-semibold text-gray-700 text-sm mt-6 mb-1">Spend this month, nearest a quota first</h3>
+      {% if supervision.quotas.spend %}
+      <div class="overflow-x-auto">
+      <table class="w-full text-xs" data-quota-spend>
+        <thead class="text-gray-500 uppercase">
+          <tr>
+            <th class="px-2 py-1 text-left">Student</th>
+            <th class="px-2 py-1 text-right">Today</th>
+            <th class="px-2 py-1 text-right">This week</th>
+            <th class="px-2 py-1 text-right">This month</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          {% for r in supervision.quotas.spend %}
+          <tr class="{% if r.worst_pct >= 100 %}bg-red-50{% elif r.worst_pct >= 80 %}bg-amber-50{% endif %}">
+            <td class="px-2 py-1 font-mono"><a href="/admin?tab=supervision&student={{ r.email|urlencode }}" class="text-blue-700 hover:underline">{{ r.email }}</a></td>
+            {% for usd, pct in ((r.day_usd, r.day_pct), (r.week_usd, r.week_pct), (r.month_usd, r.month_pct)) %}
+            <td class="px-2 py-1 text-right font-mono whitespace-nowrap">${{ '%.2f'|format(usd) }}{% if pct is not none %} <span class="text-gray-400">({{ pct }}%)</span>{% endif %}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      {% else %}
+      <p class="text-sm text-gray-400">No spend this month.</p>
+      {% endif %}
+
+      <h3 class="font-semibold text-gray-700 text-sm mt-6 mb-1">Quota hits, last 7 days ({{ supervision.quotas.hits|length }})</h3>
+      {% if supervision.quotas.hits %}
+      <ul class="text-xs text-gray-700 space-y-1" data-quota-hits>
+        {% for h in supervision.quotas.hits %}
+        <li><span class="font-mono">{{ h.ts.strftime('%Y-%m-%d %H:%M') }}</span> · {{ h.email }} · {% if h.limit_usd %}{{ h.window }} quota (${{ '%.2f'|format(h.limit_usd) }}), spend ${{ '%.2f'|format(h.spent_usd) }}{% else %}{{ h.window }} cap{% endif %}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="text-sm text-gray-400">Nobody hit a quota this week.</p>
+      {% endif %}
+    </div>
+
+    <!-- Conduct restriction -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <h2 class="font-semibold text-gray-700 mb-1">Conduct restriction <span class="text-xs text-gray-400">(caps the envelope at H1)</span></h2>
+      {% if restricted_students %}
+      <div class="flex flex-wrap gap-2 my-3">
+        {% for r in restricted_students %}
+        <form method="post" action="/admin/restriction/set" class="inline-flex items-center gap-1 bg-red-50 border border-red-200 rounded-full pl-3 pr-1 py-1">
+          <span class="text-xs font-mono text-red-700">{{ r.email }}</span>
+          <input type="hidden" name="email" value="{{ r.email }}">
+          <input type="hidden" name="restricted" value="off">
+          <button type="submit" class="text-xs px-2 py-0.5 bg-green-600 text-white rounded-full hover:bg-green-700">Clear</button>
+        </form>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="text-sm text-gray-400 my-2">No students are restricted.</p>
+      {% endif %}
+      <form method="post" action="/admin/restriction/set" class="flex gap-2 mt-2">
+        <input type="hidden" name="restricted" value="on">
+        <input list="student-emails" name="email" required placeholder="student@example.edu"
+          class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+        <datalist id="student-emails">
+          {% for s in all_students %}<option value="{{ s.email }}">{% endfor %}
+        </datalist>
+        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700">Restrict</button>
+      </form>
+    </div>
+
+    <!-- Auditor disagreement queue (Session 22) -->
+    {% if supervision.disagreements %}
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border-l-4 border-amber-400">
+      <h2 class="font-semibold text-gray-700 mb-2">Auditor disagreements ({{ supervision.disagreements|length }})</h2>
+      <div class="overflow-x-auto">
+      <table class="w-full text-xs">
+        <thead class="text-gray-500 uppercase">
+          <tr>
+            <th class="px-2 py-1 text-left">When</th>
+            <th class="px-2 py-1 text-left">Student</th>
+            <th class="px-2 py-1 text-left">Live</th>
+            <th class="px-2 py-1 text-left">Auditor</th>
+            <th class="px-2 py-1 text-left">Reason</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          {% for d in supervision.disagreements %}
+          <tr>
+            <td class="px-2 py-1 text-gray-400 whitespace-nowrap">{{ d.ts.strftime('%m-%d %H:%M') if d.ts else '—' }}</td>
+            <td class="px-2 py-1 font-mono text-gray-600">{{ d.student }}</td>
+            <td class="px-2 py-1">{{ d.live }}</td>
+            <td class="px-2 py-1 font-semibold {% if d.audit == 'block' %}text-red-600{% elif d.audit == 'revise' %}text-amber-600{% else %}text-green-700{% endif %}">{{ d.audit }}</td>
+            <td class="px-2 py-1 text-gray-500">{{ d.reason[:120] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      <p class="text-xs text-gray-400 mt-2">Where the nightly Sonnet auditor differs from the live Haiku judge. Under-blocks (auditor stricter) are the ones to watch.</p>
+    </div>
+    {% endif %}
+
+    <!-- Turn-event drill-down -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h2 class="font-semibold text-gray-700">
+          Turn events ({{ events|length }})
+          {% if supervision.selected_student %}<span class="text-sm text-gray-400">— {{ supervision.selected_student }}</span>{% endif %}
+        </h2>
+        <form method="get" action="/admin" class="flex gap-2">
+          <input type="hidden" name="tab" value="supervision">
+          <input type="hidden" name="kind" value="{{ supervision.selected_kind }}">
+          <input name="student" value="{{ supervision.selected_student or '' }}" placeholder="filter by email"
+            class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm" />
+          <button type="submit" class="px-3 py-1.5 bg-gray-700 text-white rounded-lg text-sm">Filter</button>
+        </form>
+      </div>
+      {# Three rows in four are one supervisor model call, not a turn: the
+         table opens on the turns (kind=chat) and says what it is hiding. #}
+      <div class="px-6 py-2 border-b flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+        <span class="text-gray-400 uppercase">Kind</span>
+        {% for c in supervision.kind_choices %}
+        <a href="/admin?tab=supervision&amp;kind={{ c.kind|urlencode }}{% if supervision.selected_student %}&amp;student={{ supervision.selected_student|urlencode }}{% endif %}"
+           class="{% if c.active %}font-semibold text-gray-900 underline{% else %}text-gray-500 hover:text-gray-700{% endif %}">{{ c.label }}
+          <span class="text-gray-300">{{ c.count }}</span></a>
+        {% endfor %}
+      </div>
+      {% macro cell(c) -%}
+      <span class="{{ {'bad': 'text-red-600', 'warn': 'text-amber-600', 'muted': 'text-gray-400'}.get(c.tone, '') }}"
+        {%- if c.title %} title="{{ c.title }}"{% endif %}>{{ c.text }}</span>
+      {%- endmacro %}
+      <div class="overflow-x-auto">
+      <table class="w-full text-xs">
+        <thead class="bg-gray-50 text-gray-500 uppercase">
+          <tr>
+            <th class="px-2 py-2 text-left">Time</th>
+            <th class="px-2 py-2 text-left">Student</th>
+            <th class="px-2 py-2 text-left">Kind</th>
+            <th class="px-2 py-2 text-left">Intent</th>
+            <th class="px-2 py-2 text-right">Rung</th>
+            <th class="px-2 py-2 text-left">Move</th>
+            <th class="px-2 py-2 text-left">Verdict</th>
+            <th class="px-2 py-2 text-left">Detector</th>
+            <th class="px-2 py-2 text-center">Grnd</th>
+            <th class="px-2 py-2 text-left">Model</th>
+            <th class="px-2 py-2 text-right">In/Out/Cache</th>
+            <th class="px-2 py-2 text-right">Cost</th>
+            <th class="px-2 py-2 text-right">ms</th>
+            <th class="px-2 py-2 text-left">Goals</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          {% for e in events %}
+          <tr class="hover:bg-gray-50 align-top">
+            <td class="px-2 py-2 text-gray-400 whitespace-nowrap">{{ e.ts.strftime('%m-%d %H:%M:%S') if e.ts else '—' }}</td>
+            <td class="px-2 py-2 font-mono text-gray-600">{{ e.email }}</td>
+            <td class="px-2 py-2">{{ e.kind }}</td>
+            <td class="px-2 py-2">{{ e.intent or '—' }}</td>
+            <td class="px-2 py-2 text-right whitespace-nowrap">{{ cell(e.rung_cell) }}</td>
+            <td class="px-2 py-2">{{ e.move or '—' }}{% if e.exam_lockdown %} <span class="text-red-500" title="exam lockdown">🔒</span>{% endif %}{% if e.allow_exercise == false %} <span title="exercises off" class="text-gray-400">⊘</span>{% endif %}</td>
+            <td class="px-2 py-2">{{ cell(e.verdict_cell) }}{% if e.eval_source %} <span class="text-gray-400">({{ e.eval_source }})</span>{% endif %}</td>
+            <td class="px-2 py-2">{{ cell(e.detector_cell) }}</td>
+            <td class="px-2 py-2 text-center">{% if e.grounding_hit == true %}✓{% elif e.grounding_hit == false %}✗{% else %}—{% endif %}</td>
+            <td class="px-2 py-2 text-gray-500">{{ e.model or '—' }}</td>
+            <td class="px-2 py-2 text-right text-gray-500 whitespace-nowrap">{{ e.in_tokens }}/{{ e.out_tokens }}/{{ e.cache_read_tokens }}</td>
+            <td class="px-2 py-2 text-right whitespace-nowrap">${{ '%.5f'|format(e.cost_usd or 0) }}</td>
+            <td class="px-2 py-2 text-right">{{ e.latency_ms if e.latency_ms is not none else '—' }}</td>
+            <td class="px-2 py-2 font-mono text-gray-400" title="{{ e.envelope_reason }}">{{ e.goal_ids|join(', ') if e.goal_ids else '—' }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="14" class="px-4 py-8 text-center text-gray-400">No turn events recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      <p class="px-6 py-3 text-xs text-gray-400">
+        <strong>Verdict</strong> is the judge's: allow, revise or block (a detector cut reads "revise" —
+        the student did not get the draft the actor wrote). <strong>Detector</strong> "clean" means it ran
+        and removed nothing; "cut" that it removed something; "not run" that the turn produced no reply.
+        <strong>Rung</strong> is the ceiling that was enforced, as "H2→H4" when a floor or a cap moved the
+        mastery band's ceiling — not the rung the reply used, which nothing measures.
+        <strong>n/a</strong> marks a row that is one supervisor model call rather than a turn.
+        Hover any cell, and the Goals cell for the envelope reason; lockdown 🔒 and exercises-off ⊘ sit on Move.
+      </p>
+    </div>
+    {% endif %}
+
+    <!-- Calibration tab (Engram P2: stated confidence vs. actual outcome) -->
+    {% if tab == 'calibration' %}
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b flex items-center justify-between">
+        <div>
+          <h2 class="font-semibold text-gray-800">Calibration</h2>
+          <p class="text-xs text-gray-500">
+            {% if calibration_student %}Student: {{ calibration_student }}{% else %}Cohort (all students){% endif %}
+            — stated confidence before the reveal vs. how often that answer was actually right.
+          </p>
+        </div>
+        <form method="get" action="/admin" class="text-xs">
+          <input type="hidden" name="tab" value="calibration" />
+          <input type="text" name="student" placeholder="filter by email"
+                 value="{{ calibration_student or '' }}"
+                 class="border rounded px-2 py-1" />
+          <button class="ml-1 px-2 py-1 bg-gray-800 text-white rounded">Go</button>
+        </form>
+      </div>
+
+      {% if not calibration or calibration.total == 0 %}
+      <p class="px-6 py-8 text-center text-gray-400">No confidence-rated answers recorded yet.</p>
+      {% else %}
+      <div class="grid grid-cols-3 gap-4 px-6 py-4">
+        <div class="bg-gray-50 rounded-lg p-3">
+          <div class="text-2xl font-bold text-gray-800">{{ calibration.total }}</div>
+          <div class="text-xs text-gray-500">rated answers</div>
+        </div>
+        <div class="bg-amber-50 rounded-lg p-3">
+          <div class="text-2xl font-bold text-amber-700">{{ calibration.high_conf_wrong }}</div>
+          <div class="text-xs text-gray-500">high-confidence misses (≥70% but wrong)</div>
+        </div>
+        <div class="bg-gray-50 rounded-lg p-3">
+          <div class="text-2xl font-bold text-gray-800">{{ calibration.brier if calibration.brier is not none else '—' }}</div>
+          <div class="text-xs text-gray-500">Brier score (lower = better calibrated)</div>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500 text-xs uppercase">
+          <tr>
+            <th class="px-4 py-2 text-left">Stated confidence</th>
+            <th class="px-4 py-2 text-right">Answers</th>
+            <th class="px-4 py-2 text-right">Correct</th>
+            <th class="px-4 py-2 text-right">Actual accuracy</th>
+            <th class="px-4 py-2 text-right">Gap (stated − actual)</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y">
+          {% for b in calibration.bands %}
+          <tr>
+            <td class="px-4 py-2">{{ b.confidence }}%</td>
+            <td class="px-4 py-2 text-right">{{ b.n }}</td>
+            <td class="px-4 py-2 text-right">{{ b.correct }}</td>
+            <td class="px-4 py-2 text-right">{{ b.accuracy }}%</td>
+            <td class="px-4 py-2 text-right {% if b.gap > 15 %}text-amber-700 font-semibold{% elif b.gap < -15 %}text-blue-600{% else %}text-gray-500{% endif %}">
+              {{ '%+d'|format(b.gap) }} pts
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      <p class="px-6 py-3 text-xs text-gray-400">
+        A large positive gap = overconfidence (felt sure, was wrong) — the highest-value signal to address.
+        A negative gap = underconfidence. Observational only; never shown to students.
+      </p>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Health tab -->
+    {% if tab == 'health' and health %}
+    <div class="space-y-6">
+
+      <!-- Overall banner -->
+      <div class="rounded-xl shadow-sm p-4 {% if health.overall_ok %}bg-green-50 border-l-4 border-green-500{% else %}bg-red-50 border-l-4 border-red-500{% endif %}">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold {% if health.overall_ok %}text-green-800{% else %}text-red-800{% endif %}">
+              {% if health.overall_ok %}✅ Core services healthy{% else %}⚠️ Degraded — a core service is failing{% endif %}
+            </span>
+            <p class="text-xs text-gray-600 mt-1">
+              Anthropic key + database are the two dependencies a chat turn cannot survive without.
+              Reload this tab to re-run every check live (the Anthropic check makes one 1-token API call).
+            </p>
+          </div>
+          <a href="/admin?tab=health"
+             class="px-3 py-1.5 bg-gray-800 text-white text-sm rounded hover:bg-gray-700 no-underline">↻ Re-check</a>
+        </div>
+      </div>
+
+      <!-- Anthropic -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="px-6 py-3 border-b flex items-center justify-between">
+          <h2 class="font-semibold text-gray-800">Anthropic API key</h2>
+          <span class="text-xs px-2 py-0.5 rounded-full {% if health.anthropic.ok %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+            {{ health.anthropic.status }}
+          </span>
+        </div>
+        <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <tbody class="divide-y">
+            <tr><td class="px-6 py-2 text-gray-500 w-48">Key</td><td class="px-6 py-2 font-mono">{{ health.anthropic.key }}</td></tr>
+            <tr><td class="px-6 py-2 text-gray-500">Actor model</td><td class="px-6 py-2 font-mono">{{ health.anthropic.model }}</td></tr>
+            <tr><td class="px-6 py-2 text-gray-500">Live ping</td>
+              <td class="px-6 py-2 {% if health.anthropic.ok %}text-green-700{% else %}text-red-700{% endif %}">
+                {{ health.anthropic.detail }}
+                {% if health.anthropic.latency_ms is not none %}<span class="text-gray-400">({{ health.anthropic.latency_ms }} ms)</span>{% endif %}
+              </td></tr>
+          </tbody>
+        </table>
+        </div>
+        {% if not health.anthropic.ok %}
+        <p class="px-6 py-2 text-xs text-red-600 bg-red-50">
+          {% if health.anthropic.status == 'key-invalid' %}The key is set but rejected — rotate ANTHROPIC_API_KEY in the Render dashboard.
+          {% elif health.anthropic.status == 'billing' %}Key valid but the account credit balance is too low — top up billing.
+          {% elif health.anthropic.status == 'key-missing' %}ANTHROPIC_API_KEY is not set on this instance.
+          {% else %}The API errored — check status.anthropic.com and the app logs.{% endif %}
+        </p>
+        {% endif %}
+      </div>
+
+      <!-- Database -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="px-6 py-3 border-b flex items-center justify-between">
+          <h2 class="font-semibold text-gray-800">Database</h2>
+          <span class="text-xs px-2 py-0.5 rounded-full {% if health.database.ok %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+            {{ health.database.status }}
+          </span>
+        </div>
+        <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <tbody class="divide-y">
+            <tr><td class="px-6 py-2 text-gray-500 w-48">Backend</td><td class="px-6 py-2 font-mono">{{ health.database.backend }}</td></tr>
+            <tr><td class="px-6 py-2 text-gray-500">Target</td><td class="px-6 py-2 font-mono">{{ health.database.target }}</td></tr>
+            <tr><td class="px-6 py-2 text-gray-500">SELECT 1</td>
+              <td class="px-6 py-2 {% if health.database.ok %}text-green-700{% else %}text-red-700{% endif %}">
+                {{ health.database.detail }}
+                {% if health.database.latency_ms is not none %}<span class="text-gray-400">({{ health.database.latency_ms }} ms)</span>{% endif %}
+              </td></tr>
+          </tbody>
+        </table>
+        </div>
+        {% if not health.database.ok %}
+        <p class="px-6 py-2 text-xs text-red-600 bg-red-50">
+          Database unreachable — on Supabase free tier the project auto-pauses after inactivity; un-pause it in the Supabase dashboard.
+        </p>
+        {% endif %}
+      </div>
+
+      <!-- Knowledge base -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="px-6 py-3 border-b flex items-center justify-between">
+          <h2 class="font-semibold text-gray-800">Knowledge base (ChromaDB)</h2>
+          <span class="text-xs px-2 py-0.5 rounded-full {% if health.chromadb.ok %}bg-green-100 text-green-700{% else %}bg-amber-100 text-amber-700{% endif %}">
+            {{ health.chromadb.status }}
+          </span>
+        </div>
+        <p class="px-6 py-2 text-xs text-gray-500">{{ health.chromadb.detail }}</p>
+        {% if health.chromadb.collections %}
+        <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-gray-500 text-xs uppercase">
+            <tr><th class="px-6 py-2 text-left">Collection</th><th class="px-6 py-2 text-right">Docs</th></tr>
+          </thead>
+          <tbody class="divide-y">
+            {% for c in health.chromadb.collections %}
+            <tr><td class="px-6 py-2 font-mono">{{ c.name }}</td>
+              <td class="px-6 py-2 text-right {% if c.count == 0 %}text-amber-600{% endif %}">{{ c.count if c.count >= 0 else '?' }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Features / integrations -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="px-6 py-3 border-b">
+          <h2 class="font-semibold text-gray-800">Optional features</h2>
+          <p class="text-xs text-gray-500">Presence only — secret values are never read into this page.</p>
+        </div>
+        <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <tbody class="divide-y">
+            {% for f in health.features %}
+            <tr>
+              <td class="px-6 py-2 w-8">{% if f.on %}<span class="text-green-600">●</span>{% else %}<span class="text-gray-300">●</span>{% endif %}</td>
+              <td class="px-6 py-2 text-gray-700">{{ f.name }}</td>
+              <td class="px-6 py-2 text-gray-500 text-xs">{{ f.detail }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        </div>
+        <p class="px-6 py-2 text-xs text-gray-400">Base URL: <span class="font-mono">{{ health.base_url }}</span></p>
+      </div>
+
+    </div>
+    {% endif %}
+
+  </main>
+</div>
+{% endblock %}

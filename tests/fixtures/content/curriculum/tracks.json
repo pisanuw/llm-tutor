@@ -1,0 +1,85 @@
+{
+  "tracks": [
+    {
+      "id": "AST101-lecture-order",
+      "course": "AST101",
+      "title": "Lecture Order",
+      "description": "Goals in the order the lectures teach them.",
+      "goal_ids": [
+        "AST101-L01-celestial-sphere",
+        "AST101-L01-daily-motion",
+        "AST101-L01-angular-measure",
+        "AST101-L02-explain-moon-phases",
+        "AST101-L02-eclipse-conditions",
+        "AST101-L02-explain-tides",
+        "AST101-L03-axial-tilt-seasons",
+        "AST101-L03-solstice-equinox",
+        "AST101-L03-sun-path",
+        "AST101-L04-electromagnetic-spectrum",
+        "AST101-L04-inverse-square-law",
+        "AST101-L04-telescope-aperture"
+      ]
+    },
+    {
+      "id": "AST101-big-ideas-first",
+      "course": "AST101",
+      "title": "Big Ideas First",
+      "description": "The concepts that unlock the rest of the course come first; details follow.",
+      "goal_ids": [
+        "AST101-L01-celestial-sphere",
+        "AST101-L01-daily-motion",
+        "AST101-L02-explain-moon-phases",
+        "AST101-L03-axial-tilt-seasons",
+        "AST101-L01-angular-measure",
+        "AST101-L02-eclipse-conditions",
+        "AST101-L02-explain-tides",
+        "AST101-L03-solstice-equinox",
+        "AST101-L03-sun-path",
+        "AST101-L04-electromagnetic-spectrum",
+        "AST101-L04-inverse-square-law",
+        "AST101-L04-telescope-aperture"
+      ]
+    },
+    {
+      "id": "AST102-lecture-order",
+      "course": "AST102",
+      "title": "Lecture Order",
+      "description": "Goals in the order the lectures teach them.",
+      "goal_ids": [
+        "AST102-L01-parallax-distance",
+        "AST102-L01-magnitude-scale",
+        "AST102-L01-spectral-classes",
+        "AST102-L02-hr-diagram",
+        "AST102-L02-main-sequence-fusion",
+        "AST102-L02-stellar-endpoints",
+        "AST102-L03-milky-way-structure",
+        "AST102-L03-galaxy-types",
+        "AST102-L03-dark-matter-evidence",
+        "AST102-L04-explain-redshift",
+        "AST102-L04-hubble-law",
+        "AST102-L04-big-bang-evidence"
+      ]
+    },
+    {
+      "id": "AST102-big-ideas-first",
+      "course": "AST102",
+      "title": "Big Ideas First",
+      "description": "The concepts that unlock the rest of the course come first; details follow.",
+      "goal_ids": [
+        "AST102-L01-parallax-distance",
+        "AST102-L01-magnitude-scale",
+        "AST102-L01-spectral-classes",
+        "AST102-L02-hr-diagram",
+        "AST102-L03-milky-way-structure",
+        "AST102-L03-galaxy-types",
+        "AST102-L04-explain-redshift",
+        "AST102-L04-hubble-law",
+        "AST102-L02-main-sequence-fusion",
+        "AST102-L02-stellar-endpoints",
+        "AST102-L03-dark-matter-evidence",
+        "AST102-L04-big-bang-evidence"
+      ]
+    }
+  ],
+  "graph_version": 1
+}

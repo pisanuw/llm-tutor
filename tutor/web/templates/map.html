@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% from "_nav.html" import site_header %}
+{% block title %}{{ tutor.name }} — Learning Map{% endblock %}
+{% block content %}
+
+<script src="/static/vendor/d3.min.js"></script>
+
+<style>
+  /* Map palette. Each course's node colors come from course_color, handed
+     to map.js as window.TUTOR_COURSES. */
+  :root {
+    --accent: #4B2E83;
+    --locked-fill:   #d1d5db;
+    --locked-stroke: #9ca3af;
+    --unlocked-fill:   #93c5fd;
+    --unlocked-stroke: #3b82f6;
+    --mastered-fill:   #fbbf24;
+    --mastered-stroke: #d97706;
+    --seen-fill:   #d8b4fe;
+    --seen-stroke: #9333ea;
+  }
+  html, body { height: 100%; margin: 0; overflow: hidden; }
+
+  /* Let d3.zoom own touch gestures: pinch zooms the graph, one finger pans
+     it, instead of the browser zooming/bouncing the page. */
+  #graph-svg { width: 100%; height: 100%; touch-action: none; }
+
+  .node circle.viz {
+    stroke-width: 1.5;
+    cursor: pointer;
+    transition: r 0.15s;
+  }
+  .node circle.viz:hover { stroke-width: 2.5; }
+  .node.locked   circle.viz { fill: var(--locked-fill);   stroke: var(--locked-stroke); }
+  .node.seen     circle.viz { fill: var(--seen-fill);     stroke: var(--seen-stroke); }
+  .node.unlocked circle.viz { fill: var(--unlocked-fill); stroke: var(--unlocked-stroke); }
+  .node.mastered circle.viz { fill: var(--mastered-fill); stroke: var(--mastered-stroke); }
+
+  .node circle.hit { cursor: pointer; }
+  /* Keyboard focus (plan step 3.4, finding D12): a ring on the hit circle. */
+  .node:focus { outline: none; }
+  .node:focus-visible circle.hit { stroke: #1d4ed8; stroke-width: 3; }
+
+  .link { stroke: #94a3b8; stroke-opacity: 0.55; stroke-width: 1.2; }
+
+  /* Side panel */
+  #panel {
+    position: fixed; top: 52px; right: 0;
+    width: 300px; height: calc(100vh - 52px);
+    background: white; border-left: 2px solid #e5e7eb;
+    padding: 1.25rem; overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.2s ease;
+    z-index: 50;
+  }
+  #panel.open { transform: translateX(0); }
+  #panel h3 { font-size: 1rem; font-weight: 700; color: #1e1b4b; margin-bottom: 0.4rem; }
+  #panel .badge {
+    display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem;
+    border-radius: 9999px; font-weight: 600; margin-bottom: 0.75rem;
+  }
+  #panel .badge.locked   { background: #e5e7eb; color: #6b7280; }
+  #panel .badge.seen     { background: #f3e8ff; color: #6b21a8; }
+  #panel .badge.unlocked { background: #dbeafe; color: #1d4ed8; }
+  #panel .badge.mastered { background: #fef3c7; color: #92400e; }
+  #panel p { font-size: 0.85rem; color: #374151; margin-bottom: 0.75rem; }
+  #panel .meta { font-size: 0.75rem; color: #6b7280; }
+  /* Modality buttons */
+  .mod-btn {
+    display: inline-flex; align-items: center; min-height: 44px;
+    font-size: 0.75rem; padding: 0 0.75rem;
+    border-radius: 0.375rem; text-decoration: none; font-weight: 600;
+    margin: 0.25rem 0.25rem 0 0; cursor: pointer; border: none;
+  }
+  .mod-teach  { background: #6d28d9; color: white; }
+  .mod-teach:hover  { opacity: 0.88; }
+  .mod-slides { background: #dbeafe; color: #1d4ed8; }
+  .mod-slides:hover { background: #bfdbfe; }
+  .mod-book   { background: #d1fae5; color: #065f46; }
+  .mod-book:hover   { background: #a7f3d0; }
+  .mod-quiz   { background: #fef3c7; color: #92400e; }
+  .mod-quiz:hover   { background: #fde68a; }
+  .mod-review { background: #f3f4f6; color: #374151; }
+  .mod-review:hover { background: #e5e7eb; }
+  .mod-explore { background: #ede9fe; color: #6d28d9; }
+  .mod-explore:hover { background: #ddd6fe; }
+
+  /* Recommended ring */
+  .node.recommended circle.viz {
+    stroke-width: 3;
+    stroke: #f59e0b;
+    filter: drop-shadow(0 0 4px rgba(245,158,11,0.6));
+  }
+
+  #panel a.chat-btn {
+    display: inline-block; margin-top: 0.75rem;
+    background: var(--accent); color: white;
+    padding: 0.4rem 0.9rem; border-radius: 0.375rem;
+    font-size: 0.8rem; text-decoration: none;
+  }
+  #panel a.chat-btn:hover { opacity: 0.9; }
+  #panel-close {
+    position: absolute; top: 0.25rem; right: 0.25rem;
+    width: 44px; height: 44px; border: none; background: none; border-radius: 9999px;
+    cursor: pointer; font-size: 1.1rem; color: #6b7280;
+  }
+  #panel-close:hover { background: #f3f4f6; }
+  #panel-close:hover { color: #374151; }
+
+  /* Legend */
+  #legend {
+    position: fixed; bottom: 1rem; left: 1rem;
+    background: rgba(255,255,255,0.92); border: 1px solid #e5e7eb;
+    border-radius: 0.5rem; padding: 0.6rem 0.9rem; font-size: 0.75rem;
+    z-index: 40;
+  }
+  #legend .dot {
+    display: inline-block; width: 10px; height: 10px;
+    border-radius: 50%; margin-right: 4px; vertical-align: middle;
+  }
+  #legend .row { margin-bottom: 0.2rem; }
+
+  /* Fit-view button (mainly for phones, harmless on desktop) */
+  #fit-btn {
+    position: fixed; bottom: 1rem; right: 1rem; z-index: 40;
+    background: rgba(255,255,255,0.92); border: 1px solid #e5e7eb;
+    border-radius: 0.5rem; padding: 0 0.9rem; min-height: 44px; font-size: 0.8rem;
+    cursor: pointer; color: #374151;
+  }
+  #fit-btn:hover { border-color: #6d28d9; color: #1e1b4b; }
+
+  /* List view: the same goals as text, by course and lecture, for keyboard
+     and screen-reader users and anyone who finds the graph hard to read. */
+  #goal-list {
+    position: fixed; top: 52px; left: 0; right: 0; bottom: 0;
+    overflow-y: auto; background: #f8fafc; padding: 1rem;
+  }
+  #goal-list h2 { font-size: 1rem; font-weight: 700; color: #1e1b4b; margin: 1rem 0 0.25rem; }
+  #goal-list h3 { font-size: 0.8rem; font-weight: 600; color: #6b7280; margin: 0.75rem 0 0.25rem; }
+  #goal-list ul { list-style: none; margin: 0; padding: 0; }
+  #goal-list button {
+    display: flex; align-items: center; gap: 0.5rem; width: 100%; min-height: 44px;
+    text-align: left; padding: 0.25rem 0.5rem; border-radius: 0.375rem;
+    background: white; border: 1px solid #e5e7eb; margin-bottom: 0.25rem;
+    font-size: 0.875rem; color: #1f2937; cursor: pointer;
+  }
+  #goal-list button:hover { border-color: #6d28d9; }
+  #goal-list .status { margin-left: auto; font-size: 0.75rem; color: #6b7280; white-space: nowrap; }
+  #goal-list .rec { font-size: 0.7rem; font-weight: 600; color: #b45309; white-space: nowrap; }
+  body.list-view #legend, body.list-view #fit-btn { display: none; }
+
+  /* Phone: the 300px side panel becomes a bottom sheet, the legend compacts,
+     and both clear the home indicator. */
+  @media (max-width: 767px) {
+    #panel {
+      top: auto; bottom: 0; left: 0; right: 0;
+      width: 100%; height: auto; max-height: 60vh;
+      border-left: none; border-top: 2px solid #e5e7eb;
+      border-radius: 0.75rem 0.75rem 0 0;
+      padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+      transform: translateY(110%);
+    }
+    #panel.open { transform: translateY(0); }
+    #legend { font-size: 0.65rem; padding: 0.4rem 0.6rem;
+              bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px)); }
+    #fit-btn { bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px)); }
+  }
+</style>
+
+<!-- Top bar: the shared site header (templates/_nav.html), pinned; the
+     canvas below starts at 52 px. -->
+{% call site_header("map", "Learning map", student=student, is_admin=is_admin,
+                    is_instructor=is_instructor, course=course, fixed=True) %}
+  <button type="button" id="view-toggle" aria-pressed="false" onclick="toggleListView()"
+          class="shrink-0 text-sm bg-blue-600 border border-blue-500 rounded px-3 min-h-[44px] text-white">
+    ☰ List view
+  </button>
+  <span class="text-blue-200 text-xs hidden xl:inline truncate">
+    {{ mastered }} solid · {{ unlocked }} practiced · {{ seen }} started · {{ total_goals }} topics
+  </span>
+{% endcall %}
+
+<!-- Graph canvas -->
+<div style="position:fixed;top:52px;left:0;right:0;bottom:0;overflow:hidden;background:#f8fafc;">
+  <svg id="graph-svg"></svg>
+</div>
+
+<!-- The same goals as a list (toggleListView). -->
+<div id="goal-list" hidden></div>
+
+<!-- Click-detail panel -->
+<div id="panel" role="region" aria-labelledby="panel-title">
+  <button type="button" id="panel-close" onclick="closePanel()" aria-label="Close the details">✕</button>
+  <h3 id="panel-title" tabindex="-1"></h3>
+  <span id="panel-badge" class="badge"></span>
+  <p id="panel-hook" style="font-style:italic;color:#6d28d9;font-size:0.8rem;margin-bottom:0.4rem"></p>
+  <p id="panel-desc"></p>
+  <div id="panel-meta" class="meta"></div>
+  <div id="panel-links" style="display:flex;gap:0.5rem;margin:0.5rem 0;flex-wrap:wrap"></div>
+  <div id="panel-modality" style="margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:0;"></div>
+</div>
+
+<!-- Legend -->
+<div id="legend">
+  <div class="row"><span class="dot" style="background:#d1d5db;border:1.5px solid #9ca3af"></span>Not started</div>
+  <div class="row"><span class="dot" style="background:#d8b4fe;border:1.5px solid #9333ea"></span>Started</div>
+  <div class="row"><span class="dot" style="background:#93c5fd;border:1.5px solid #3b82f6"></span>Practiced</div>
+  <div class="row"><span class="dot" style="background:#fbbf24;border:1.5px solid #d97706"></span>Solid</div>
+  {%- for c in course_list %}
+  <div class="row"{% if loop.first %} style="margin-top:0.4rem;border-top:1px solid #e5e7eb;padding-top:0.3rem"{% endif %}>
+    <span class="dot" style="background:{{ course_color(c.id).mid }}"></span>{{ c.label }}
+  </div>
+  {%- endfor %}
+</div>
+
+<!-- Reset zoom/pan, mainly for touch users who pinch themselves lost -->
+<button id="fit-btn" onclick="fitView()" title="Reset zoom and pan">⤢ Fit</button>
+
+<script type="application/json" id="graph-data">{{ graph|tojson }}</script>
+<!-- The courses in order, with their labels and node colors (course_color):
+     map.js gives each its own column and color. -->
+{%- set map_courses = [] %}
+{%- for c in course_list %}
+  {%- set _ = map_courses.append({"id": c.id, "label": c.label, "color": course_color(c.id)}) %}
+{%- endfor %}
+<script>window.TUTOR_COURSES = {{ map_courses|tojson }};</script>
+<script src="{{ asset_url('map.js') }}"></script>
+
+{% endblock %}

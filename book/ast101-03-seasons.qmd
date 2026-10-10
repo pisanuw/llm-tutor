@@ -1,0 +1,119 @@
+# Seasons
+
+Here is a question most college graduates get wrong when someone asks it on
+camera: why is it hot in summer and cold in winter? Write your answer down.
+Pencils are cheap.
+
+By the end of this chapter you should be able to:
+
+- explain the seasons from Earth's tilt, and rule out distance;
+- identify the solstices and equinoxes and what happens at each;
+- predict the Sun's path and its noon height on a given date.
+
+## Tilt, Not Distance {#the-cause-of-the-seasons}
+
+The favorite answer is that Earth is closer to the Sun in summer. It is a good
+wrong answer: closer usually does mean warmer. It just is not what happens.
+
+Two facts end it. First, Earth's orbit is very nearly a circle, and Earth is
+**closest** to the Sun, about 147 million km, in early **January**. It is
+farthest, about 152 million km, in early July. That is a 3 percent difference,
+and it runs the wrong way for the north. Second, when it is summer in the
+Northern Hemisphere it is winter in Australia, on the same day, at the same
+distance from the Sun.
+
+The real cause is the **tilt**. Earth's axis is tilted 23.5 degrees, and it
+keeps pointing the same direction in space all year, toward Polaris. Around
+June the Northern Hemisphere leans toward the Sun; around December it leans
+away. The axis does not flip. Earth moves to the other side of the Sun.
+
+Leaning toward the Sun does two things, and both warm you up:
+
+1. **The sunlight arrives more directly.** Shine a flashlight straight down on
+   a table: a small, bright circle. Tilt it: the same light spreads into a
+   big, dim oval. High summer Sun is the straight beam; low winter Sun is the
+   tilted one. Same energy, more area, less heating per square meter.
+2. **The days are longer.** At 47 degrees north there are about 16 hours of
+   daylight in June and about 8.5 in December.
+
+## Solstices and Equinoxes {#solstices-and-equinoxes}
+
+Four dates mark the year:
+
+| Date (about) | Name | The Sun | Northern Hemisphere |
+|---|---|---|---|
+| June 21 | June solstice | farthest north, over 23.5 degrees N | longest day |
+| September 22 | September equinox | over the equator | 12 hours of day |
+| December 21 | December solstice | farthest south, over 23.5 degrees S | shortest day |
+| March 20 | March equinox | over the equator | 12 hours of day |
+
+*Solstice* means "the Sun stands still": its noon height stops climbing (or
+falling) and turns back. At the equinoxes, day and night are about 12 hours
+each everywhere on Earth.
+
+The same 23.5 degrees shows up on every world map. The Tropics of Cancer and
+Capricorn, at 23.5 degrees north and south, are as far from the equator as the
+Sun can be straight overhead. The Arctic Circle, at 66.5 degrees north, is
+where the Sun does not set at the June solstice.
+
+The solstice is not the hottest day. Oceans and land take weeks to warm up, so
+the hottest weather comes in July or August: a pot keeps heating after you
+turn the burner down.
+
+## The Sun's Path Across the Sky {#the-suns-path}
+
+Every day the Sun follows an arc from east to west. In summer the arc is long
+and high; in winter it is short and low. One rule gives its height at noon:
+
+> noon altitude = 90 degrees - latitude + the Sun's declination
+
+The declination is +23.5 degrees at the June solstice, 0 at the equinoxes,
+and -23.5 degrees at the December solstice. At latitude 47 degrees north:
+June gives 90 - 47 + 23.5 = 66.5 degrees; December gives 19.5 degrees. That is
+why winter shadows are so long.
+
+Where the Sun rises moves too. At the equinoxes it rises due east and sets
+due west, everywhere. In northern summer it rises north of east and sets north
+of west; in winter it rises south of east and sets south of west.
+
+::: {.callout-tip title="Try it this week"}
+Pick a landmark you can see to the west: a tree, a roofline, a hill. Note
+where the Sun sets compared with it. Do it again two weeks later. The sunset
+point slides along the horizon, faster near the equinoxes than near the
+solstices. That is observing log entry 3.
+:::
+
+## Self-check
+
+```{=html}
+<div class="quiz" data-answer="b">
+  <div class="question">1. In early January Earth is at its closest to the Sun. What season is it in Sydney, Australia?</div>
+  <ul>
+    <li data-choice="a"><label><strong>a.</strong> Winter, because it is January</label></li>
+    <li data-choice="b"><label><strong>b.</strong> Summer, because the Southern Hemisphere leans toward the Sun</label></li>
+    <li data-choice="c"><label><strong>c.</strong> Summer, because Earth is closest to the Sun</label></li>
+    <li data-choice="d"><label><strong>d.</strong> Spring, because it is halfway between solstices</label></li>
+  </ul>
+  <div class="explain">
+    <strong>b</strong>. The tilt decides the season. Distance does not: the north has winter at the same moment, at the same distance.
+  </div>
+</div>
+
+<div class="quiz" data-answer="c">
+  <div class="question">2. At latitude 40 degrees north, how high is the noon Sun at the equinoxes?</div>
+  <ul>
+    <li data-choice="a"><label><strong>a.</strong> 40 degrees</label></li>
+    <li data-choice="b"><label><strong>b.</strong> 26.5 degrees</label></li>
+    <li data-choice="c"><label><strong>c.</strong> 50 degrees</label></li>
+    <li data-choice="d"><label><strong>d.</strong> 73.5 degrees</label></li>
+  </ul>
+  <div class="explain">
+    <strong>c</strong>. 90 - 40 + 0 = 50 degrees. In June it would be 73.5 degrees.
+  </div>
+</div>
+```
+
+## Where this fits
+
+The seasons use the same skill as the phases: what you see depends on where
+things sit relative to the Sun. Next: light, and the instruments that collect it.

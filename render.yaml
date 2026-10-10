@@ -1,0 +1,94 @@
+# Render Blueprint for the tutor web app.
+# New > Blueprint > connect this repo; Render reads this file.
+# Secrets (sync: false) must be filled in the Render dashboard after creation.
+services:
+  - type: web
+    name: tutor
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: standard            # 2 GB. The tutor/RAG is live; the ONNX embedding model
+                              # plus the app can OOM on 'starter' (512 MB). The live
+                              # plan is whatever the Render dashboard is set to.
+    healthCheckPath: /auth/login
+    # Deploys come only from .github/workflows/deploy.yml (the Render deploy
+    # hook, after `tests` passes on main). Auto-deploy on push would ship a red
+    # build before CI finishes and deploy every green push twice. The dashboard
+    # setting wins for a service not synced from this Blueprint, so also set
+    # Settings > Build & Deploy > Auto-Deploy to Off there. Quoted: bare off is
+    # a YAML 1.1 boolean.
+    autoDeployTrigger: "off"
+    # The tutor/ChromaDB is live: chroma.tgz seeds from CHROMA_SEED_URL onto a
+    # persistent disk (first boot only); the DB is external (Supabase).
+    # Lecture narration audio is also seeded once onto this disk, under
+    # <mount>/lecture-audio, via AUDIO_SEED_URL, and the chat's voice cache grows
+    # under <mount>/tts-cache. 2 GB holds a large course; size it to your store.
+    disk: { name: chroma, mountPath: /app/knowledge-base/chromadb, sizeGB: 2 }
+    # (Render disks bill at $0.25/GB/mo.)
+    envVars:
+      # ---- Secrets: set these in the Render dashboard ----
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: ADMIN_TOKEN
+        sync: false
+      - key: DATABASE_URL            # Supabase Postgres connection string
+        sync: false
+      # Seed blobs are GitHub Release assets on your repository (free egress; see
+      # DEPLOY.md Step 2). Each *_SEED_URL is the API asset endpoint
+      # https://api.github.com/repos/<owner>/<repo>/releases/assets/<id>
+      # and entrypoint.sh fetches it, with GITHUB_TOKEN when the repo is private.
+      - key: GITHUB_TOKEN            # read-only token for a private repo's Release assets (unset for a public repo)
+        sync: false
+      - key: CHROMA_SEED_URL         # chroma.tgz — prebuilt ChromaDB store
+        sync: false
+      - key: OUTPUT_SEED_URL         # slides.tgz — narrated Reveal decks (output/); unset => slides 404
+        sync: false
+      - key: AUDIO_SEED_URL          # lecture-audio.tgz — per-slide narration MP3s; seeded once onto the disk; unset => /lecture-audio 404
+        sync: false
+      - key: LECTURE_AUDIO_DIR       # where main.py serves /lecture-audio from (the on-disk seed target)
+        value: /app/knowledge-base/chromadb/lecture-audio
+      - key: TTS_CACHE_DIR           # the chat's voice cache (per-reply clips + pre-rendered Teach-me openers), on the disk so it survives deploys
+        value: /app/knowledge-base/chromadb/tts-cache
+      - key: MASTERY_EXAMS_URL       # mastery_exams.json — exam bank; unset => mastery gating disabled
+        sync: false
+      - key: BASE_URL                # live URL (custom domain): https://tutor.example.edu
+        sync: false
+      # Supabase Management API creds so the app can un-pause its own database
+      # (tutor/selfheal.py, triggered by /healthz + unhandled DB errors). Same
+      # values as the GitHub Actions secrets of the same names. Unset = the
+      # feature reports "unconfigured" and only the scheduled workflow restores.
+      - key: SUPABASE_ACCESS_TOKEN
+        sync: false
+      - key: SUPABASE_PROJECT_REF   # your Supabase project's reference id
+        sync: false
+      # Optional Sentry error reporting (tutor/main.py); unset = disabled.
+      - key: SENTRY_DSN
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: FROM_EMAIL
+        sync: false
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: ELEVENLABS_VOICE_ID
+        sync: false
+      # ---- Non-secret config ----
+      - key: SECRET_KEY              # JWT signing key; generated once and kept stable
+        generateValue: true
+      - key: ADMIN_EMAILS            # comma-separated; the instructor(s) who run the site
+        sync: false
+      # uvicorn trusts X-Forwarded-For only from 127.0.0.1 unless told otherwise,
+      # and Render's proxy reaches the container from a private address
+      # (10.x, seen in the access log), so every per-address limit in the app
+      # (the magic-link and code limiters, the /healthz throttle) was keyed on
+      # the proxy and shared by the whole class. The private
+      # ranges, never "*": with "*" uvicorn takes the leftmost forwarded entry,
+      # which a caller writes themselves when the edge appends to the header,
+      # so every limit would key on an address of the caller's choosing. With
+      # the ranges it walks the header from the right and stops at the first
+      # hop that is not a private proxy: the address the proxy saw.
+      - key: FORWARDED_ALLOW_IPS
+        value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"

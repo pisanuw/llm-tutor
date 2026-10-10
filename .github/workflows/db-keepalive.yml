@@ -1,0 +1,140 @@
+# Keep the free-tier Supabase database from pausing, and catch it (or the
+# live site) being down between deploys.
+#
+# Supabase Free pauses a project after ~7 days without database activity;
+# deploy.yml only restores at deploy time, so a quiet week takes the live site
+# down for the next visitor (the 2026-09-01 login outage: both auth flows
+# 500'd on their first query). This workflow closes that gap. Every 3 days it
+# (a) restores the project if paused, then (b) hits the app's /healthz, whose
+# SELECT 1 both verifies the whole path end to end and registers the database
+# activity that prevents the next pause. On any failure it emails ADMIN_EMAILS
+# via Resend (same secrets as daily-report.yml; without them the failed run in
+# the Actions tab is the only signal).
+#
+# The app also has two runtime layers for the same failure (see
+# tutor/selfheal.py + tutor/routers/status.py): /healthz auto-restores a
+# paused DB on demand, and unhandled DB errors alert + restore. This workflow
+# is the proactive layer that keeps the pause from happening at all.
+
+name: db-keepalive
+
+on:
+  schedule:
+    # 07:23 UTC on days 1,4,...,28,31: 00:23 PDT, or 23:23 PST the evening
+    # before. Day-of-month */3 resets at month boundaries, but every gap stays
+    # well under Supabase's 7-day pause.
+    - cron: "23 7 */3 * *"
+  workflow_dispatch:
+
+# One run at a time: a run that starts while another is going waits for it
+# (plan step 6.4, finding E19).
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # Same restore script as deploy.yml, with one difference: deploy.yml
+      # fails soft (an infra hiccup must not block a code deploy), while here
+      # a restore that does not reach ACTIVE_HEALTHY fails the job so the
+      # alert step below fires. Secrets cannot be checked in a step-level if:
+      # (see the deploy.yml note), so the unset check lives in the script.
+      - name: Restore Supabase project if paused
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ] || [ -z "$SUPABASE_PROJECT_REF" ]; then
+            echo "::warning::Supabase secrets unset; skipping restore (the /healthz probe below still detects an outage)."
+            exit 0
+          fi
+          REF="$SUPABASE_PROJECT_REF"
+          AUTH="Authorization: Bearer $SUPABASE_ACCESS_TOKEN"
+
+          status=$(curl -fsS -H "$AUTH" "https://api.supabase.com/v1/projects/$REF" \
+            | python3 -c "import sys,json; print(json.load(sys.stdin).get('status',''))" 2>/dev/null)
+          echo "Supabase project status: ${status:-unknown}"
+
+          if [ "$status" = "ACTIVE_HEALTHY" ]; then
+            echo "Already active; skipping restore."
+            exit 0
+          fi
+
+          echo "Requesting restore..."
+          curl -fsS -X POST -H "$AUTH" "https://api.supabase.com/v1/projects/$REF/restore" \
+            -o /dev/null -w "restore request: HTTP %{http_code}\n"
+
+          echo "Waiting for the database to come back (up to 5 min)..."
+          for i in $(seq 1 30); do
+            sleep 10
+            status=$(curl -fsS -H "$AUTH" "https://api.supabase.com/v1/projects/$REF" \
+              | python3 -c "import sys,json; print(json.load(sys.stdin).get('status',''))" 2>/dev/null)
+            echo "  [$i/30] status: ${status:-unknown}"
+            if [ "$status" = "ACTIVE_HEALTHY" ]; then
+              echo "Restored."
+              exit 0
+            fi
+          done
+          echo "::error::Supabase did not report ACTIVE_HEALTHY within 5 min."
+          exit 1
+
+      - name: Probe /healthz (verifies app + DB, registers DB activity)
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          if [ -z "$SITE_URL" ]; then
+            echo "SITE_URL repository variable not set; skipping the /healthz probe."
+            exit 0
+          fi
+          # BASE_URL of the live site (render.yaml). /healthz runs SELECT 1
+          # through DATABASE_URL, which is the activity that resets Supabase's
+          # 7-day pause clock.
+          URL="${SITE_URL%/}/healthz"
+          for i in $(seq 1 8); do
+            code=$(curl -sS -o /tmp/hz.json -w "%{http_code}" --max-time 20 "$URL" || echo 000)
+            echo "[$i/8] HTTP ${code}: $(cat /tmp/hz.json 2>/dev/null)"
+            if [ "$code" = "200" ]; then
+              exit 0
+            fi
+            sleep 20
+          done
+          echo "::error::/healthz never returned 200"
+          exit 1
+
+      - name: Email alert on failure
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'EOF'
+          import json, os, urllib.request
+
+          key = os.environ.get("RESEND_API_KEY", "").strip()
+          to = [e.strip() for e in os.environ.get("ADMIN_EMAILS", "").split(",") if e.strip()]
+          if not key or not to:
+              print("No RESEND_API_KEY/ADMIN_EMAILS secret; cannot email. The failed run is the only signal.")
+              raise SystemExit(0)
+          run_url = os.environ["RUN_URL"]
+          body = {
+              "from": os.environ.get("FROM_EMAIL", "tutor@yourdomain.com"),
+              "to": to,
+              "subject": "[tutor] db-keepalive FAILED",
+              "text": (
+                  "The scheduled database keep-alive failed: the Supabase restore did "
+                  "not complete or /healthz never returned 200. The live site is "
+                  "likely down for students.\n\nRun log: " + run_url + "\n"
+              ),
+          }
+          req = urllib.request.Request(
+              "https://api.resend.com/emails",
+              data=json.dumps(body).encode(),
+              headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+          )
+          print("Resend response:", urllib.request.urlopen(req, timeout=15).status)
+          EOF

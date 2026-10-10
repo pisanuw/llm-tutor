@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% from "_nav.html" import site_header %}
+{% block title %}{{ tutor.name }} — Review{% endblock %}
+{% block content %}
+
+{{ site_header("review", None, student=student, is_admin=is_admin,
+               is_instructor=is_instructor, course=course) }}
+
+<div class="max-w-2xl mx-auto px-4 py-8" x-data="reviewSession('{{ course }}', {{ student.id|tojson }})" x-init="load()">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-xl font-bold text-gray-800">Spaced Review · {{ course_label(course) }}</h1>
+  </div>
+
+  <!-- Loading -->
+  <p x-show="loading" class="text-gray-500">Loading your review session…</p>
+
+  <!-- A session that did not load says so (plan step 3.5, finding D13: the
+       message sat inside a block that only shows once a session loads). -->
+  <div x-show="loadError" x-cloak role="alert" data-review-error
+       class="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-800">
+    <p x-text="loadError"></p>
+    <!-- A lapsed session is not a connection problem (R28): sign in, and
+         the page comes back. -->
+    <a x-show="expired" :href="loginHref()"
+       class="mt-2 inline-flex items-center min-h-[44px] px-4 rounded-lg bg-red-700 text-white text-sm">
+      Sign in again
+    </a>
+    <button x-show="!expired" type="button" @click="load()"
+            class="mt-2 inline-flex items-center min-h-[44px] px-4 rounded-lg bg-red-700 text-white text-sm">
+      Try again
+    </button>
+  </div>
+
+  <!-- Everything below reads the session, so it renders only once there is
+       one (x-if): no null reads before it loads. -->
+  <template x-if="session">
+  <div>
+  <!-- Nothing due -->
+  <div x-show="!loading && session.due_count === 0" class="bg-white rounded-xl border p-6 text-center">
+    <p class="text-gray-700 font-medium">Nothing due right now. 🎉</p>
+    <p class="text-sm text-gray-500 mt-1">Come back when items are ready — reviewing right on time is what keeps them.</p>
+  </div>
+
+  <!-- Amnesty banner -->
+  <div x-show="!loading && session.amnesty" class="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-4 text-sm text-amber-800">
+    You have <span x-text="session.due_count"></span> items due. No rush — here's a calm set of
+    <span x-text="session.shown"></span> to clear now; the rest keep for later.
+  </div>
+
+  <!-- Session progress -->
+  <div x-show="!loading && session.shown > 0 && !done" class="space-y-4">
+    <p class="text-sm text-gray-500">
+      Item <span x-text="index + 1"></span> of <span x-text="session.shown"></span>
+      · about <span x-text="session.minutes"></span> min
+    </p>
+
+    <div class="bg-white rounded-xl border p-5">
+      <p class="text-xs uppercase tracking-wide text-purple-600 font-semibold mb-1" x-text="current().title"></p>
+      <p class="text-gray-800 mb-3" x-text="current().question"></p>
+
+      <textarea x-model="answer" x-show="!graded" rows="4" aria-label="Your answer"
+        class="w-full border rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300"
+        placeholder="Answer from memory — no peeking. Then check."></textarea>
+
+      <!-- Confidence picker: shown before the reveal, never inferred (skip = null) -->
+      <div x-show="!graded" class="mt-3">
+        <p class="text-xs text-gray-500 mb-1">Before you check — how sure are you?</p>
+        <div class="flex flex-wrap gap-2">
+          <template x-for="opt in confidenceOptions" :key="opt.value">
+            <button type="button" @click="confidence = opt.value"
+              class="px-3 min-h-[44px] text-xs rounded-full border"
+              :class="confidence === opt.value ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-gray-600 border-gray-300 hover:border-purple-400'"
+              x-text="opt.label"></button>
+          </template>
+        </div>
+      </div>
+
+      <button x-show="!graded" @click="grade()" :disabled="grading || !answer.trim() || !!limitNote"
+        class="mt-3 px-4 min-h-[44px] bg-purple-600 text-white text-sm rounded-lg disabled:opacity-40">
+        <span x-text="grading ? 'Checking…' : 'Check'"></span>
+      </button>
+
+      <!-- Verdict -->
+      <div x-show="graded" class="mt-2">
+        <p class="text-sm font-semibold"
+           :class="verdict.score >= 2 ? 'text-green-600' : 'text-amber-600'">
+          <span x-text="verdict.rating"></span> — scored <span x-text="verdict.score"></span>/3
+        </p>
+        <p x-show="verdict.miscalibrated" class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1 mt-1">
+          You felt sure on this one — worth slowing down here. That gap is the most useful kind to close.
+        </p>
+        <p class="text-sm text-gray-600 mt-1" x-text="verdict.feedback"></p>
+        <p class="text-xs text-gray-400 mt-1" x-show="verdict.next_due">Next review: <span x-text="verdict.next_due"></span></p>
+        <button @click="next()" class="mt-3 px-4 min-h-[44px] bg-gray-800 text-white text-sm rounded-lg" x-text="index + 1 < session.shown ? 'Next' : 'Finish'"></button>
+      </div>
+
+      <p x-show="error" role="alert" data-review-card-error class="text-sm mt-2" :class="errorKind === 'already_checked' ? 'text-gray-700' : 'text-red-600'"
+         x-text="error"></p>
+      <!-- A card that cannot be checked (a lost signal, a limit, a lapsed
+           session) always has a way forward (R27); a lapsed session also has
+           its sign-in, with the answer kept for when the page comes back. -->
+      <div x-show="error && !graded" class="mt-2 flex flex-wrap gap-2">
+        <a x-show="expired" :href="loginHref()" data-review-signin
+           class="inline-flex items-center min-h-[44px] px-4 bg-purple-600 text-white text-sm rounded-lg">Sign in again</a>
+        <button type="button" @click="next()" data-review-skip
+                class="min-h-[44px] px-4 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50"
+                x-text="limitNote ? 'Finish for today'
+                        : errorKind === 'already_checked' ? (index + 1 < session.shown ? 'Next' : 'Finish')
+                        : (index + 1 < session.shown ? 'Skip this one' : 'Finish')"></button>
+      </div>
+    </div>
+  </div>
+  </div>
+  </template>
+
+  <!-- Done -->
+  <div x-show="done" class="bg-white rounded-xl border p-6 text-center">
+    <p class="text-gray-700 font-medium" data-review-done x-text="limitNote || 'Session complete. Nicely done.'"></p>
+    <a href="/chat" class="inline-block mt-3 text-sm text-blue-500 hover:underline">Back to chat →</a>
+  </div>
+</div>
+
+<script>
+function reviewSession(course, sid) {
+  return {
+    course, loading: true, session: null, index: 0, answer: '',
+    grading: false, graded: false, verdict: {}, error: '', errorKind: '', loadError: '', done: false,
+    expired: false, limitNote: '', confidence: null,
+    confidenceOptions: [
+      { value: 90, label: 'Certain' },
+      { value: 70, label: 'Pretty sure' },
+      { value: 50, label: 'Half unsure' },
+      { value: 25, label: 'Guessing' },
+    ],
+    async load() {
+      this.loading = true;
+      this.loadError = '';
+      try {
+        const r = await fetch(`/review/session?course=${encodeURIComponent(course)}`);
+        if (r.status === 401) {
+          this.expired = true;
+          throw new Error('expired');
+        }
+        if (!r.ok) throw new Error(String(r.status));
+        this.session = await r.json();
+        this.restoreDraft();
+        this.noteShown();
+      } catch (e) {
+        this.session = null;
+        this.loadError = this.expired
+          ? 'Your session has ended. Sign in again to carry on with your review.'
+          : 'Could not load your review session. Check your connection and try again.';
+      }
+      this.loading = false;
+    },
+    loginHref() {
+      return '/auth/login?next=' + encodeURIComponent(`/review?course=${course}`);
+    },
+    // An answer the session lapsed under is kept for when the page comes back.
+    // Kept with the question it answers and the student who wrote it: a new
+    // session draws a new question for the goal, and a shared computer must
+    // never hand one student's answer to the next (the Stage 3 review).
+    saveDraft() {
+      try {
+        const item = this.current();
+        localStorage.setItem('tutor-review-draft', JSON.stringify(
+          {goal_id: item.goal_id, probe_id: item.probe_id, question: item.question, answer: this.answer,
+           sid, course, at: Date.now()}));
+      } catch (e) { /* storage off: the sentence still says what happened */ }
+    },
+    restoreDraft() {
+      try {
+        const d = JSON.parse(localStorage.getItem('tutor-review-draft') || 'null');
+        if (!d) return;
+        if (d.sid !== sid || Date.now() - d.at > 6 * 3600 * 1000) {
+          localStorage.removeItem('tutor-review-draft');
+          return;
+        }
+        if (!this.session || d.course !== course) return;
+        const i = this.session.items.findIndex((it, n) => n < this.session.shown && it.goal_id === d.goal_id);
+        if (i < 0) return;
+        // The same question as before, first in the session; /review/grade
+        // finds any question of the goal's bank by its id.
+        const [item] = this.session.items.splice(i, 1);
+        item.probe_id = d.probe_id;
+        item.question = d.question || item.question;
+        this.session.items.unshift(item);
+        this.index = 0;
+        this.answer = d.answer || '';
+        localStorage.removeItem('tutor-review-draft');
+      } catch (e) { /* nothing kept */ }
+    },
+    current() { return (this.session && this.session.items[this.index]) || {}; },
+    // Activity events (docs/activity-analytics-plan-2026-10.md): the probe
+    // shown and the answer sent, by goal. A no-op when tracking is off.
+    track(name) {
+      try {
+        const item = this.current();
+        if (window.tutorTrack && item.goal_id) window.tutorTrack(name, {goal_id: item.goal_id, course});
+      } catch (e) { /* never into the page */ }
+    },
+    noteShown() { if (this.session && this.session.shown > this.index) this.track('review_start'); },
+    async grade() {
+      if (!this.answer.trim()) return;
+      this.grading = true; this.error = ''; this.errorKind = '';
+      const item = this.current();
+      const body = new URLSearchParams({ goal_id: item.goal_id, probe_id: item.probe_id, answer: this.answer });
+      // Past the server's form limit (1 MB encoded) the answer could not be
+      // checked and the card said only to skip it (the Stage 4 review).
+      if (body.toString().length > 900000) {
+        this.errorKind = 'too_long';
+        this.error = `That answer is ${this.answer.length.toLocaleString('en-US')} characters, too long to check. ` +
+                     'Trim it to the part that answers the question, then check it.';
+        this.grading = false;
+        return;
+      }
+      if (this.confidence !== null) { body.set('confidence', this.confidence); }
+      this.track('review_answer');
+      try {
+        const r = await fetch('/review/grade', { method: 'POST', body });
+        if (r.status === 401) {
+          this.expired = true;
+          this.errorKind = 'expired';
+          this.saveDraft();
+          this.error = 'Your session has ended, so this answer was not checked. Sign in again: your answer will be here.';
+          this.grading = false;
+          return;
+        }
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          this.errorKind = data.error || 'unavailable';
+          // Waiting only helps a server error; anything else says to move on.
+          this.error = data.feedback || (r.status >= 500
+            ? 'Grading is unavailable right now. Try again in a minute.'
+            : 'This one could not be checked. Skip it and carry on.');
+          // A used-up limit ends today's session: the later cards would be
+          // refused the same way (the Stage 3 review).
+          if (this.errorKind === 'limit') this.limitNote = this.error;
+          this.grading = false;
+          return;
+        }
+        this.verdict = data; this.graded = true;
+      } catch (e) { this.error = 'Could not reach ' + {{ tutor.name|tojson }} + '. Check your connection and try again.'; }
+      this.grading = false;
+    },
+    next() {
+      if (this.limitNote) { this.done = true; return; }
+      this.graded = false; this.answer = ''; this.verdict = {}; this.error = ''; this.errorKind = ''; this.confidence = null;
+      if (this.index + 1 < this.session.shown) { this.index += 1; this.noteShown(); }
+      else { this.done = true; }
+    },
+  };
+}
+</script>
+{% endblock %}

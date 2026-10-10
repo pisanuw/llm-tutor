@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% from "_nav.html" import site_header %}
+{% block title %}{{ tutor.name }} — Weekly report{% endblock %}
+{% block content %}
+
+{% call site_header("instructor", "Weekly report preview", student=viewer, is_admin=is_admin,
+                    is_instructor=True, course=course) %}
+  <span class="text-sm font-semibold text-yellow-300 whitespace-nowrap truncate">📧 Weekly report</span>
+{% endcall %}
+
+<main class="max-w-3xl mx-auto px-3 sm:px-6 py-6">
+  <div class="flex flex-wrap items-end justify-between gap-2 mb-4">
+    <div class="min-w-0">
+      <h1 class="text-xl font-bold text-gray-900">This week's email</h1>
+      <p class="text-sm text-gray-500">
+        Sent to <span class="font-mono text-xs">{{ viewer.email }}</span> every Monday morning.
+        This is a preview of exactly what goes out.
+      </p>
+    </div>
+    <form method="get" action="/instructor/report" class="flex items-end gap-2">
+      <label class="text-xs text-gray-500">
+        <span class="block mb-1">Window</span>
+        <select name="days" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm bg-white">
+          {% for d, lbl in [(7, 'Last 7 days'), (14, 'Last 14 days'), (30, 'Last 30 days')] %}
+          <option value="{{ d }}" {% if days == d %}selected{% endif %}>{{ lbl }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <button type="submit"
+              class="px-4 py-1.5 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800">
+        Show
+      </button>
+    </form>
+  </div>
+
+  <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-4 py-3 border-b border-gray-100 bg-gray-50">
+      <p class="text-xs uppercase tracking-wide text-gray-400">Subject</p>
+      <p class="text-sm font-medium text-gray-800 break-words">{{ subject }}</p>
+    </div>
+    <div class="p-4 sm:p-6 overflow-x-auto">
+      {{ body_html|safe }}
+    </div>
+  </div>
+
+  <p class="text-xs text-gray-400 mt-4">
+    To change which classes report, or to stop the email, ask an admin (Admin → Classes).
+  </p>
+</main>
+
+{% endblock %}

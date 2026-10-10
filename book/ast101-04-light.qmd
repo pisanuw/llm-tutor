@@ -1,0 +1,120 @@
+# Light and Telescopes
+
+Almost everything we know about the universe arrived as light. Before you read
+on, predict: if you move a lamp twice as far away, does it look half as
+bright, a quarter as bright, or the same? Make the bet.
+
+By the end of this chapter you should be able to:
+
+- order the electromagnetic spectrum by wavelength, frequency and energy;
+- use the inverse-square law to compare brightness at different distances;
+- explain why a telescope's aperture matters more than its magnification.
+
+## The Spectrum {#the-electromagnetic-spectrum}
+
+Light is an electromagnetic wave traveling at about 300,000 km/s. Its
+**wavelength** is the distance from one crest to the next; its **frequency** is
+how many crests pass each second. Wavelength times frequency equals the speed
+of light, so a shorter wavelength means a higher frequency.
+
+Light also arrives in packets of energy called **photons**, and a shorter
+wavelength photon carries more energy. That is why ultraviolet light can burn
+your skin and radio waves cannot.
+
+From longest to shortest wavelength, the spectrum runs:
+
+> radio, microwave, infrared, **visible**, ultraviolet, X-ray, gamma ray
+
+Visible light runs from red (about 700 nm) to violet (about 400 nm). Picture a
+piano keyboard miles long: our eyes hear about one octave of it.
+
+Every warm object glows, and the hotter it is, the shorter the wavelength of
+its peak glow. A stove burner goes dull red, then orange, then yellow-white as
+it heats. In astronomy, red means cool and blue means hot. You glow too, in
+the infrared, which is how thermal cameras see people in the dark.
+
+Our atmosphere lets visible light and most radio waves through, absorbs much
+of the infrared, and blocks ultraviolet, X-rays and gamma rays. To see in
+those bands, telescopes have to go to space.
+
+## Brightness Falls Off With Distance {#the-inverse-square-law}
+
+Light leaving a lamp spreads out over a sphere. The area of that sphere grows
+as the distance squared, so the light landing on each square meter falls off
+as **one over the distance squared**:
+
+| Distance | Apparent brightness |
+|---|---|
+| 1 times | 1 |
+| 2 times | 1/4 |
+| 3 times | 1/9 |
+| 10 times | 1/100 |
+
+So the answer to the opening bet is a quarter, not a half. A flashlight beam
+at twice the distance covers four times the area, and each patch gets a
+quarter of the light.
+
+The rule works backwards too, which is the whole point for astronomers. Two
+identical streetlights stand along a straight road, and the far one looks one
+sixteenth as bright. It must be four times farther away, because 4 squared is
+16. Know how bright a light really is, measure how bright it looks, and you
+know how far away it is.
+
+## Bigger Is Better {#telescopes}
+
+A telescope has three jobs. In order of importance:
+
+1. **Gather light.** Its light-gathering power depends on the area of its main
+   lens or mirror, the **aperture**, so it grows with the diameter squared. A
+   telescope twice as wide collects four times as much light. A 2-meter mirror
+   collects about 80,000 times as much as your 7-millimeter pupil.
+2. **Resolve detail.** A bigger aperture also separates finer details.
+3. **Magnify.** This only enlarges whatever the first two jobs delivered.
+
+A telescope is a bucket for light: a bucket twice as wide catches four times
+the rain. Magnification is the number printed biggest on department-store
+telescope boxes, and it matters least. Stars stay points of light at any
+magnification, and too much magnification just spreads a faint, blurry image
+over a bigger area.
+
+::: {.callout-warning title="Eye safety"}
+Never point a telescope or binoculars at the Sun unless a proper solar filter
+covers the front. A telescope gathers light; aimed at the Sun, it gathers
+enough to blind you instantly.
+:::
+
+## Self-check
+
+```{=html}
+<div class="quiz" data-answer="c">
+  <div class="question">1. A star is moved to three times its current distance. Its apparent brightness becomes:</div>
+  <ul>
+    <li data-choice="a"><label><strong>a.</strong> One third as bright</label></li>
+    <li data-choice="b"><label><strong>b.</strong> One sixth as bright</label></li>
+    <li data-choice="c"><label><strong>c.</strong> One ninth as bright</label></li>
+    <li data-choice="d"><label><strong>d.</strong> Unchanged, only smaller</label></li>
+  </ul>
+  <div class="explain">
+    <strong>c</strong>. Brightness goes as one over distance squared: 3 squared is 9.
+  </div>
+</div>
+
+<div class="quiz" data-answer="b">
+  <div class="question">2. Telescope A has a 10 cm aperture at 300x. Telescope B has a 30 cm aperture at 100x. Which shows fainter galaxies?</div>
+  <ul>
+    <li data-choice="a"><label><strong>a.</strong> A, because it magnifies more</label></li>
+    <li data-choice="b"><label><strong>b.</strong> B, because it gathers 9 times the light</label></li>
+    <li data-choice="c"><label><strong>c.</strong> B, because it gathers 3 times the light</label></li>
+    <li data-choice="d"><label><strong>d.</strong> They are equal</label></li>
+  </ul>
+  <div class="explain">
+    <strong>b</strong>. Light-gathering power goes as the aperture squared: (30/10) squared is 9. You can always change the eyepiece; you cannot change the aperture.
+  </div>
+</div>
+```
+
+## Where this fits
+
+AST 102 leans on all three ideas: a star's color gives its temperature, the
+inverse-square law links brightness and distance, and big telescopes are how
+we gather the light of distant galaxies.

@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moon Phases Explorable</title>
+<!--
+  Explorable for the goal AST101-L02-explain-moon-phases (the example course).
+  Fully offline: inline CSS, inline JS, inline SVG, nothing fetched.
+  Contract: predict before reveal, a guided manipulable, and a closing
+  blank-page reconstruction prompt.
+-->
+<style>
+  :root {
+    --bg: #f7f7fb; --card: #ffffff; --ink: #1d1d2b; --muted: #55566b;
+    --line: #d5d6e3; --accent: #3730a3; --accent-ink: #ffffff; --warm: #b45309;
+    --good: #1f7a4a; --bad: #b42318; --space: #10122b; --sun: #f6b73c;
+    --moon-lit: #f4f1e6; --moon-dark: #3a3d56; --earth-day: #5aa0e6; --earth-night: #1e3a5f;
+    --shadow: rgba(0, 0, 0, 0.45); --face: #f59e0b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12131c; --card: #1c1d2a; --ink: #ececf4; --muted: #a9aac0;
+      --line: #34364a; --accent: #a5b4fc; --accent-ink: #12131c; --warm: #fbbf24;
+      --good: #4ade80; --bad: #f87171; --space: #07081a; --shadow: rgba(0, 0, 0, 0.6);
+    }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 1.6rem; line-height: 1.2; margin: 0.4rem 0 0.2rem; }
+  h2 { font-size: 1.2rem; margin: 0 0 0.5rem; }
+  p { margin: 0.4rem 0 0.8rem; }
+  .lede { color: var(--muted); }
+  section.card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px; margin: 16px 0;
+  }
+  .step { color: var(--warm); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.8rem; }
+  .figs { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 700px) { .figs { grid-template-columns: 2fr 1fr; } }
+  figure { margin: 0; min-width: 0; }
+  figcaption { font-size: 0.9rem; color: var(--muted); margin-top: 4px; }
+  svg { width: 100%; height: auto; display: block; background: var(--space); border-radius: 10px; }
+  .view svg { max-width: 260px; margin: 0 auto; }
+  fieldset { border: 1px solid var(--line); border-radius: 10px; margin: 12px 0; padding: 8px 12px 12px; min-width: 0; }
+  legend { font-weight: 600; padding: 0 4px; }
+  .choices { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+  .choices label {
+    display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--line);
+    border-radius: 8px; cursor: pointer; min-height: 44px;
+  }
+  .choices input { width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+  button {
+    font: inherit; border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink);
+    border-radius: 8px; padding: 10px 16px; min-height: 44px; cursor: pointer;
+  }
+  button.secondary { background: transparent; color: var(--accent); }
+  button:disabled { opacity: 0.45; cursor: not-allowed; }
+  :focus-visible { outline: 3px solid var(--warm); outline-offset: 2px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .result { border-left: 4px solid var(--line); padding: 8px 12px; margin-top: 12px; min-height: 2.5em; }
+  .result.right { border-color: var(--good); }
+  .result.wrong { border-color: var(--bad); }
+  .score { color: var(--muted); font-size: 0.95rem; }
+  .readout { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; font-size: 0.95rem; margin: 8px 0; }
+  .readout dt { color: var(--muted); }
+  .readout dd { margin: 0; font-weight: 600; }
+  input[type="range"] { width: 100%; min-height: 44px; accent-color: var(--accent); }
+  .tasks { padding-left: 0; list-style: none; margin: 8px 0; }
+  .tasks li { padding: 6px 0 6px 30px; position: relative; }
+  .tasks li::before {
+    content: ""; position: absolute; left: 0; top: 9px; width: 18px; height: 18px;
+    border: 2px solid var(--line); border-radius: 50%;
+  }
+  .tasks li.done::before { background: var(--good); border-color: var(--good); }
+  .tasks li.done { color: var(--muted); }
+  .hidden-view { display: grid; place-items: center; aspect-ratio: 1; max-width: 260px; margin: 0 auto;
+    background: var(--space); color: #c9cbe3; border-radius: 10px; font-size: 2.5rem; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  details { margin-top: 10px; }
+  summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
+  .note { font-size: 0.9rem; color: var(--muted); }
+  .sun { fill: var(--sun); } .shade { fill: var(--shadow); }
+  .earth-night { fill: var(--earth-night); } .earth-day { fill: var(--earth-day); }
+  .moon-dark { fill: var(--moon-dark); } .moon-lit { fill: var(--moon-lit); }
+  .face { stroke: var(--face); } .marker { fill: #8b8fb8; } .marker-on { fill: var(--face); }
+</style>
+</head>
+<body>
+<main>
+  <p class="step">AST 101, Lecture 02</p>
+  <h1>What causes the Moon's phases?</h1>
+  <p class="lede">Predict first. Then we look. You will place the Moon in its orbit, predict the phase
+  you would see from Earth, and only then find out. After that you get the controls.</p>
+
+  <!-- ===================== Step 1: predict ===================== -->
+  <section class="card" aria-labelledby="predict-h">
+    <p class="step">Step 1</p>
+    <h2 id="predict-h">Predict the phase</h2>
+    <p>The drawing is a top-down view from far above the North Pole. The Sun is far off to the left,
+    so sunlight comes from the left. The Moon moves counterclockwise around Earth.</p>
+
+    <div class="figs">
+      <figure>
+        <svg id="p-top" viewBox="0 0 320 240" role="img" aria-labelledby="p-top-title">
+          <title id="p-top-title">Top-down view of the Sun, Earth and the Moon's orbit</title>
+        </svg>
+        <figcaption>Top-down view. Letters mark eight places the Moon can be.</figcaption>
+      </figure>
+      <figure class="view">
+        <div id="p-hidden" class="hidden-view" aria-hidden="true">?</div>
+        <svg id="p-view" viewBox="0 0 120 120" role="img" aria-labelledby="p-view-title" hidden>
+          <title id="p-view-title">The Moon as seen from Earth</title>
+        </svg>
+        <figcaption>What you see from Earth (hidden until you predict).</figcaption>
+      </figure>
+    </div>
+
+    <fieldset>
+      <legend>1. Put the Moon at a position</legend>
+      <div class="choices" id="pos-choices"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>2. Predict: what phase do you see from Earth?</legend>
+      <div class="choices" id="phase-choices"></div>
+    </fieldset>
+
+    <div class="row">
+      <button id="reveal" type="button" disabled>Reveal</button>
+      <button id="again" type="button" class="secondary" hidden>Try another position</button>
+      <span class="score" id="score">No predictions yet.</span>
+    </div>
+    <div id="p-result" class="result" role="status" aria-live="polite"></div>
+  </section>
+
+  <!-- ===================== Step 2: explore ===================== -->
+  <section class="card" aria-labelledby="explore-h">
+    <p class="step">Step 2</p>
+    <h2 id="explore-h">Move the Moon yourself</h2>
+    <p>Drag the slider or use the buttons (the arrow keys work on the slider too). The orange outline marks
+    the half of the Moon that faces Earth. Watch how much of it is lit.</p>
+
+    <div class="figs">
+      <figure>
+        <svg id="e-top" viewBox="0 0 320 240" role="img" aria-labelledby="e-top-title">
+          <title id="e-top-title">Top-down view with the Moon</title>
+        </svg>
+        <figcaption>Top-down view. Sunlight from the left.</figcaption>
+      </figure>
+      <figure class="view">
+        <svg id="e-view" viewBox="0 0 120 120" role="img" aria-labelledby="e-view-title">
+          <title id="e-view-title">The Moon as seen from Earth</title>
+        </svg>
+        <figcaption>From Earth (Northern Hemisphere).</figcaption>
+      </figure>
+    </div>
+
+    <label for="angle"><strong>Moon's position:</strong> angle from the Sun's direction, measured counterclockwise</label>
+    <input id="angle" type="range" min="0" max="359" step="1" value="45">
+    <div class="row">
+      <button id="back" type="button" class="secondary" aria-label="Move the Moon back one eighth of an orbit">Back 45 degrees</button>
+      <button id="fwd" type="button" class="secondary" aria-label="Move the Moon forward one eighth of an orbit">Forward 45 degrees</button>
+      <label class="row" for="shadow"><input id="shadow" type="checkbox"> Show Earth's shadow</label>
+    </div>
+
+    <dl class="readout">
+      <dt>Phase</dt><dd id="r-phase"></dd>
+      <dt>Face lit</dt><dd id="r-lit"></dd>
+      <dt>Moonrise</dt><dd id="r-rise"></dd>
+      <dt>Cycle</dt><dd id="r-day"></dd>
+    </dl>
+    <p id="e-live" class="sr-only" aria-live="polite"></p>
+
+    <h3>Try this</h3>
+    <ol class="tasks" id="tasks">
+      <li data-task="full">Move the Moon until you see a full moon. Where is it compared with the Sun?</li>
+      <li data-task="quarter">Find a quarter phase, where exactly half of the Earth-facing side is lit.</li>
+      <li data-task="evening">Find a thin crescent you could see low in the west just after sunset.</li>
+      <li data-task="shadow">Turn on Earth's shadow. Find the only position where it could touch the Moon. What phase is that?</li>
+    </ol>
+    <p id="t-live" class="sr-only" aria-live="polite"></p>
+    <p class="note">Notice that the Moon is always half lit, the half facing the Sun. The phase is only how much of that
+    lit half faces you. In this flat drawing the Moon crosses the shadow at every full moon; the real orbit is tilted
+    about 5 degrees, so most months it passes above or below the shadow. That is why lunar eclipses are rare.</p>
+  </section>
+
+  <!-- ===================== Step 3: reconstruct ===================== -->
+  <section class="card" aria-labelledby="recon-h">
+    <p class="step">Step 3</p>
+    <h2 id="recon-h">Reconstruct it from memory</h2>
+    <p><strong>Close this page and take out a blank sheet of paper.</strong> From memory, draw the top-down
+    view: the Sun on one side, Earth in the middle, and the Moon at eight positions around its orbit. For each
+    position, shade the half the Sun lights, outline the half that faces Earth, and name the phase. Then add one
+    line explaining why Earth's shadow cannot make a crescent.</p>
+    <p>Only then come back and check yourself against the checklist.</p>
+    <details>
+      <summary>Checklist (open after you draw)</summary>
+      <ul>
+        <li>Every Moon is half lit, and the lit half always faces the Sun.</li>
+        <li>Between Earth and the Sun: new moon. Opposite the Sun: full moon.</li>
+        <li>A quarter of the way around, either side: a quarter phase, half the face lit.</li>
+        <li>Crescents are near the Sun's side of the orbit; gibbous phases are near the far side.</li>
+        <li>Earth's shadow points away from the Sun, so it can only reach a full moon (a lunar eclipse).</li>
+      </ul>
+    </details>
+  </section>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var PHASES = ["New moon", "Waxing crescent", "First quarter", "Waxing gibbous",
+                "Full moon", "Waning gibbous", "Third quarter", "Waning crescent"];
+  var POSITIONS = [
+    ["A", "between Earth and the Sun"],
+    ["B", "one eighth of the way around from A"],
+    ["C", "a quarter of the way around from A"],
+    ["D", "three eighths of the way around from A"],
+    ["E", "on the far side of Earth from the Sun"],
+    ["F", "five eighths of the way around from A"],
+    ["G", "three quarters of the way around from A"],
+    ["H", "seven eighths of the way around from A"]
+  ];
+  var EX = 190, EY = 120, ORBIT = 80, MOON_R = 12, EARTH_R = 18;
+
+  function rad(deg) { return deg * Math.PI / 180; }
+  function f(n) { return n.toFixed(2); }
+  function phaseIndex(e) { return Math.round(e / 45) % 8; }
+  function moonXY(e) { return [EX - ORBIT * Math.cos(rad(e)), EY + ORBIT * Math.sin(rad(e))]; }
+
+  // ---- drawing --------------------------------------------------------------
+
+  function topView(e, opts) {
+    var s = "";
+    // the Sun, far away to the left, and its light
+    s += '<circle cx="-40" cy="120" r="70" class="sun"/>';
+    s += '<text x="6" y="22" fill="#fde68a" font-size="11">Sun (far away)</text>';
+    for (var y = 50; y <= 190; y += 35) {
+      s += '<line x1="40" y1="' + y + '" x2="70" y2="' + y + '" stroke="#fde68a" stroke-width="2"/>' +
+           '<path d="M70 ' + (y - 4) + ' L78 ' + y + ' L70 ' + (y + 4) + ' Z" fill="#fde68a"/>';
+    }
+    if (opts.shadow) {
+      s += '<rect x="' + EX + '" y="' + (EY - EARTH_R) + '" width="' + (320 - EX) + '" height="' +
+           (2 * EARTH_R) + '" class="shade"/>';
+      s += '<text x="236" y="' + (EY - EARTH_R - 6) + '" fill="#c9cbe3" font-size="10">Earth\'s shadow</text>';
+    }
+    s += '<circle cx="' + EX + '" cy="' + EY + '" r="' + ORBIT + '" fill="none" stroke="#6b6f99" stroke-dasharray="4 4"/>';
+    // Earth: day side toward the Sun
+    s += '<circle cx="' + EX + '" cy="' + EY + '" r="' + EARTH_R + '" class="earth-night"/>';
+    s += '<path d="M' + EX + ' ' + (EY - EARTH_R) + ' A' + EARTH_R + ' ' + EARTH_R + ' 0 0 0 ' + EX + ' ' +
+         (EY + EARTH_R) + ' Z" class="earth-day"/>';
+    s += '<text x="' + (EX - 14) + '" y="' + (EY + EARTH_R + 13) + '" fill="#c9cbe3" font-size="10">Earth</text>';
+    if (opts.markers) {
+      for (var i = 0; i < 8; i++) {
+        var a = rad(i * 45), lx = EX - (ORBIT + 22) * Math.cos(a), ly = EY + (ORBIT + 22) * Math.sin(a);
+        var px = EX - ORBIT * Math.cos(a), py = EY + ORBIT * Math.sin(a);
+        var on = opts.selected === i;
+        s += '<circle cx="' + f(px) + '" cy="' + f(py) + '" r="3" class="' + (on ? "marker-on" : "marker") + '"/>';
+        s += '<text x="' + f(lx - 4) + '" y="' + f(ly + 4) + '" fill="' + (on ? "#fcd34d" : "#c9cbe3") +
+             '" font-size="12" font-weight="' + (on ? "700" : "400") + '">' + POSITIONS[i][0] + '</text>';
+      }
+    }
+    if (e === null) return s;
+    var m = moonXY(e), mx = m[0], my = m[1], r = MOON_R;
+    // the Moon: always lit on the side facing the Sun (the left)
+    s += '<circle cx="' + f(mx) + '" cy="' + f(my) + '" r="' + r + '" class="moon-dark"/>';
+    s += '<path d="M' + f(mx) + ' ' + f(my - r) + ' A' + r + ' ' + r + ' 0 0 0 ' + f(mx) + ' ' + f(my + r) +
+         ' Z" class="moon-lit"/>';
+    // the half that faces Earth, outlined
+    var td = Math.atan2(EY - my, EX - mx), R = r + 3;
+    var x1 = mx + R * Math.cos(td - Math.PI / 2), y1 = my + R * Math.sin(td - Math.PI / 2);
+    var x2 = mx + R * Math.cos(td + Math.PI / 2), y2 = my + R * Math.sin(td + Math.PI / 2);
+    s += '<path d="M' + f(x1) + ' ' + f(y1) + ' A' + R + ' ' + R + ' 0 0 1 ' + f(x2) + ' ' + f(y2) +
+         '" class="face" fill="none" stroke-width="3" stroke-linecap="round"/>';
+    return s;
+  }
+
+  function earthView(e) {
+    var cx = 60, cy = 60, r = 46;
+    var c = Math.cos(rad(e)), rx = Math.abs(c) * r;
+    var waxing = (e % 360) < 180, crescent = c > 0;
+    var sweep1 = waxing ? 1 : 0;
+    var sweep2 = waxing ? (crescent ? 0 : 1) : (crescent ? 1 : 0);
+    var s = '<circle cx="60" cy="60" r="' + r + '" class="moon-dark" stroke="#6b6f99" stroke-width="1"/>';
+    s += '<path d="M' + cx + ' ' + (cy - r) + ' A' + r + ' ' + r + ' 0 0 ' + sweep1 + ' ' + cx + ' ' + (cy + r) +
+         ' A' + f(rx) + ' ' + r + ' 0 0 ' + sweep2 + ' ' + cx + ' ' + (cy - r) + ' Z" class="moon-lit"/>';
+    return s;
+  }
+
+  function litPercent(e) { return Math.round((1 - Math.cos(rad(e))) / 2 * 100); }
+  function riseText(e) {
+    var h = Math.round(6 + e / 15) % 24;
+    if (h === 0) return "about midnight";
+    if (h === 12) return "about noon";
+    if (h === 6) return "about 6 am, with the Sun";
+    if (h === 18) return "about 6 pm, as the Sun sets";
+    return "about " + (h % 12) + (h < 12 ? " am" : " pm");
+  }
+  function describe(e) {
+    return PHASES[phaseIndex(e)] + ", " + litPercent(e) + " percent of the face lit";
+  }
+
+  // ---- step 1: predict -------------------------------------------------------
+
+  var pTop = document.getElementById("p-top"), pView = document.getElementById("p-view");
+  var pHidden = document.getElementById("p-hidden"), reveal = document.getElementById("reveal");
+  var again = document.getElementById("again"), result = document.getElementById("p-result");
+  var scoreEl = document.getElementById("score");
+  var chosenPos = null, chosenPhase = null, revealed = false, right = 0, tries = 0;
+
+  function radios(containerId, name, labels, onPick) {
+    var box = document.getElementById(containerId);
+    labels.forEach(function (text, i) {
+      var label = document.createElement("label");
+      var input = document.createElement("input");
+      input.type = "radio"; input.name = name; input.value = String(i);
+      input.addEventListener("change", function () { onPick(i); });
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(text));
+      box.appendChild(label);
+    });
+    return box;
+  }
+
+  function drawPredict() {
+    var e = chosenPos === null ? null : chosenPos * 45;
+    var label = chosenPos === null
+      ? "Top-down view of the Sun, Earth and the Moon's orbit, with eight positions marked A to H"
+      : "Top-down view. The Moon is at position " + POSITIONS[chosenPos][0] + ", " + POSITIONS[chosenPos][1];
+    pTop.innerHTML = '<title id="p-top-title">' + label + '</title>' +
+      topView(e, { markers: true, selected: chosenPos });
+    reveal.disabled = revealed || chosenPos === null || chosenPhase === null;
+  }
+
+  radios("pos-choices", "pos", POSITIONS.map(function (p) { return p[0] + ": " + p[1]; }), function (i) {
+    if (revealed) resetPredict(false);
+    chosenPos = i; drawPredict();
+  });
+  var phaseBox = radios("phase-choices", "phase", PHASES, function (i) {
+    if (revealed) resetPredict(false);
+    chosenPhase = i; drawPredict();
+  });
+
+  reveal.addEventListener("click", function () {
+    var e = chosenPos * 45, actual = phaseIndex(e);
+    revealed = true; tries += 1;
+    pView.innerHTML = '<title id="p-view-title">The Moon as seen from Earth: ' + describe(e) + '</title>' + earthView(e);
+    pView.removeAttribute("hidden"); pHidden.hidden = true;
+    var msg;
+    if (actual === chosenPhase) {
+      right += 1;
+      result.className = "result right";
+      msg = "Right: at position " + POSITIONS[chosenPos][0] + " you see a " + PHASES[actual].toLowerCase() + ". ";
+    } else {
+      result.className = "result wrong";
+      msg = "Good wrong answer. You predicted " + PHASES[chosenPhase].toLowerCase() + "; at position " +
+            POSITIONS[chosenPos][0] + " you actually see a " + PHASES[actual].toLowerCase() + ". ";
+    }
+    msg += "The Sun lights the left half of the Moon. From Earth you see the half facing you, and " +
+           litPercent(e) + " percent of that half is lit.";
+    result.textContent = msg;
+    scoreEl.textContent = "Predictions right: " + right + " of " + tries + ".";
+    reveal.disabled = true; again.hidden = false;
+    again.focus();
+  });
+
+  function resetPredict(clearPos) {
+    revealed = false; chosenPhase = null;
+    if (clearPos) chosenPos = null;
+    Array.prototype.forEach.call(phaseBox.querySelectorAll("input"), function (el) { el.checked = false; });
+    if (clearPos) {
+      Array.prototype.forEach.call(document.querySelectorAll("#pos-choices input"), function (el) { el.checked = false; });
+    }
+    pView.setAttribute("hidden", ""); pHidden.hidden = false;
+    result.className = "result"; result.textContent = "";
+    again.hidden = true;
+    drawPredict();
+  }
+  again.addEventListener("click", function () {
+    resetPredict(true);
+    var first = document.querySelector("#pos-choices input");
+    if (first) first.focus();
+  });
+
+  // ---- step 2: explore -------------------------------------------------------
+
+  var eTop = document.getElementById("e-top"), eView = document.getElementById("e-view");
+  var angle = document.getElementById("angle"), shadow = document.getElementById("shadow");
+  var live = document.getElementById("e-live"), tLive = document.getElementById("t-live");
+  var lastPhase = null, liveTimer = null;
+  var done = {};
+
+  function check(task, ok, message) {
+    if (!ok || done[task]) return;
+    done[task] = true;
+    var li = document.querySelector('#tasks li[data-task="' + task + '"]');
+    if (li) li.classList.add("done");
+    tLive.textContent = message;
+  }
+
+  function drawExplore(announce) {
+    var e = Number(angle.value) % 360;
+    eTop.innerHTML = '<title id="e-top-title">Top-down view: the Moon ' + e + ' degrees from the Sun\'s direction</title>' +
+      topView(e, { shadow: shadow.checked });
+    eView.innerHTML = '<title id="e-view-title">The Moon as seen from Earth: ' + describe(e) + '</title>' + earthView(e);
+    var name = PHASES[phaseIndex(e)];
+    document.getElementById("r-phase").textContent = "Close to " + name.toLowerCase();
+    document.getElementById("r-lit").textContent = litPercent(e) + " percent";
+    document.getElementById("r-rise").textContent = riseText(e);
+    document.getElementById("r-day").textContent = "about day " + Math.round(e / 360 * 29.5) + " of 29.5";
+    angle.setAttribute("aria-valuetext", e + " degrees: " + describe(e));
+    if (announce && name !== lastPhase) {
+      clearTimeout(liveTimer);
+      liveTimer = setTimeout(function () { live.textContent = describe(e) + ". Rises " + riseText(e) + "."; }, 250);
+    }
+    lastPhase = name;
+    var full = e >= 170 && e <= 190;
+    check("full", full, "Done: a full moon is on the far side of Earth, opposite the Sun.");
+    check("quarter", (e >= 85 && e <= 95) || (e >= 265 && e <= 275),
+          "Done: at a quarter phase the Moon is a quarter of the way around, and half its Earth-facing side is lit.");
+    check("evening", e >= 20 && e <= 60,
+          "Done: a waxing crescent sits just east of the Sun, so it is low in the west after sunset.");
+    check("shadow", shadow.checked && full,
+          "Done: the shadow points away from the Sun, so it can only reach a full moon. That is a lunar eclipse.");
+  }
+
+  function step(delta) {
+    var v = (Number(angle.value) + delta + 360) % 360;
+    angle.value = String(Math.round(v / 45) * 45 % 360);
+    drawExplore(true);
+  }
+  angle.addEventListener("input", function () { drawExplore(true); });
+  shadow.addEventListener("change", function () { drawExplore(false); });
+  document.getElementById("back").addEventListener("click", function () { step(-45); });
+  document.getElementById("fwd").addEventListener("click", function () { step(45); });
+
+  drawPredict();
+  drawExplore(false);
+})();
+</script>
+</body>
+</html>

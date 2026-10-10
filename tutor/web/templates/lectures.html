@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% from "_nav.html" import site_header %}
+{% block title %}{{ tutor.name }} — Lectures{% endblock %}
+{% block content %}
+
+{{ site_header("lectures", None, student=student, is_admin=is_admin,
+               is_instructor=is_instructor, course=course) }}
+
+<main class="max-w-4xl mx-auto px-4 py-8">
+  {% if missing %}
+    <!-- A lecture that is not there lands here, not on a JSON 404 (plan
+         step 3.5, finding D15). -->
+    <p role="alert" data-missing-lecture
+       class="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+      {{ missing }} Pick another lecture below.
+    </p>
+  {% endif %}
+  <h1 class="text-2xl font-bold text-gray-800 mb-1">Lectures</h1>
+  <p class="text-gray-500 mb-6">Slide decks with narration. Press
+    <span class="font-medium">Play narration</span> to have each slide read aloud and auto-advance.</p>
+
+  {% if not catalog %}
+    <p class="text-gray-500 italic">No rendered lectures yet.</p>
+  {% endif %}
+
+  {% for course, lectures in catalog.items() %}
+    <section class="mb-8">
+      <h2 class="text-lg font-semibold text-purple-800 mb-3">{{ course_label(course) }}</h2>
+      <ul class="grid gap-3 sm:grid-cols-2">
+        {% for lec in lectures %}
+          <li>
+            <a href="/lectures/{{ course }}/{{ lec.num }}" data-track="lecture-open"
+               data-event="lecture_open"
+               data-event-fields='{{ {"course": course, "lecture_num": lec.num}|tojson }}'
+               class="block rounded-lg border border-gray-200 hover:border-purple-400 hover:shadow
+                      bg-white p-4 no-underline transition">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-semibold text-gray-500">Lecture {{ lec.num }}</span>
+                {% if lec.has_audio %}
+                  <span class="text-xs bg-purple-100 text-purple-700 rounded-full px-2 py-0.5">🔊 narrated{% if lec.minutes %} · {{ lec.minutes }} min{% endif %}</span>
+                {% else %}
+                  <span class="text-xs bg-gray-100 text-gray-500 rounded-full px-2 py-0.5">slides only</span>
+                {% endif %}
+              </div>
+              <div class="mt-1 text-gray-800 font-medium">{{ lec.title or "Lecture " ~ lec.num }}</div>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endfor %}
+</main>
+
+{% endblock %}

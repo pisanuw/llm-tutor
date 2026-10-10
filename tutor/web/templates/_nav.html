@@ -1,0 +1,116 @@
+{#
+  The one site header (plan step 3.1, findings D21, D7, D3, D29).
+
+  Every signed-in page renders its header with this macro, so the link set,
+  the current-page style, and the accessible names cannot drift apart again.
+
+    {% from "_nav.html" import site_header %}
+    {% call site_header("map", "Learning map", student=student, is_admin=is_admin,
+                        is_instructor=is_instructor, course=course) %}
+      ...page controls (optional)...
+    {% endcall %}
+
+  current        which link is the current page ("chat", "map", "lectures",
+                 "book", "review", "help", "instructor", "admin", or "" for none)
+  heading        a visually hidden h1 for pages without a visible one (None
+                 when the page shows its own h1)
+  course         the course the Review link opens (it counts per course)
+  alpine_course  bind the Review link to an Alpine `course` variable instead
+  help_modal     Help opens the chat page's help dialog (openHelp()) instead
+  fixed          pin the header to the top (the map page scrolls under it)
+  inline_at      the width from which the links sit inline: "lg" (default)
+                 or "2xl" for a page with many controls of its own (chat)
+
+  Wide screens show the links inline with their text. Narrower screens show a
+  Menu button that opens the same links as full-width, 44 px rows, so every
+  target is labelled and big enough to tap.
+#}
+{% macro _links(current, course, alpine_course, help_modal, is_admin, is_instructor, sheet) %}
+  {%- set base = "flex items-center gap-2 min-h-[44px] px-3 rounded-md no-underline " -%}
+  {%- if sheet -%}
+    {%- set idle = base ~ "text-gray-800 hover:bg-gray-100 w-full" -%}
+    {%- set here = base ~ "bg-blue-50 text-blue-800 font-semibold w-full" -%}
+  {%- else -%}
+    {%- set idle = base ~ "text-blue-100 hover:text-white hover:bg-blue-600" -%}
+    {%- set here = base ~ "bg-blue-900/40 text-white font-semibold" -%}
+  {%- endif -%}
+  {%- set items = [
+      ("chat", "/chat", "💬", "Chat", False),
+      ("map", "/map", "🗺", "Map", False),
+      ("lectures", "/lectures", "🎓", "Lectures", False),
+      ("book", "/book/index.html", "📖", "Book", True),
+      ("review", "/review?course=" ~ (course or course_list[0].id), "🔁", "Review", False),
+  ] -%}
+  {%- set show_book = book_available() -%}
+  {%- for key, href, icon, label, new_tab in items if key != "book" or show_book %}
+  <a href="{{ href }}" class="{{ here if key == current else idle }}"
+     {%- if key == current %} aria-current="page"{% endif %}
+     {%- if new_tab %} target="_blank" rel="noopener"{% endif %}
+     {%- if key == "review" and alpine_course %} :href="'/review?course=' + course"{% endif %}>
+    <span aria-hidden="true">{{ icon }}</span><span>{{ label }}</span>
+  </a>
+  {%- endfor %}
+  {%- if help_modal %}
+  <button type="button" @click="openHelp()" class="{{ idle }} text-left">
+    <span aria-hidden="true">❓</span><span>Help</span>
+  </button>
+  {%- else %}
+  <a href="/help" class="{{ here if current == 'help' else idle }}"
+     {%- if current == 'help' %} aria-current="page"{% endif %}>
+    <span aria-hidden="true">❓</span><span>Help</span>
+  </a>
+  {%- endif %}
+  {%- if is_instructor %}
+  <a href="/instructor" class="{{ here if current == 'instructor' else idle }}"
+     {%- if current == 'instructor' %} aria-current="page"{% endif %}>
+    <span aria-hidden="true">🧑‍🏫</span><span>Instructor</span>
+  </a>
+  {%- endif %}
+  {%- if is_admin %}
+  <a href="/admin" class="{{ here if current == 'admin' else idle }}"
+     {%- if current == 'admin' %} aria-current="page"{% endif %}>
+    <span aria-hidden="true">🛠</span><span>Admin</span>
+  </a>
+  {%- endif %}
+  {#- A POST: logging out changes state (plan step 4.5, finding C19). -#}
+  <form method="post" action="/auth/logout" class="{{ 'w-full' if sheet else 'contents' }}">
+    <button type="submit" class="{{ idle }} text-left">
+      <span aria-hidden="true">🚪</span><span>Log out</span>
+    </button>
+  </form>
+{% endmacro %}
+
+{% macro site_header(current, heading, student=None, is_admin=False, is_instructor=False,
+                     course=None, alpine_course=False, help_modal=False, fixed=False,
+                     inline_at="lg") %}
+{#- Literal class strings, so the Tailwind build finds them. -#}
+{%- set show_inline = {"lg": "hidden lg:flex", "2xl": "hidden 2xl:flex"}[inline_at] -%}
+{%- set show_menu = {"lg": "lg:hidden", "2xl": "2xl:hidden"}[inline_at] -%}
+<header class="bg-blue-700 text-white shadow shrink-0 {% if fixed %}fixed top-0 inset-x-0 z-[60]{% else %}relative z-40{% endif %}">
+  {%- if heading %}<h1 class="sr-only">{{ heading }}</h1>{% endif %}
+  <div class="flex items-center gap-x-2 gap-y-1 px-2 sm:px-4 min-h-[52px]">
+    <a href="/chat" class="font-bold text-lg text-white hover:text-blue-200 no-underline shrink-0
+                           inline-flex items-center min-h-[44px] px-1">{{ tutor.name }}</a>
+    <div class="flex flex-wrap items-center gap-x-2 gap-y-1 min-w-0 flex-1">
+      {%- if caller %}{{ caller() }}{% endif %}
+    </div>
+    <nav aria-label="Main" class="{{ show_inline }} items-center gap-0.5 text-sm shrink-0">
+      {{ _links(current, course, alpine_course, help_modal, is_admin, is_instructor, False) }}
+    </nav>
+    <details class="{{ show_menu }} relative shrink-0" data-nav-menu>
+      <summary class="list-none cursor-pointer select-none inline-flex items-center justify-center
+                      min-h-[44px] min-w-[44px] px-2 rounded-md text-white hover:bg-blue-600
+                      [&::-webkit-details-marker]:hidden">
+        <span aria-hidden="true" class="text-xl leading-none">☰</span><span class="sr-only">Menu</span>
+      </summary>
+      <nav aria-label="Main" class="absolute right-0 mt-1 w-60 max-w-[calc(100vw-1rem)] bg-white
+                                    rounded-lg shadow-xl ring-1 ring-black/10 p-1 z-50 text-sm">
+        {%- if student %}
+        <p class="px-3 py-2 text-xs text-gray-500 truncate">{{ student.email }}</p>
+        {%- endif %}
+        {{ _links(current, course, alpine_course, help_modal, is_admin, is_instructor, True) }}
+      </nav>
+    </details>
+  </div>
+</header>
+{% endmacro %}

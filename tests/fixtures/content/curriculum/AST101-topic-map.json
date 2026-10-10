@@ -1,0 +1,31 @@
+{
+  "course": "AST101",
+  "topics": [
+    {
+      "name": "The celestial sphere and daily motion",
+      "lectures_covered": ["week1-sky.pptx"],
+      "depth": "introductory",
+      "key_concepts": ["celestial sphere", "daily motion", "angular measure"]
+    },
+    {
+      "name": "Phases of the Moon and eclipses",
+      "lectures_covered": ["week2-moon.pptx", "midterm-review.pptx"],
+      "depth": "introductory",
+      "key_concepts": ["lunar phases", "eclipse conditions"]
+    },
+    {
+      "name": "Seasons",
+      "lectures_covered": ["week3-seasons.pptx", "midterm-review.pptx"],
+      "depth": "introductory",
+      "key_concepts": ["axial tilt", "solstices and equinoxes"]
+    },
+    {
+      "name": "Light and telescopes",
+      "lectures_covered": ["week4-light.pptx"],
+      "depth": "introductory",
+      "key_concepts": ["electromagnetic spectrum", "inverse-square law"]
+    }
+  ],
+  "coverage_gaps": [],
+  "suggested_lecture_sequence": ["sky, Moon, seasons, light"]
+}

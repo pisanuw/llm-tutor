@@ -1,0 +1,44 @@
+[
+  {
+    "text": "AST 101 Problem Set 2 covers lectures 3 and 4: the seasons, the Sun's path, light and telescopes. As always, reasoning and diagrams earn the credit. Round numbers are fine; say what you rounded. Due at the final exam. Late days cannot be used on this set because solutions are posted the same day.",
+    "source_file": "AST101-problem-set-2.docx",
+    "section": "Instructions",
+    "doc_type": "document"
+  },
+  {
+    "text": "Earth is closest to the Sun in early January. Use this fact and one other observation to argue that the changing Earth-Sun distance does not cause the seasons. Then explain the two effects of the 23.5 degree axial tilt that do. A flashlight sketch is welcome.",
+    "source_file": "AST101-problem-set-2.docx",
+    "section": "Question 1: Seasons and Distance",
+    "doc_type": "document"
+  },
+  {
+    "text": "Find the altitude of the noon Sun at the June solstice, the equinoxes and the December solstice for latitude 40 degrees north. Then repeat for a city of your choice in the Southern Hemisphere and explain why its seasons are reversed. Show the formula you used and each step.",
+    "source_file": "AST101-problem-set-2.docx",
+    "section": "Question 2: Noon Sun",
+    "doc_type": "document"
+  },
+  {
+    "text": "Using your observing log entry 3, describe how the point on the horizon where the Sun set moved between your two observations. Predict where it will set on the next solstice and on the next equinox, relative to due west. If clouds stopped you, use the diagram from lecture 3 instead and say so.",
+    "source_file": "AST101-problem-set-2.docx",
+    "section": "Question 3: Sunset Point",
+    "doc_type": "document"
+  },
+  {
+    "text": "Put these in order from longest to shortest wavelength: X-rays, radio waves, green light, infrared, ultraviolet. Then put them in order of photon energy. Explain why astronomers need telescopes in space to observe two of them.",
+    "source_file": "AST101-problem-set-2.docx",
+    "section": "Question 4: The Spectrum",
+    "doc_type": "document"
+  },
+  {
+    "text": "Two identical lamps are on a long, straight road. The far lamp looks one twenty-fifth as bright as the near one. How many times farther away is it? Then answer: if a star were moved to three times its current distance, by what factor would its apparent brightness change? Show the ratio in words first.",
+    "source_file": "AST101-problem-set-2.docx",
+    "section": "Question 5: Inverse-Square Law",
+    "doc_type": "document"
+  },
+  {
+    "text": "A shop sells two telescopes: one with a 7 cm lens advertised at 450 times magnification, and one with a 20 cm mirror advertised at 150 times. Which would you buy to see faint galaxies, and how many times more light does it gather? Which shows finer detail? Explain why the magnification number matters least.",
+    "source_file": "AST101-problem-set-2.docx",
+    "section": "Question 6: Telescope Aperture",
+    "doc_type": "document"
+  }
+]

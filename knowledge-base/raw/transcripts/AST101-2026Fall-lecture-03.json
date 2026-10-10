@@ -1,0 +1,126 @@
+{
+  "source_file": "AST101-2026Fall-lecture-03.mp4",
+  "full_text": "Alright, good morning. Quick sky report and then a question that most college graduates get wrong on camera. No pressure. Why is it hot in summer and cold in winter? Write your answer down. Pencils are cheap. Commit to something. Okay, show of hands. Who wrote that Earth is closer to the Sun in summer? Yeah. Lots of you. That's the favorite answer every year. It's a good wrong answer, because closer usually does mean warmer. Stand closer to a campfire, you get warmer. Totally reasonable. But here are two facts that kill it. First, Earth is closest to the Sun in early January. About a hundred and forty-seven million kilometers. Farthest in early July, about a hundred and fifty-two million. So in the north we're closest in the middle of winter. Second fact. When it's summer here it's winter in Australia. Same planet, same day, same distance from the Sun. Distance can't be doing it. So what is? The tilt. Earth's axis is tilted twenty-three and a half degrees, and it keeps pointing the same direction in space all year. Watch the globe. I carry it around the lamp, and the axis always points at the same spot on the back wall. In June, the north leans toward the lamp. In December, same tilt, but now the north leans away. The axis didn't flip. Earth moved to the other side of the Sun. Now, why does leaning toward the Sun make it hotter? Grab a flashlight and a sheet of graph paper with your neighbor. Shine it straight down. Count the squares it lights. Now tilt it, same height, and count again. What happened? Right, the tilted beam covers about twice as many squares, and each one is dimmer. Same flashlight, same energy, spread over more area. That's summer versus winter. Summer sunlight comes in steep, like the straight beam. Winter sunlight comes in low and slanted, like the tilted one. And there's a second effect from the same tilt. Longer days. Up here around forty-seven degrees north you get about sixteen hours of daylight in June. In December, about eight and a half. So summer gets more direct light and more hours of it. Two effects, one cause. Okay, the special days. The June solstice, around June twenty-first, is when the Sun is as far north as it gets. Longest day of the year up here. December solstice, the opposite. And the equinoxes, in March and September, the Sun is right over the equator, and day and night are about equal everywhere. Solstice means the Sun stands still. Its noon height stops climbing and turns around. It doesn't mean it's the hottest day. The hottest weather comes weeks later, because the oceans take forever to warm up. Like a pot that keeps heating after you turn the burner down. One formula today, and it's a friendly one. Noon altitude of the Sun is ninety degrees minus your latitude plus the Sun's declination. Declination is plus twenty-three and a half in June, zero at the equinoxes, minus twenty-three and a half in December. Try it for forty-seven north. June: ninety minus forty-seven plus twenty-three and a half is sixty-six and a half degrees. December: nineteen and a half. That's why winter shadows are so long. Observing log this week: pick a landmark, a tree, a building, and note where the Sun sets behind it. Do it again in two weeks. It moves. See you Thursday.",
+  "segments": [
+    {
+      "start": 3.0,
+      "end": 10.7,
+      "text": "Alright, good morning. Quick sky report and then a question that most college graduates get wrong on camera. No pressure."
+    },
+    {
+      "start": 11.3,
+      "end": 19.0,
+      "text": "Why is it hot in summer and cold in winter? Write your answer down. Pencils are cheap. Commit to something."
+    },
+    {
+      "start": 19.6,
+      "end": 29.2,
+      "text": "Okay, show of hands. Who wrote that Earth is closer to the Sun in summer? Yeah. Lots of you. That's the favorite answer every year."
+    },
+    {
+      "start": 29.8,
+      "end": 37.9,
+      "text": "It's a good wrong answer, because closer usually does mean warmer. Stand closer to a campfire, you get warmer. Totally reasonable."
+    },
+    {
+      "start": 38.5,
+      "end": 48.1,
+      "text": "But here are two facts that kill it. First, Earth is closest to the Sun in early January. About a hundred and forty-seven million kilometers."
+    },
+    {
+      "start": 48.7,
+      "end": 56.8,
+      "text": "Farthest in early July, about a hundred and fifty-two million. So in the north we're closest in the middle of winter."
+    },
+    {
+      "start": 57.4,
+      "end": 66.6,
+      "text": "Second fact. When it's summer here it's winter in Australia. Same planet, same day, same distance from the Sun. Distance can't be doing it."
+    },
+    {
+      "start": 67.2,
+      "end": 76.8,
+      "text": "So what is? The tilt. Earth's axis is tilted twenty-three and a half degrees, and it keeps pointing the same direction in space all year."
+    },
+    {
+      "start": 117.4,
+      "end": 128.9,
+      "text": "Watch the globe. I carry it around the lamp, and the axis always points at the same spot on the back wall. In June, the north leans toward the lamp."
+    },
+    {
+      "start": 129.5,
+      "end": 138.3,
+      "text": "In December, same tilt, but now the north leans away. The axis didn't flip. Earth moved to the other side of the Sun."
+    },
+    {
+      "start": 138.9,
+      "end": 147.4,
+      "text": "Now, why does leaning toward the Sun make it hotter? Grab a flashlight and a sheet of graph paper with your neighbor."
+    },
+    {
+      "start": 208.0,
+      "end": 215.3,
+      "text": "Shine it straight down. Count the squares it lights. Now tilt it, same height, and count again. What happened?"
+    },
+    {
+      "start": 215.9,
+      "end": 224.7,
+      "text": "Right, the tilted beam covers about twice as many squares, and each one is dimmer. Same flashlight, same energy, spread over more area."
+    },
+    {
+      "start": 225.3,
+      "end": 234.5,
+      "text": "That's summer versus winter. Summer sunlight comes in steep, like the straight beam. Winter sunlight comes in low and slanted, like the tilted one."
+    },
+    {
+      "start": 235.1,
+      "end": 245.1,
+      "text": "And there's a second effect from the same tilt. Longer days. Up here around forty-seven degrees north you get about sixteen hours of daylight in June."
+    },
+    {
+      "start": 245.7,
+      "end": 254.2,
+      "text": "In December, about eight and a half. So summer gets more direct light and more hours of it. Two effects, one cause."
+    },
+    {
+      "start": 254.8,
+      "end": 265.6,
+      "text": "Okay, the special days. The June solstice, around June twenty-first, is when the Sun is as far north as it gets. Longest day of the year up here."
+    },
+    {
+      "start": 266.2,
+      "end": 276.2,
+      "text": "December solstice, the opposite. And the equinoxes, in March and September, the Sun is right over the equator, and day and night are about equal everywhere."
+    },
+    {
+      "start": 276.8,
+      "end": 284.9,
+      "text": "Solstice means the Sun stands still. Its noon height stops climbing and turns around. It doesn't mean it's the hottest day."
+    },
+    {
+      "start": 285.5,
+      "end": 295.5,
+      "text": "The hottest weather comes weeks later, because the oceans take forever to warm up. Like a pot that keeps heating after you turn the burner down."
+    },
+    {
+      "start": 296.1,
+      "end": 304.9,
+      "text": "One formula today, and it's a friendly one. Noon altitude of the Sun is ninety degrees minus your latitude plus the Sun's declination."
+    },
+    {
+      "start": 305.5,
+      "end": 315.1,
+      "text": "Declination is plus twenty-three and a half in June, zero at the equinoxes, minus twenty-three and a half in December. Try it for forty-seven north."
+    },
+    {
+      "start": 360.7,
+      "end": 371.1,
+      "text": "June: ninety minus forty-seven plus twenty-three and a half is sixty-six and a half degrees. December: nineteen and a half. That's why winter shadows are so long."
+    },
+    {
+      "start": 371.7,
+      "end": 383.2,
+      "text": "Observing log this week: pick a landmark, a tree, a building, and note where the Sun sets behind it. Do it again in two weeks. It moves. See you Thursday."
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+/* Course book styles: callouts, self-check quizzes and the narration player.
+   Colors are translucent where possible so the light (cosmo) and dark
+   (darkly) themes both read well. Change the two accents to your own. */
+
+:root {
+  --book-accent: #3730a3;   /* deep indigo, the decks' primary */
+  --book-warm: #b45309;     /* warm amber, the decks' accent */
+  --book-warn: #c0392b;
+  --book-good: #27744a;
+}
+
+h1, h2, h3, h4 {
+  letter-spacing: -0.01em;
+}
+
+/* "Try it" activity block (optional; Quarto callouts work too) */
+.try-it {
+  border-left: 4px solid var(--book-accent);
+  background: rgba(55, 48, 163, 0.06);
+  padding: 0.8em 1em;
+  margin: 1em 0;
+  border-radius: 4px;
+}
+.try-it::before {
+  content: "Try it";
+  display: block;
+  font-weight: 700;
+  color: var(--book-accent);
+  margin-bottom: 0.3em;
+  text-transform: uppercase;
+  font-size: 0.78em;
+  letter-spacing: 0.06em;
+}
+
+/* "Common mistake" warning block */
+.gotcha {
+  border-left: 4px solid var(--book-warn);
+  background: rgba(192, 57, 43, 0.07);
+  padding: 0.8em 1em;
+  margin: 1em 0;
+  border-radius: 4px;
+}
+.gotcha::before {
+  content: "Common mistake";
+  display: block;
+  font-weight: 700;
+  color: var(--book-warn);
+  margin-bottom: 0.3em;
+  text-transform: uppercase;
+  font-size: 0.78em;
+  letter-spacing: 0.06em;
+}
+
+/* Short instructor commentary, in voice */
+.instructor-note {
+  border-left: 4px solid var(--book-good);
+  background: rgba(39, 116, 74, 0.07);
+  padding: 0.8em 1em;
+  margin: 1em 0;
+  border-radius: 4px;
+  font-style: italic;
+}
+.instructor-note::before {
+  content: "Note";
+  display: block;
+  font-weight: 700;
+  color: var(--book-good);
+  margin-bottom: 0.3em;
+  font-style: normal;
+  text-transform: uppercase;
+  font-size: 0.78em;
+  letter-spacing: 0.06em;
+}
+
+/* Self-check quiz widget (quiz.js) */
+.quiz {
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 6px;
+  padding: 1em;
+  margin: 1.2em 0;
+  background: rgba(127, 127, 127, 0.05);
+}
+.quiz .question {
+  font-weight: 600;
+  margin-bottom: 0.6em;
+}
+.quiz ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+.quiz li {
+  margin: 0.3em 0;
+}
+.quiz label {
+  display: block;
+  padding: 0.4em 0.6em;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.quiz label:hover { background: rgba(127, 127, 127, 0.12); }
+.quiz .correct label { border-color: var(--book-good); background: rgba(39, 116, 74, 0.15); }
+.quiz .wrong label   { border-color: var(--book-warn); background: rgba(192, 57, 43, 0.15); }
+.quiz .explain {
+  margin-top: 0.7em;
+  padding: 0.6em;
+  background: rgba(127, 127, 127, 0.1);
+  border-radius: 4px;
+  font-size: 0.92em;
+  display: none;
+}
+.quiz.revealed .explain { display: block; }
+
+/* Compact lecture-summary boxes */
+.summary-card {
+  background: rgba(127, 127, 127, 0.08);
+  border-radius: 6px;
+  padding: 1em 1.2em;
+  margin: 1.5em 0;
+}
+.summary-card h4 {
+  margin-top: 0;
+  color: var(--book-accent);
+}
+
+/* Side-by-side comparison */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1em;
+  margin: 1em 0;
+}
+@media (max-width: 700px) {
+  .compare { grid-template-columns: 1fr; }
+}
+.compare .label {
+  font-size: 0.82em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.75;
+}
+
+/* Wide tables scroll inside the page on a phone instead of widening it */
+main table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Chapter narration (narration.js): a player for a signed-in student, a
+   sign-in line otherwise; the clips are gated, the page is not. */
+.book-narration {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6em;
+  margin: 0 0 1.2em;
+  padding: 0.6em 0.9em;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 6px;
+  background: rgba(127, 127, 127, 0.1);
+  font-size: 0.95em;
+}
+.book-narration audio {
+  flex: 1 1 260px;
+  min-width: 0;
+  max-width: 100%;
+}
