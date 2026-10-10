@@ -1,0 +1,112 @@
+# Daily per-user activity report.
+#
+# Runs read-only against the production database (DATABASE_URL), writes one
+# markdown file per active student plus a digest, and emails the digest via
+# Resend. The per-student files are not uploaded: an artifact would keep student
+# activity readable by anyone with repo access for 30 days, outside the
+# retention policy, and the emailed digest is the report. No-ops cleanly when
+# DATABASE_URL is unset (e.g. on forks). The report never writes to the DB.
+
+name: daily-report
+
+on:
+  schedule:
+    - cron: "45 8 * * *"   # 08:45 UTC daily: 01:45 PDT, 00:45 PST; before the auditor
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: "Look-back window in hours"
+        default: "24"
+
+# One run at a time: a run that starts while another is going waits for it
+# (plan step 6.4, finding E19).
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-web.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-web.txt
+
+      - name: Generate report
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          REPORT_EMAIL: ${{ secrets.REPORT_EMAIL }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          SLOW_TURN_MS: ${{ secrets.SLOW_TURN_MS }}
+          # Public app URL for the links to flagged students' conversations.
+          BASE_URL: ${{ vars.SITE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "DATABASE_URL not set; skipping daily report."
+            exit 0
+          fi
+          HOURS="${{ github.event.inputs.hours }}"
+          python -m scripts.daily_report --hours "${HOURS:-24}"
+      - name: Thumbs-down report (emails only if a reply was flagged)
+        # Runs even when the digest step failed: a broken digest must not
+        # also lose the day's thumbs-down (review step 0.8, F54).
+        if: always()
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          REPORT_EMAIL: ${{ secrets.REPORT_EMAIL }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          # Public app URL for the deep links in the email (admin transcript, #msg-<id>).
+          BASE_URL: ${{ vars.SITE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "DATABASE_URL not set; skipping thumbs-down report."
+            exit 0
+          fi
+          HOURS="${{ github.event.inputs.hours }}"
+          python -m scripts.feedback_report --hours "${HOURS:-24}"
+
+      - name: Email alert on failure
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'EOF'
+          import json, os, urllib.request
+
+          key = os.environ.get("RESEND_API_KEY", "").strip()
+          to = [e.strip() for e in os.environ.get("ADMIN_EMAILS", "").split(",") if e.strip()]
+          if not key or not to:
+              print("No RESEND_API_KEY/ADMIN_EMAILS secret; cannot email. The failed run is the only signal.")
+              raise SystemExit(0)
+          body = {
+              "from": os.environ.get("FROM_EMAIL", "tutor@yourdomain.com"),
+              "to": to,
+              "subject": "[tutor] daily-report FAILED",
+              "text": ("The daily digest or the thumbs-down report did not run to the end, so this "
+                       "morning's email is missing or incomplete.\n\nRun log: " + os.environ["RUN_URL"] + "\n"),
+          }
+          req = urllib.request.Request(
+              "https://api.resend.com/emails",
+              data=json.dumps(body).encode(),
+              headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+          )
+          try:
+              print("Resend response:", urllib.request.urlopen(req, timeout=15).status)
+          except Exception as exc:
+              print("the failure email itself failed:", exc)
+          EOF

@@ -1,0 +1,128 @@
+{
+  "filename": "cosmology.pptx",
+  "lecture_title": "AST 102: Cosmology",
+  "slide_count": 10,
+  "slides": [
+    {
+      "slide_number": 1,
+      "layout_name": "TITLE",
+      "title": "AST 102: Cosmology",
+      "body_text": [
+        "The expanding universe",
+        "Dr. Alex Morgan"
+      ],
+      "speaker_notes": "Today we cover everything. All of it. Fourteen billion years, seventy-five minutes.",
+      "has_code": false
+    },
+    {
+      "slide_number": 2,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Doppler Shift",
+      "body_text": [
+        "A source moving away: waves stretched, longer wavelength",
+        "A source moving closer: waves squeezed, shorter wavelength",
+        "Sound: a siren's pitch drops as it passes"
+      ],
+      "speaker_notes": "Swing a buzzer on a string. Hear the pitch go up and down.",
+      "has_code": false
+    },
+    {
+      "slide_number": 3,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Measuring Redshift",
+      "body_text": [
+        "z = (observed wavelength - rest wavelength) / rest wavelength",
+        "For small z, speed is about z times the speed of light",
+        "Example: hydrogen-alpha, rest 656.3 nm, observed 662.9 nm, z = 0.010, about 3,000 km/s"
+      ],
+      "speaker_notes": "Rest wavelengths come from laboratory spectra. A shifted line is a speedometer.",
+      "has_code": false
+    },
+    {
+      "slide_number": 4,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Hubble's Law",
+      "body_text": [
+        "v = H0 x d",
+        "Farther galaxies recede faster",
+        "d = v / H0 turns a redshift into a distance",
+        "Example: 7,000 km/s / 70 km/s/Mpc = 100 Mpc"
+      ],
+      "speaker_notes": "Twice the distance, twice the speed.",
+      "has_code": false
+    },
+    {
+      "slide_number": 5,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Hubble Constant",
+      "body_text": [
+        "H0 is about 70 km/s per megaparsec",
+        "Different methods give values from about 67 to 73",
+        "The disagreement is an active research question"
+      ],
+      "speaker_notes": "We use 70 for round numbers. Tell students the disagreement is real and unsolved.",
+      "has_code": false
+    },
+    {
+      "slide_number": 6,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Expansion of Space",
+      "body_text": [
+        "Space itself stretches; galaxies are carried apart",
+        "Every galaxy sees the others receding: there is no center",
+        "Gravity holds galaxies and clusters together; they do not expand"
+      ],
+      "speaker_notes": "Raisin bread: every raisin moves away from every other, and the farther ones move faster.",
+      "has_code": false
+    },
+    {
+      "slide_number": 7,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Age of the Universe",
+      "body_text": [
+        "Run the expansion backward",
+        "Age is roughly 1 / H0, about 14 billion years for H0 = 70",
+        "Detailed measurements: 13.8 billion years"
+      ],
+      "speaker_notes": "The oldest stars are a little younger than that, which is reassuring.",
+      "has_code": false
+    },
+    {
+      "slide_number": 8,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Cosmic Microwave Background",
+      "body_text": [
+        "A faint microwave glow from every direction",
+        "Released about 380,000 years after the Big Bang, when the universe became transparent",
+        "Today it matches a temperature of about 2.7 K",
+        "Tiny ripples in it are the seeds of galaxies"
+      ],
+      "speaker_notes": "The baby picture of the universe, stretched from visible light into microwaves by expansion.",
+      "has_code": false
+    },
+    {
+      "slide_number": 9,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Light Elements",
+      "body_text": [
+        "The first few minutes were hot enough to fuse hydrogen into helium",
+        "Prediction: about 75 percent hydrogen, 25 percent helium by mass, a trace of lithium",
+        "Measurements in the oldest gas match"
+      ],
+      "speaker_notes": "Three independent lines of evidence: the expansion, the microwave background, the light elements.",
+      "has_code": false
+    },
+    {
+      "slide_number": 10,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Open Questions",
+      "body_text": [
+        "The expansion is speeding up, attributed to dark energy",
+        "Dark energy makes up about 68 percent of the universe's energy",
+        "What dark matter and dark energy are remains unknown"
+      ],
+      "speaker_notes": "End on honesty: we know the history well and the ingredients poorly.",
+      "has_code": false
+    }
+  ]
+}

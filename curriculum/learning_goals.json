@@ -1,0 +1,544 @@
+{
+  "goals": [
+    {
+      "id": "AST101-L01-celestial-sphere",
+      "title": "Describe the celestial sphere model",
+      "description": "Student can describe the sky as a sphere centered on the observer, and name the celestial poles, the celestial equator, the horizon and the zenith.",
+      "course": "AST101",
+      "lecture": 1,
+      "slide_anchor": {
+        "lecture": 1,
+        "slide": 3,
+        "title": "The Celestial Sphere"
+      },
+      "book_anchor": {
+        "chapter": "ast101-01-the-sky",
+        "section_id": "the-celestial-sphere",
+        "title": "The Celestial Sphere"
+      },
+      "hook": "Find your way around the sky the way navigators have for thousands of years."
+    },
+    {
+      "id": "AST101-L01-daily-motion",
+      "title": "Explain why stars rise and set",
+      "description": "Student can explain the daily motion of the Sun and stars as the result of Earth's rotation, and predict which stars never set from a given latitude.",
+      "course": "AST101",
+      "lecture": 1,
+      "slide_anchor": {
+        "lecture": 1,
+        "slide": 6,
+        "title": "Why the Sky Turns"
+      },
+      "book_anchor": {
+        "chapter": "ast101-01-the-sky",
+        "section_id": "daily-motion",
+        "title": "Why the Sky Turns"
+      },
+      "hook": "Know why the sky turns every night, and which stars you will always see."
+    },
+    {
+      "id": "AST101-L01-angular-measure",
+      "title": "Estimate angles on the sky",
+      "description": "Student can estimate angular sizes and separations on the sky in degrees using an outstretched hand, and convert between degrees, arcminutes and arcseconds.",
+      "course": "AST101",
+      "lecture": 1,
+      "slide_anchor": {
+        "lecture": 1,
+        "slide": 9,
+        "title": "Measuring Angles With Your Hand"
+      },
+      "book_anchor": {
+        "chapter": "ast101-01-the-sky",
+        "section_id": "measuring-angles",
+        "title": "Measuring Angles With Your Hand"
+      },
+      "hook": "Measure the sky with nothing but your hand."
+    },
+    {
+      "id": "AST101-L02-explain-moon-phases",
+      "title": "Explain the cause of lunar phases",
+      "description": "Student can explain the Moon's phases from the changing angle between the Sun, the Moon and Earth, and rule out Earth's shadow as the cause.",
+      "course": "AST101",
+      "lecture": 2,
+      "slide_anchor": {
+        "lecture": 2,
+        "slide": 4,
+        "title": "What Causes the Phases?"
+      },
+      "book_anchor": {
+        "chapter": "ast101-02-moon",
+        "section_id": "phases",
+        "title": "What Causes the Phases?"
+      },
+      "hook": "Replace the most common wrong idea about the Moon with the right one.",
+      "threshold": true
+    },
+    {
+      "id": "AST101-L02-eclipse-conditions",
+      "title": "State the conditions for an eclipse",
+      "description": "Student can state when a solar or lunar eclipse can happen, using the Moon's phase and the tilt of its orbit, and explain why eclipses do not happen every month.",
+      "course": "AST101",
+      "lecture": 2,
+      "slide_anchor": {
+        "lecture": 2,
+        "slide": 10,
+        "title": "Why Not Every Month?"
+      },
+      "book_anchor": {
+        "chapter": "ast101-02-moon",
+        "section_id": "eclipses",
+        "title": "Why Not Every Month?"
+      },
+      "hook": "Predict eclipses instead of waiting to hear about them."
+    },
+    {
+      "id": "AST101-L02-explain-tides",
+      "title": "Explain why there are two tides a day",
+      "description": "Student can explain the two daily high tides from the difference in the Moon's gravitational pull across Earth, and say why spring tides happen at new and full moon.",
+      "course": "AST101",
+      "lecture": 2,
+      "slide_anchor": {
+        "lecture": 2,
+        "slide": 14,
+        "title": "Two Bulges, Two Tides"
+      },
+      "book_anchor": {
+        "chapter": "ast101-02-moon",
+        "section_id": "tides",
+        "title": "Two Bulges, Two Tides"
+      },
+      "hook": "See the Moon's pull at the beach, twice a day."
+    },
+    {
+      "id": "AST101-L03-axial-tilt-seasons",
+      "title": "Explain the seasons from axial tilt",
+      "description": "Student can explain the seasons from the tilt of Earth's axis (the angle of sunlight and the length of the day) and rule out the changing Earth-Sun distance as the cause.",
+      "course": "AST101",
+      "lecture": 3,
+      "slide_anchor": {
+        "lecture": 3,
+        "slide": 5,
+        "title": "Tilt, Not Distance"
+      },
+      "book_anchor": {
+        "chapter": "ast101-03-seasons",
+        "section_id": "the-cause-of-the-seasons",
+        "title": "Tilt, Not Distance"
+      },
+      "hook": "Answer the question most graduates get wrong on camera.",
+      "threshold": true
+    },
+    {
+      "id": "AST101-L03-solstice-equinox",
+      "title": "Identify solstices and equinoxes",
+      "description": "Student can identify the solstices and equinoxes on a diagram of Earth's orbit and state the Sun's position and the length of the day at each.",
+      "course": "AST101",
+      "lecture": 3,
+      "slide_anchor": {
+        "lecture": 3,
+        "slide": 9,
+        "title": "Solstices and Equinoxes"
+      },
+      "book_anchor": {
+        "chapter": "ast101-03-seasons",
+        "section_id": "solstices-and-equinoxes",
+        "title": "Solstices and Equinoxes"
+      },
+      "hook": "Know what the longest and shortest days really mark."
+    },
+    {
+      "id": "AST101-L03-sun-path",
+      "title": "Predict the Sun's path by season",
+      "description": "Student can predict where the Sun rises and sets and how high it climbs at noon on a given date and latitude.",
+      "course": "AST101",
+      "lecture": 3,
+      "slide_anchor": {
+        "lecture": 3,
+        "slide": 13,
+        "title": "The Sun's Path Across the Sky"
+      },
+      "book_anchor": {
+        "chapter": "ast101-03-seasons",
+        "section_id": "the-suns-path",
+        "title": "The Sun's Path Across the Sky"
+      },
+      "hook": "Plan a garden, a photo or a solar panel by the Sun's path."
+    },
+    {
+      "id": "AST101-L04-electromagnetic-spectrum",
+      "title": "Order the electromagnetic spectrum",
+      "description": "Student can order the bands of the electromagnetic spectrum by wavelength, frequency and photon energy, and relate wavelength to color.",
+      "course": "AST101",
+      "lecture": 4,
+      "slide_anchor": {
+        "lecture": 4,
+        "slide": 4,
+        "title": "The Spectrum"
+      },
+      "book_anchor": {
+        "chapter": "ast101-04-light",
+        "section_id": "the-electromagnetic-spectrum",
+        "title": "The Spectrum"
+      },
+      "hook": "Read the universe in light your eyes cannot see."
+    },
+    {
+      "id": "AST101-L04-inverse-square-law",
+      "title": "Apply the inverse-square law",
+      "description": "Student can use the inverse-square law to compute how the apparent brightness of a source changes when its distance changes.",
+      "course": "AST101",
+      "lecture": 4,
+      "slide_anchor": {
+        "lecture": 4,
+        "slide": 8,
+        "title": "Brightness Falls Off With Distance"
+      },
+      "book_anchor": {
+        "chapter": "ast101-04-light",
+        "section_id": "the-inverse-square-law",
+        "title": "Brightness Falls Off With Distance"
+      },
+      "hook": "Tell how far away a light is from how bright it looks."
+    },
+    {
+      "id": "AST101-L04-telescope-aperture",
+      "title": "Explain why aperture matters",
+      "description": "Student can explain why a telescope's light-gathering power grows with the square of its aperture and how aperture limits the finest detail it can resolve.",
+      "course": "AST101",
+      "lecture": 4,
+      "slide_anchor": {
+        "lecture": 4,
+        "slide": 12,
+        "title": "Bigger Is Better"
+      },
+      "book_anchor": {
+        "chapter": "ast101-04-light",
+        "section_id": "telescopes",
+        "title": "Bigger Is Better"
+      },
+      "hook": "Know what actually makes one telescope better than another."
+    },
+    {
+      "id": "AST102-L01-parallax-distance",
+      "title": "Compute a star's distance from parallax",
+      "description": "Student can compute a star's distance in parsecs from its parallax angle in arcseconds, and explain why parallax only works for nearby stars.",
+      "course": "AST102",
+      "lecture": 1,
+      "slide_anchor": {
+        "lecture": 1,
+        "slide": 5,
+        "title": "Parallax"
+      },
+      "book_anchor": {
+        "chapter": "ast102-01-measuring-stars",
+        "section_id": "parallax",
+        "title": "Parallax"
+      },
+      "hook": "Measure the distance to a star with geometry alone.",
+      "threshold": true
+    },
+    {
+      "id": "AST102-L01-magnitude-scale",
+      "title": "Compare stars on the magnitude scale",
+      "description": "Student can compare the brightness of two stars from their magnitudes, remembering that the scale runs backwards and that 5 magnitudes is a factor of 100.",
+      "course": "AST102",
+      "lecture": 1,
+      "slide_anchor": {
+        "lecture": 1,
+        "slide": 9,
+        "title": "Magnitudes"
+      },
+      "book_anchor": {
+        "chapter": "ast102-01-measuring-stars",
+        "section_id": "magnitudes",
+        "title": "Magnitudes"
+      },
+      "hook": "Decode the strange scale astronomers use for brightness."
+    },
+    {
+      "id": "AST102-L01-spectral-classes",
+      "title": "Read a star's spectral class",
+      "description": "Student can order the spectral classes O B A F G K M by surface temperature and color, and place the Sun among them.",
+      "course": "AST102",
+      "lecture": 1,
+      "slide_anchor": {
+        "lecture": 1,
+        "slide": 13,
+        "title": "OBAFGKM"
+      },
+      "book_anchor": {
+        "chapter": "ast102-01-measuring-stars",
+        "section_id": "spectral-classes",
+        "title": "OBAFGKM"
+      },
+      "hook": "Know a star's temperature from its color."
+    },
+    {
+      "id": "AST102-L02-hr-diagram",
+      "title": "Place stars on the H-R diagram",
+      "description": "Student can place a star on the Hertzsprung-Russell diagram from its temperature and luminosity, and name the main sequence, giants and white dwarfs.",
+      "course": "AST102",
+      "lecture": 2,
+      "slide_anchor": {
+        "lecture": 2,
+        "slide": 4,
+        "title": "The H-R Diagram"
+      },
+      "book_anchor": {
+        "chapter": "ast102-02-lives-of-stars",
+        "section_id": "the-hr-diagram",
+        "title": "The H-R Diagram"
+      },
+      "hook": "Read the one chart that organizes every star.",
+      "threshold": true
+    },
+    {
+      "id": "AST102-L02-main-sequence-fusion",
+      "title": "Explain fusion on the main sequence",
+      "description": "Student can explain how hydrogen fusion in the core powers a main-sequence star and why more massive stars burn out faster.",
+      "course": "AST102",
+      "lecture": 2,
+      "slide_anchor": {
+        "lecture": 2,
+        "slide": 9,
+        "title": "Hydrogen Into Helium"
+      },
+      "book_anchor": {
+        "chapter": "ast102-02-lives-of-stars",
+        "section_id": "fusion",
+        "title": "Hydrogen Into Helium"
+      },
+      "hook": "Understand why the Sun shines and how long it will."
+    },
+    {
+      "id": "AST102-L02-stellar-endpoints",
+      "title": "Predict a star's end state from its mass",
+      "description": "Student can predict whether a star ends as a white dwarf, a neutron star or a black hole from its initial mass.",
+      "course": "AST102",
+      "lecture": 2,
+      "slide_anchor": {
+        "lecture": 2,
+        "slide": 14,
+        "title": "How Stars Die"
+      },
+      "book_anchor": {
+        "chapter": "ast102-02-lives-of-stars",
+        "section_id": "stellar-endpoints",
+        "title": "How Stars Die"
+      },
+      "hook": "Know how the Sun will die, and how the giants do."
+    },
+    {
+      "id": "AST102-L03-milky-way-structure",
+      "title": "Describe the Milky Way's structure",
+      "description": "Student can describe the Milky Way's disk, bulge and halo, where the Sun sits in it, and why we see the galaxy as a band across the sky.",
+      "course": "AST102",
+      "lecture": 3,
+      "slide_anchor": {
+        "lecture": 3,
+        "slide": 4,
+        "title": "Our Galaxy"
+      },
+      "book_anchor": {
+        "chapter": "ast102-03-galaxies",
+        "section_id": "the-milky-way",
+        "title": "Our Galaxy"
+      },
+      "hook": "Know your address in the galaxy."
+    },
+    {
+      "id": "AST102-L03-galaxy-types",
+      "title": "Classify galaxies by shape",
+      "description": "Student can classify a galaxy as spiral, elliptical or irregular from an image and relate each type to its stars and gas.",
+      "course": "AST102",
+      "lecture": 3,
+      "slide_anchor": {
+        "lecture": 3,
+        "slide": 9,
+        "title": "Spirals, Ellipticals, Irregulars"
+      },
+      "book_anchor": {
+        "chapter": "ast102-03-galaxies",
+        "section_id": "galaxy-types",
+        "title": "Spirals, Ellipticals, Irregulars"
+      },
+      "hook": "Sort the galaxies in any deep-sky photograph."
+    },
+    {
+      "id": "AST102-L03-dark-matter-evidence",
+      "title": "Explain the rotation-curve evidence for dark matter",
+      "description": "Student can explain why flat galaxy rotation curves imply more mass than the visible stars and gas, and what that unseen mass is called.",
+      "course": "AST102",
+      "lecture": 3,
+      "slide_anchor": {
+        "lecture": 3,
+        "slide": 13,
+        "title": "Rotation Curves"
+      },
+      "book_anchor": {
+        "chapter": "ast102-03-galaxies",
+        "section_id": "dark-matter",
+        "title": "Rotation Curves"
+      },
+      "hook": "See the evidence for matter no one has ever seen."
+    },
+    {
+      "id": "AST102-L04-explain-redshift",
+      "title": "Explain cosmological redshift",
+      "description": "Student can explain redshift as the stretching of light's wavelength and compute a redshift from an observed and a rest wavelength.",
+      "course": "AST102",
+      "lecture": 4,
+      "slide_anchor": {
+        "lecture": 4,
+        "slide": 4,
+        "title": "Redshift"
+      },
+      "book_anchor": {
+        "chapter": "ast102-04-expanding-universe",
+        "section_id": "redshift",
+        "title": "Redshift"
+      },
+      "hook": "Read a galaxy's motion from the color of its light."
+    },
+    {
+      "id": "AST102-L04-hubble-law",
+      "title": "Use Hubble's law to estimate a distance",
+      "description": "Student can use Hubble's law (velocity equals the Hubble constant times distance) to estimate a galaxy's distance from its recession velocity.",
+      "course": "AST102",
+      "lecture": 4,
+      "slide_anchor": {
+        "lecture": 4,
+        "slide": 8,
+        "title": "Hubble's Law"
+      },
+      "book_anchor": {
+        "chapter": "ast102-04-expanding-universe",
+        "section_id": "hubbles-law",
+        "title": "Hubble's Law"
+      },
+      "hook": "Measure the size of the universe with one equation.",
+      "threshold": true
+    },
+    {
+      "id": "AST102-L04-big-bang-evidence",
+      "title": "List the evidence for the Big Bang",
+      "description": "Student can list the main evidence for the Big Bang (the expansion, the cosmic microwave background, the abundance of light elements) and say what each shows.",
+      "course": "AST102",
+      "lecture": 4,
+      "slide_anchor": {
+        "lecture": 4,
+        "slide": 12,
+        "title": "The Evidence"
+      },
+      "book_anchor": {
+        "chapter": "ast102-04-expanding-universe",
+        "section_id": "big-bang-evidence",
+        "title": "The Evidence"
+      },
+      "hook": "Know why astronomers are confident the universe had a beginning."
+    }
+  ],
+  "edges": [
+    {
+      "from": "AST101-L01-celestial-sphere",
+      "to": "AST101-L01-daily-motion"
+    },
+    {
+      "from": "AST101-L01-celestial-sphere",
+      "to": "AST101-L01-angular-measure"
+    },
+    {
+      "from": "AST101-L01-daily-motion",
+      "to": "AST101-L02-explain-moon-phases"
+    },
+    {
+      "from": "AST101-L02-explain-moon-phases",
+      "to": "AST101-L02-eclipse-conditions"
+    },
+    {
+      "from": "AST101-L02-explain-moon-phases",
+      "to": "AST101-L02-explain-tides"
+    },
+    {
+      "from": "AST101-L01-celestial-sphere",
+      "to": "AST101-L03-axial-tilt-seasons"
+    },
+    {
+      "from": "AST101-L03-axial-tilt-seasons",
+      "to": "AST101-L03-solstice-equinox"
+    },
+    {
+      "from": "AST101-L03-solstice-equinox",
+      "to": "AST101-L03-sun-path"
+    },
+    {
+      "from": "AST101-L01-daily-motion",
+      "to": "AST101-L03-sun-path"
+    },
+    {
+      "from": "AST101-L04-electromagnetic-spectrum",
+      "to": "AST101-L04-telescope-aperture"
+    },
+    {
+      "from": "AST101-L01-angular-measure",
+      "to": "AST101-L04-telescope-aperture"
+    },
+    {
+      "from": "AST102-L01-magnitude-scale",
+      "to": "AST102-L02-hr-diagram"
+    },
+    {
+      "from": "AST102-L01-spectral-classes",
+      "to": "AST102-L02-hr-diagram"
+    },
+    {
+      "from": "AST102-L02-hr-diagram",
+      "to": "AST102-L02-main-sequence-fusion"
+    },
+    {
+      "from": "AST102-L02-main-sequence-fusion",
+      "to": "AST102-L02-stellar-endpoints"
+    },
+    {
+      "from": "AST102-L01-parallax-distance",
+      "to": "AST102-L03-milky-way-structure"
+    },
+    {
+      "from": "AST102-L03-milky-way-structure",
+      "to": "AST102-L03-galaxy-types"
+    },
+    {
+      "from": "AST102-L03-milky-way-structure",
+      "to": "AST102-L03-dark-matter-evidence"
+    },
+    {
+      "from": "AST102-L04-explain-redshift",
+      "to": "AST102-L04-hubble-law"
+    },
+    {
+      "from": "AST102-L04-hubble-law",
+      "to": "AST102-L04-big-bang-evidence"
+    },
+    {
+      "from": "AST102-L03-galaxy-types",
+      "to": "AST102-L04-hubble-law"
+    },
+    {
+      "from": "AST101-L01-angular-measure",
+      "to": "AST102-L01-parallax-distance"
+    },
+    {
+      "from": "AST101-L04-inverse-square-law",
+      "to": "AST102-L01-magnitude-scale"
+    },
+    {
+      "from": "AST101-L04-electromagnetic-spectrum",
+      "to": "AST102-L01-spectral-classes"
+    },
+    {
+      "from": "AST101-L04-electromagnetic-spectrum",
+      "to": "AST102-L04-explain-redshift"
+    }
+  ],
+  "graph_version": 1
+}

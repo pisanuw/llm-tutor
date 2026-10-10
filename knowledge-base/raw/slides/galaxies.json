@@ -1,0 +1,130 @@
+{
+  "filename": "galaxies.pptx",
+  "lecture_title": "AST 102: Galaxies",
+  "slide_count": 10,
+  "slides": [
+    {
+      "slide_number": 1,
+      "layout_name": "TITLE",
+      "title": "AST 102: Galaxies",
+      "body_text": [
+        "Our galaxy and the others",
+        "Dr. Alex Morgan"
+      ],
+      "speaker_notes": "Sky report: look for the Andromeda galaxy from a dark site this week.",
+      "has_code": false
+    },
+    {
+      "slide_number": 2,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Milky Way From Inside",
+      "body_text": [
+        "A faint band of light across the sky",
+        "It is the disk of our galaxy seen edge-on from within",
+        "We see more stars along the disk than above or below it"
+      ],
+      "speaker_notes": "Standing in a forest: trees all around the horizon, open sky overhead.",
+      "has_code": false
+    },
+    {
+      "slide_number": 3,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Disk, Bulge, Halo",
+      "body_text": [
+        "Disk: about 100,000 light-years across, with gas, dust and young stars",
+        "Bulge: a thick central concentration of older stars",
+        "Halo: a sparse sphere of old stars and globular clusters"
+      ],
+      "speaker_notes": "A few hundred billion stars in all, and a supermassive black hole at the very center.",
+      "has_code": false
+    },
+    {
+      "slide_number": 4,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Sun's Orbit",
+      "body_text": [
+        "About 26,000 light-years (8 kpc) from the center",
+        "Orbital speed: about 230 km/s",
+        "One orbit: about 230 million years"
+      ],
+      "speaker_notes": "The center is toward Sagittarius, hidden behind dust in visible light.",
+      "has_code": false
+    },
+    {
+      "slide_number": 5,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Island Universes",
+      "body_text": [
+        "Faint spiral nebulae turned out to be separate galaxies",
+        "The Andromeda galaxy is about 2.5 million light-years away",
+        "Hundreds of billions of galaxies in the observable universe"
+      ],
+      "speaker_notes": "Andromeda is the most distant object most people can see without a telescope.",
+      "has_code": false
+    },
+    {
+      "slide_number": 6,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Galaxy Types",
+      "body_text": [
+        "Spiral: disk, arms and bulge; gas and young stars (the Milky Way, Andromeda)",
+        "Elliptical: smooth and oval; old stars, little gas",
+        "Irregular: no clear shape; often gas-rich (the Magellanic Clouds)",
+        "Barred spirals have a bar through the center; the Milky Way is one"
+      ],
+      "speaker_notes": "Sorting activity: thirty galaxy images into three piles. Argue about the hard ones.",
+      "has_code": false
+    },
+    {
+      "slide_number": 7,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Color Tells Age",
+      "body_text": [
+        "Blue light comes from young, massive, short-lived stars",
+        "Red-yellow light comes from old, low-mass stars",
+        "Spiral arms are blue; ellipticals are red-yellow"
+      ],
+      "speaker_notes": "If massive blue stars are present, stars formed in the last few million years.",
+      "has_code": false
+    },
+    {
+      "slide_number": 8,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Rotation Curves",
+      "body_text": [
+        "Plot orbital speed against distance from the center",
+        "Expected from visible matter: speeds falling off far from the center",
+        "Observed: speeds stay roughly flat far beyond the visible disk",
+        "Measured with the radio emission of hydrogen gas"
+      ],
+      "speaker_notes": "Ball on a string: a faster swing at the same radius needs a stronger pull. Flat curves need more mass.",
+      "has_code": false
+    },
+    {
+      "slide_number": 9,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Dark Matter Halo",
+      "body_text": [
+        "The extra mass is called dark matter",
+        "It emits and absorbs no light; we detect it only through gravity",
+        "About five times as much dark matter as ordinary matter",
+        "It forms a large halo around each galaxy"
+      ],
+      "speaker_notes": "Other evidence agrees: galaxy clusters and gravitational lensing.",
+      "has_code": false
+    },
+    {
+      "slide_number": 10,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "What Could Dark Matter Be?",
+      "body_text": [
+        "Not dark gas or dust: those would block or emit light",
+        "Not enough dim stars or black holes to account for it",
+        "Most likely a kind of particle not yet detected",
+        "Still an open question"
+      ],
+      "speaker_notes": "Be clear about what is known: that it is there. Not what it is.",
+      "has_code": false
+    }
+  ]
+}

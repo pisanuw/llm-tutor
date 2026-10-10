@@ -1,0 +1,118 @@
+# Phases of the Moon and Eclipses
+
+Predict first. Why does the Moon change shape over a month? Earth's shadow?
+Clouds? Its distance changing? Something about angles? Write down your
+answer before you read on. About half of every class picks the shadow.
+
+By the end of this chapter you should be able to:
+
+- explain the phases from the angle between the Sun, the Moon and Earth;
+- say when a solar or lunar eclipse can happen, and why not every month;
+- explain why there are two high tides a day.
+
+## What Causes the Phases? {#phases}
+
+One sentence carries this whole section: **the Moon is always half lit.** The
+Moon makes no light of its own. The Sun lights the half facing it, all the
+time. The phase you see is how much of that lit half happens to face Earth,
+and that depends only on the angle between the Sun, the Moon and Earth.
+
+You can see it with a lamp and a ball. A bare lamp in a dark room is the Sun.
+A ball held at arm's length is the Moon. Your head is Earth. Turn slowly in a
+circle and watch the ball:
+
+- Ball toward the lamp: you see its dark side. **New moon.**
+- A quarter of the way around: half the face is lit. **First quarter.**
+- Ball opposite the lamp: the whole lit face points at you. **Full moon.**
+- Three quarters of the way around: the other half lit. **Third quarter.**
+
+In between come the crescents (less than half lit) and the gibbous phases
+(more than half lit). While the lit part grows the Moon is **waxing**; while it
+shrinks, **waning**. The full cycle, new moon to new moon, takes about 29.5
+days.
+
+Now the test for the shadow idea. Earth's shadow points straight away from the
+Sun, so a shadow could only fall on a Moon opposite the Sun in the sky. But a
+thin crescent Moon appears low in the west just after sunset, right next to
+where the Sun went down. The shadow cannot explain it. In the lamp-and-ball
+model, your head's shadow never touches the ball, except when the ball is
+exactly behind your head. That is a lunar eclipse, and it is the only time
+Earth's shadow plays any part.
+
+Because the phase is an angle, it also tells time. A full moon is opposite the
+Sun, so it rises at sunset. A first quarter Moon rises around noon and is
+highest at sunset, which is why you often see the Moon in the afternoon.
+
+## Why Not Every Month? {#eclipses}
+
+A **solar eclipse** happens when the Moon passes between the Sun and Earth, so
+only at new moon. A **lunar eclipse** happens when the Moon passes into Earth's
+shadow, so only at full moon.
+
+There is a new moon and a full moon every month. So why not an eclipse every
+month? Because the Moon's orbit is tilted about 5 degrees to Earth's orbit.
+Picture two hula hoops tilted against each other. They cross at two points,
+the **nodes**. Most months the new moon passes a little above or below the
+Sun, and the full moon a little above or below Earth's shadow. An eclipse
+needs a new or full moon right at a node. That lineup comes around about twice
+a year, in what are called eclipse seasons.
+
+Never look at the Sun, eclipse or no eclipse, without a proper solar filter.
+Sunglasses are not a solar filter.
+
+## Two Bulges, Two Tides {#tides}
+
+The Moon's gravity gets weaker with distance. It pulls the ocean on the near
+side of Earth more than it pulls Earth's center, and Earth's center more than
+the ocean on the far side. That difference stretches Earth and its oceans into
+two bulges, one facing the Moon and one facing away. Think of three runners on
+one rope, pulled from the front: the group stretches at both ends.
+
+Earth turns under both bulges every day, so most coasts get two high tides,
+about every 12 hours and 25 minutes. The Sun raises tides too, a bit under half
+as strong. At new and full moon the Sun and Moon line up and their tides add:
+**spring tides**, the biggest range. At the quarter phases they work at right
+angles: **neap tides**, the smallest.
+
+::: {.callout-note title="Dr. Morgan's note"}
+Do not memorize a phase chart. Learn to draw the top-down view, Sun on one
+side, Earth in the middle, Moon at eight positions. From that one drawing you
+can rebuild every phase, every rising time and both kinds of eclipse in about
+thirty seconds. I have watched students do it on the exam.
+:::
+
+## Self-check
+
+```{=html}
+<div class="quiz" data-answer="d">
+  <div class="question">1. The Moon is full tonight. Where is it at sunrise?</div>
+  <ul>
+    <li data-choice="a"><label><strong>a.</strong> High in the south</label></li>
+    <li data-choice="b"><label><strong>b.</strong> Rising in the east</label></li>
+    <li data-choice="c"><label><strong>c.</strong> Next to the Sun</label></li>
+    <li data-choice="d"><label><strong>d.</strong> Setting in the west</label></li>
+  </ul>
+  <div class="explain">
+    <strong>d</strong>. A full moon is opposite the Sun, so it rises as the Sun sets and sets as the Sun rises.
+  </div>
+</div>
+
+<div class="quiz" data-answer="a">
+  <div class="question">2. During a solar eclipse, what phase is the Moon in?</div>
+  <ul>
+    <li data-choice="a"><label><strong>a.</strong> New</label></li>
+    <li data-choice="b"><label><strong>b.</strong> First quarter</label></li>
+    <li data-choice="c"><label><strong>c.</strong> Full</label></li>
+    <li data-choice="d"><label><strong>d.</strong> Any phase, if the orbit lines up</label></li>
+  </ul>
+  <div class="explain">
+    <strong>a</strong>. The Moon must be between the Sun and Earth, which is new moon. A lunar eclipse needs a full moon.
+  </div>
+</div>
+```
+
+## Where this fits
+
+The same habit, working out what you see from where things sit relative to
+the Sun, explains the seasons in the next chapter. If you want to play with
+the phases, the explorable for this lecture lets you move the Moon yourself.

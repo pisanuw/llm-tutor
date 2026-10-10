@@ -1,0 +1,496 @@
+{
+  "graph_version": 1,
+  "generated_from": "learning_goals.json",
+  "exercises": [
+    {
+      "id": "AST101-L01-celestial-sphere-concept",
+      "course": "AST101",
+      "lecture_num": 1,
+      "topic": "Describe the celestial sphere model",
+      "difficulty": "concept",
+      "prompt": "In your own words, describe the sky as a sphere centered on the observer, and name the celestial poles, the celestial equator, the horizon and the zenith. Find your way around the sky the way navigators have for thousands of years. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can describe the sky as a sphere centered on the observer, and name the celestial poles, the celestial equator, the horizon and the zenith, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L01-celestial-sphere"
+      ]
+    },
+    {
+      "id": "AST101-L01-daily-motion-concept",
+      "course": "AST101",
+      "lecture_num": 1,
+      "topic": "Explain why stars rise and set",
+      "difficulty": "concept",
+      "prompt": "In your own words, explain the daily motion of the Sun and stars as the result of Earth's rotation, and predict which stars never set from a given latitude. Know why the sky turns every night, and which stars you will always see. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can explain the daily motion of the Sun and stars as the result of Earth's rotation, and predict which stars never set from a given latitude, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L01-daily-motion"
+      ]
+    },
+    {
+      "id": "AST101-L01-angular-measure-concept",
+      "course": "AST101",
+      "lecture_num": 1,
+      "topic": "Estimate angles on the sky",
+      "difficulty": "concept",
+      "prompt": "In your own words, estimate angular sizes and separations on the sky in degrees using an outstretched hand, and convert between degrees, arcminutes and arcseconds. Measure the sky with nothing but your hand. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can estimate angular sizes and separations on the sky in degrees using an outstretched hand, and convert between degrees, arcminutes and arcseconds, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L01-angular-measure"
+      ]
+    },
+    {
+      "id": "AST101-L01-angular-measure-trace",
+      "course": "AST101",
+      "lecture_num": 1,
+      "topic": "Estimate angles on the sky",
+      "difficulty": "trace",
+      "prompt": "Your outstretched fist covers about 10 degrees of sky. The two pointer stars of the Big Dipper look about half a fist apart. Estimate their separation in degrees, then in arcminutes. Show each step.",
+      "hints": [],
+      "expected_behavior": "About 5 degrees, which is 300 arcminutes, with the hand-width estimate and the 60 arcminutes per degree conversion shown.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L01-angular-measure"
+      ]
+    },
+    {
+      "id": "AST101-L02-explain-moon-phases-concept",
+      "course": "AST101",
+      "lecture_num": 2,
+      "topic": "Explain the cause of lunar phases",
+      "difficulty": "concept",
+      "prompt": "In your own words, explain the Moon's phases from the changing angle between the Sun, the Moon and Earth, and rule out Earth's shadow as the cause. Replace the most common wrong idea about the Moon with the right one. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can explain the Moon's phases from the changing angle between the Sun, the Moon and Earth, and rule out Earth's shadow as the cause, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L02-explain-moon-phases"
+      ]
+    },
+    {
+      "id": "AST101-L02-explain-moon-phases-trace",
+      "course": "AST101",
+      "lecture_num": 2,
+      "topic": "Explain the cause of lunar phases",
+      "difficulty": "trace",
+      "prompt": "The Moon is at first quarter at sunset. Sketch the Sun, Earth and Moon from above, mark which half of the Moon is lit and which half faces Earth, and predict the phase one week later.",
+      "hints": [],
+      "expected_behavior": "A sketch with the Moon 90 degrees from the Sun, half of the Earth-facing side lit, and the prediction that one week later the Moon is full.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L02-explain-moon-phases"
+      ]
+    },
+    {
+      "id": "AST101-L02-eclipse-conditions-concept",
+      "course": "AST101",
+      "lecture_num": 2,
+      "topic": "State the conditions for an eclipse",
+      "difficulty": "concept",
+      "prompt": "In your own words, state when a solar or lunar eclipse can happen, using the Moon's phase and the tilt of its orbit, and explain why eclipses do not happen every month. Predict eclipses instead of waiting to hear about them. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can state when a solar or lunar eclipse can happen, using the Moon's phase and the tilt of its orbit, and explain why eclipses do not happen every month, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L02-eclipse-conditions"
+      ]
+    },
+    {
+      "id": "AST101-L02-explain-tides-concept",
+      "course": "AST101",
+      "lecture_num": 2,
+      "topic": "Explain why there are two tides a day",
+      "difficulty": "concept",
+      "prompt": "In your own words, explain the two daily high tides from the difference in the Moon's gravitational pull across Earth, and say why spring tides happen at new and full moon. See the Moon's pull at the beach, twice a day. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can explain the two daily high tides from the difference in the Moon's gravitational pull across Earth, and say why spring tides happen at new and full moon, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L02-explain-tides"
+      ]
+    },
+    {
+      "id": "AST101-L03-axial-tilt-seasons-concept",
+      "course": "AST101",
+      "lecture_num": 3,
+      "topic": "Explain the seasons from axial tilt",
+      "difficulty": "concept",
+      "prompt": "In your own words, explain the seasons from the tilt of Earth's axis (the angle of sunlight and the length of the day) and rule out the changing Earth-Sun distance as the cause. Answer the question most graduates get wrong on camera. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can explain the seasons from the tilt of Earth's axis (the angle of sunlight and the length of the day) and rule out the changing Earth-Sun distance as the cause, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L03-axial-tilt-seasons"
+      ]
+    },
+    {
+      "id": "AST101-L03-solstice-equinox-concept",
+      "course": "AST101",
+      "lecture_num": 3,
+      "topic": "Identify solstices and equinoxes",
+      "difficulty": "concept",
+      "prompt": "In your own words, identify the solstices and equinoxes on a diagram of Earth's orbit and state the Sun's position and the length of the day at each. Know what the longest and shortest days really mark. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can identify the solstices and equinoxes on a diagram of Earth's orbit and state the Sun's position and the length of the day at each, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L03-solstice-equinox"
+      ]
+    },
+    {
+      "id": "AST101-L03-sun-path-concept",
+      "course": "AST101",
+      "lecture_num": 3,
+      "topic": "Predict the Sun's path by season",
+      "difficulty": "concept",
+      "prompt": "In your own words, predict where the Sun rises and sets and how high it climbs at noon on a given date and latitude. Plan a garden, a photo or a solar panel by the Sun's path. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can predict where the Sun rises and sets and how high it climbs at noon on a given date and latitude, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L03-sun-path"
+      ]
+    },
+    {
+      "id": "AST101-L03-sun-path-trace",
+      "course": "AST101",
+      "lecture_num": 3,
+      "topic": "Predict the Sun's path by season",
+      "difficulty": "trace",
+      "prompt": "You live at 40 degrees north. Predict the Sun's noon altitude on the June solstice and on the December solstice. Show your reasoning from the 23.5 degree tilt.",
+      "hints": [],
+      "expected_behavior": "About 73.5 degrees in June (90 - 40 + 23.5) and about 26.5 degrees in December (90 - 40 - 23.5), with the reasoning shown.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L03-sun-path"
+      ]
+    },
+    {
+      "id": "AST101-L04-electromagnetic-spectrum-concept",
+      "course": "AST101",
+      "lecture_num": 4,
+      "topic": "Order the electromagnetic spectrum",
+      "difficulty": "concept",
+      "prompt": "In your own words, order the bands of the electromagnetic spectrum by wavelength, frequency and photon energy, and relate wavelength to color. Read the universe in light your eyes cannot see. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can order the bands of the electromagnetic spectrum by wavelength, frequency and photon energy, and relate wavelength to color, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L04-electromagnetic-spectrum"
+      ]
+    },
+    {
+      "id": "AST101-L04-inverse-square-law-concept",
+      "course": "AST101",
+      "lecture_num": 4,
+      "topic": "Apply the inverse-square law",
+      "difficulty": "concept",
+      "prompt": "In your own words, use the inverse-square law to compute how the apparent brightness of a source changes when its distance changes. Tell how far away a light is from how bright it looks. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can use the inverse-square law to compute how the apparent brightness of a source changes when its distance changes, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L04-inverse-square-law"
+      ]
+    },
+    {
+      "id": "AST101-L04-inverse-square-law-trace",
+      "course": "AST101",
+      "lecture_num": 4,
+      "topic": "Apply the inverse-square law",
+      "difficulty": "trace",
+      "prompt": "A lamp is moved from 2 meters to 6 meters away. By what factor does its apparent brightness change? Show the steps.",
+      "hints": [],
+      "expected_behavior": "The distance triples, so the brightness drops by a factor of 9 (3 squared); the steps use the inverse-square law.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L04-inverse-square-law"
+      ]
+    },
+    {
+      "id": "AST101-L04-telescope-aperture-concept",
+      "course": "AST101",
+      "lecture_num": 4,
+      "topic": "Explain why aperture matters",
+      "difficulty": "concept",
+      "prompt": "In your own words, explain why a telescope's light-gathering power grows with the square of its aperture and how aperture limits the finest detail it can resolve. Know what actually makes one telescope better than another. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can explain why a telescope's light-gathering power grows with the square of its aperture and how aperture limits the finest detail it can resolve, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST101-L04-telescope-aperture"
+      ]
+    },
+    {
+      "id": "AST102-L01-parallax-distance-concept",
+      "course": "AST102",
+      "lecture_num": 1,
+      "topic": "Compute a star's distance from parallax",
+      "difficulty": "concept",
+      "prompt": "In your own words, compute a star's distance in parsecs from its parallax angle in arcseconds, and explain why parallax only works for nearby stars. Measure the distance to a star with geometry alone. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can compute a star's distance in parsecs from its parallax angle in arcseconds, and explain why parallax only works for nearby stars, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L01-parallax-distance"
+      ]
+    },
+    {
+      "id": "AST102-L01-parallax-distance-trace",
+      "course": "AST102",
+      "lecture_num": 1,
+      "topic": "Compute a star's distance from parallax",
+      "difficulty": "trace",
+      "prompt": "A star has a parallax of 0.25 arcseconds. Compute its distance in parsecs and in light-years (1 parsec is about 3.26 light-years). Show each step.",
+      "hints": [],
+      "expected_behavior": "4 parsecs (1 / 0.25), about 13 light-years, with d = 1/p and the conversion shown.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L01-parallax-distance"
+      ]
+    },
+    {
+      "id": "AST102-L01-magnitude-scale-concept",
+      "course": "AST102",
+      "lecture_num": 1,
+      "topic": "Compare stars on the magnitude scale",
+      "difficulty": "concept",
+      "prompt": "In your own words, compare the brightness of two stars from their magnitudes, remembering that the scale runs backwards and that 5 magnitudes is a factor of 100. Decode the strange scale astronomers use for brightness. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can compare the brightness of two stars from their magnitudes, remembering that the scale runs backwards and that 5 magnitudes is a factor of 100, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L01-magnitude-scale"
+      ]
+    },
+    {
+      "id": "AST102-L01-magnitude-scale-trace",
+      "course": "AST102",
+      "lecture_num": 1,
+      "topic": "Compare stars on the magnitude scale",
+      "difficulty": "trace",
+      "prompt": "Star A has magnitude 1 and star B has magnitude 6. Which looks brighter, and by about what factor? Show your reasoning.",
+      "hints": [],
+      "expected_behavior": "Star A looks brighter, by a factor of about 100, because 5 magnitudes is a factor of 100 and smaller magnitudes are brighter.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L01-magnitude-scale"
+      ]
+    },
+    {
+      "id": "AST102-L01-spectral-classes-concept",
+      "course": "AST102",
+      "lecture_num": 1,
+      "topic": "Read a star's spectral class",
+      "difficulty": "concept",
+      "prompt": "In your own words, order the spectral classes O B A F G K M by surface temperature and color, and place the Sun among them. Know a star's temperature from its color. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can order the spectral classes O B A F G K M by surface temperature and color, and place the Sun among them, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L01-spectral-classes"
+      ]
+    },
+    {
+      "id": "AST102-L02-hr-diagram-concept",
+      "course": "AST102",
+      "lecture_num": 2,
+      "topic": "Place stars on the H-R diagram",
+      "difficulty": "concept",
+      "prompt": "In your own words, place a star on the Hertzsprung-Russell diagram from its temperature and luminosity, and name the main sequence, giants and white dwarfs. Read the one chart that organizes every star. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can place a star on the Hertzsprung-Russell diagram from its temperature and luminosity, and name the main sequence, giants and white dwarfs, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L02-hr-diagram"
+      ]
+    },
+    {
+      "id": "AST102-L02-main-sequence-fusion-concept",
+      "course": "AST102",
+      "lecture_num": 2,
+      "topic": "Explain fusion on the main sequence",
+      "difficulty": "concept",
+      "prompt": "In your own words, explain how hydrogen fusion in the core powers a main-sequence star and why more massive stars burn out faster. Understand why the Sun shines and how long it will. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can explain how hydrogen fusion in the core powers a main-sequence star and why more massive stars burn out faster, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L02-main-sequence-fusion"
+      ]
+    },
+    {
+      "id": "AST102-L02-stellar-endpoints-concept",
+      "course": "AST102",
+      "lecture_num": 2,
+      "topic": "Predict a star's end state from its mass",
+      "difficulty": "concept",
+      "prompt": "In your own words, predict whether a star ends as a white dwarf, a neutron star or a black hole from its initial mass. Know how the Sun will die, and how the giants do. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can predict whether a star ends as a white dwarf, a neutron star or a black hole from its initial mass, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L02-stellar-endpoints"
+      ]
+    },
+    {
+      "id": "AST102-L03-milky-way-structure-concept",
+      "course": "AST102",
+      "lecture_num": 3,
+      "topic": "Describe the Milky Way's structure",
+      "difficulty": "concept",
+      "prompt": "In your own words, describe the Milky Way's disk, bulge and halo, where the Sun sits in it, and why we see the galaxy as a band across the sky. Know your address in the galaxy. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can describe the Milky Way's disk, bulge and halo, where the Sun sits in it, and why we see the galaxy as a band across the sky, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L03-milky-way-structure"
+      ]
+    },
+    {
+      "id": "AST102-L03-galaxy-types-concept",
+      "course": "AST102",
+      "lecture_num": 3,
+      "topic": "Classify galaxies by shape",
+      "difficulty": "concept",
+      "prompt": "In your own words, classify a galaxy as spiral, elliptical or irregular from an image and relate each type to its stars and gas. Sort the galaxies in any deep-sky photograph. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can classify a galaxy as spiral, elliptical or irregular from an image and relate each type to its stars and gas, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L03-galaxy-types"
+      ]
+    },
+    {
+      "id": "AST102-L03-dark-matter-evidence-concept",
+      "course": "AST102",
+      "lecture_num": 3,
+      "topic": "Explain the rotation-curve evidence for dark matter",
+      "difficulty": "concept",
+      "prompt": "In your own words, explain why flat galaxy rotation curves imply more mass than the visible stars and gas, and what that unseen mass is called. See the evidence for matter no one has ever seen. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can explain why flat galaxy rotation curves imply more mass than the visible stars and gas, and what that unseen mass is called, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L03-dark-matter-evidence"
+      ]
+    },
+    {
+      "id": "AST102-L04-explain-redshift-concept",
+      "course": "AST102",
+      "lecture_num": 4,
+      "topic": "Explain cosmological redshift",
+      "difficulty": "concept",
+      "prompt": "In your own words, explain redshift as the stretching of light's wavelength and compute a redshift from an observed and a rest wavelength. Read a galaxy's motion from the color of its light. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can explain redshift as the stretching of light's wavelength and compute a redshift from an observed and a rest wavelength, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L04-explain-redshift"
+      ]
+    },
+    {
+      "id": "AST102-L04-explain-redshift-trace",
+      "course": "AST102",
+      "lecture_num": 4,
+      "topic": "Explain cosmological redshift",
+      "difficulty": "trace",
+      "prompt": "A spectral line with a rest wavelength of 500 nm is observed at 525 nm. Compute the redshift z and say whether the source is approaching or receding.",
+      "hints": [],
+      "expected_behavior": "z = (525 - 500) / 500 = 0.05, and the source is receding because the line moved to a longer wavelength.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L04-explain-redshift"
+      ]
+    },
+    {
+      "id": "AST102-L04-hubble-law-concept",
+      "course": "AST102",
+      "lecture_num": 4,
+      "topic": "Use Hubble's law to estimate a distance",
+      "difficulty": "concept",
+      "prompt": "In your own words, use Hubble's law (velocity equals the Hubble constant times distance) to estimate a galaxy's distance from its recession velocity. Measure the size of the universe with one equation. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can use Hubble's law (velocity equals the Hubble constant times distance) to estimate a galaxy's distance from its recession velocity, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L04-hubble-law"
+      ]
+    },
+    {
+      "id": "AST102-L04-hubble-law-trace",
+      "course": "AST102",
+      "lecture_num": 4,
+      "topic": "Use Hubble's law to estimate a distance",
+      "difficulty": "trace",
+      "prompt": "A galaxy recedes at 7,000 km/s. Using a Hubble constant of 70 km/s per megaparsec, estimate its distance. Show the steps.",
+      "hints": [],
+      "expected_behavior": "About 100 megaparsecs (7000 / 70), with v = H0 d rearranged to d = v / H0.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L04-hubble-law"
+      ]
+    },
+    {
+      "id": "AST102-L04-big-bang-evidence-concept",
+      "course": "AST102",
+      "lecture_num": 4,
+      "topic": "List the evidence for the Big Bang",
+      "difficulty": "concept",
+      "prompt": "In your own words, list the main evidence for the Big Bang (the expansion, the cosmic microwave background, the abundance of light elements) and say what each shows. Know why astronomers are confident the universe had a beginning. Explain it to a classmate who missed the lecture, with one concrete example.",
+      "hints": [],
+      "expected_behavior": "A clear explanation in the student's own words showing they can list the main evidence for the Big Bang (the expansion, the cosmic microwave background, the abundance of light elements) and say what each shows, including at least one correct concrete example.",
+      "starter_code": "",
+      "goal_ids": [
+        "AST102-L04-big-bang-evidence"
+      ]
+    },
+    {
+      "id": "AST101-L01-celestial-sphere-code",
+      "course": "AST101",
+      "lecture_num": 1,
+      "topic": "Describe the celestial sphere model",
+      "difficulty": "code",
+      "prompt": "Write a C++ program that reads two angles in whole degrees and prints their sum, the combined angle on the sky.",
+      "hints": [],
+      "expected_behavior": "Reads two integers from stdin and prints their sum on one line.",
+      "starter_code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    // TODO\n    return 0;\n}\n",
+      "goal_ids": [
+        "AST101-L01-celestial-sphere"
+      ]
+    },
+    {
+      "id": "AST101-L03-sun-path-code",
+      "course": "AST101",
+      "lecture_num": 3,
+      "topic": "Predict the Sun's path by season",
+      "difficulty": "code",
+      "prompt": "Write a C++ program that reads a latitude in whole degrees (0 to 66) and prints the Sun's noon altitude on an equinox, 90 minus the latitude.",
+      "hints": [],
+      "expected_behavior": "Reads one integer and prints 90 minus it on one line.",
+      "starter_code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    // TODO\n    return 0;\n}\n",
+      "goal_ids": [
+        "AST101-L03-sun-path"
+      ]
+    },
+    {
+      "id": "AST101-L04-inverse-square-law-code",
+      "course": "AST101",
+      "lecture_num": 4,
+      "topic": "Apply the inverse-square law",
+      "difficulty": "code",
+      "prompt": "Write a C++ program that reads a whole number k, how many times farther a light source is moved, and prints how many times dimmer it looks (k squared).",
+      "hints": [],
+      "expected_behavior": "Reads one positive integer k and prints k*k on one line.",
+      "starter_code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    // TODO\n    return 0;\n}\n",
+      "goal_ids": [
+        "AST101-L04-inverse-square-law"
+      ]
+    }
+  ]
+}

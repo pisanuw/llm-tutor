@@ -1,0 +1,46 @@
+{
+  "_README": {
+    "about": "TEST FIXTURE. Deterministic test cases for run_code, keyed by exercise id. Each entry is {contract, tests:[{name, stdin, expected, match?}]}; 'match' is 'exact' (whitespace-normalised, default) or 'contains'.",
+    "tests": []
+  },
+  "AST101-L01-celestial-sphere-code": {
+    "contract": "Read two integers a and b from stdin (whitespace separated); print their sum on one line.",
+    "tests": [
+      {
+        "name": "small",
+        "stdin": "2 3",
+        "expected": "5"
+      },
+      {
+        "name": "negatives",
+        "stdin": "-4 10",
+        "expected": "6"
+      },
+      {
+        "name": "zero",
+        "stdin": "0 0",
+        "expected": "0"
+      }
+    ]
+  },
+  "AST101-L04-inverse-square-law-code": {
+    "contract": "Read a positive integer k from stdin; print k*k on one line.",
+    "tests": [
+      {
+        "name": "one",
+        "stdin": "1",
+        "expected": "1"
+      },
+      {
+        "name": "three",
+        "stdin": "3",
+        "expected": "9"
+      },
+      {
+        "name": "ten",
+        "stdin": "10",
+        "expected": "100"
+      }
+    ]
+  }
+}

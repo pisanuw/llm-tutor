@@ -1,0 +1,34 @@
+# Keep the build context small and reproducible.
+.git/
+.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Large / generated / secret — never ship in the image. The whole knowledge
+# base stays out of the build context: the image reads only the ChromaDB store
+# (seeded at boot), and the raw sources include copyrighted texts.
+source-materials/
+source-materials2/
+knowledge-base/
+output/
+tts-cache/
+*.db
+.env
+.env.asc
+
+# Quarto book output + caches: the image renders book/_book/ in a build stage,
+# so any local copy must not enter the context (it would shadow the fresh render).
+book/_book/
+book/.quarto/
+book/_freeze/
+
+# Dev-only
+tests/
+.idea/
+.vscode/
+*.swp
+.DS_Store
+*.tgz

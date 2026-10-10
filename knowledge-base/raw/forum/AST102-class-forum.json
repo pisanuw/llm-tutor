@@ -1,0 +1,20 @@
+[
+  {
+    "text": "[Leo] Why do we use arcseconds for parallax instead of degrees?\n[Dr. Morgan] Because the angles are tiny. The biggest stellar parallax, Proxima Centauri's, is 0.77 arcseconds, which is about 0.0002 degrees. Arcseconds keep the numbers readable, and the parsec is defined so that d = 1/p works with p in arcseconds.",
+    "source_file": "AST102-class-forum.json",
+    "section": "Why is parallax measured in arcseconds?",
+    "doc_type": "forum"
+  },
+  {
+    "text": "[Priya] How can a magnitude be negative? Does that mean less than zero brightness?\n[Sam] It just means brighter than magnitude zero, since the scale runs backwards. Sirius is about -1.5.\n[Dr. Morgan] Exactly. The scale only has to be consistent: five magnitudes is a factor of 100, whichever side of zero you are on. The Sun is about -26.7, and the full Moon about -12.7.",
+    "source_file": "AST102-class-forum.json",
+    "section": "Negative magnitudes?",
+    "doc_type": "forum"
+  },
+  {
+    "text": "[Jordan] If the universe is expanding, what is it expanding into?\n[Dr. Morgan] Honest answer: as far as we can tell, nothing. The expansion is not galaxies flying into empty space beyond some edge; it is the distances between galaxies growing everywhere at once. In the raisin bread picture, think of the dough stretching rather than the loaf pushing into the oven. It is one of the hardest ideas in the course, and it is fine if it still feels strange.",
+    "source_file": "AST102-class-forum.json",
+    "section": "What is the universe expanding into?",
+    "doc_type": "forum"
+  }
+]

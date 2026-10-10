@@ -1,0 +1,11 @@
+Before you log in
+This is an educational AI assistant in Dr. Alex Morgan's voice, built to help you
+learn the course material. It can be wrong, so verify anything important against
+the lectures, and it will not show full homework solutions.
+To run the tutor and to improve it for future students, your questions, code, and
+progress are recorded. It is a learning tool: it is not used to grade you, and
+your data is never sold or shared outside the course. Identifiable records are
+kept for up to one year; after that, all personally identifying information is
+removed and only anonymized usage data is kept to keep improving the tutor. You
+may request deletion at any time by emailing instructor@example.edu. See the course site
+for the full retention and consent notice.

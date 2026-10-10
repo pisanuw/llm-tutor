@@ -1,0 +1,22 @@
+{#- One conversation's messages as chat bubbles (docs/conversations-list-plan-2026-10.md):
+    the admin transcript view, the thread fragment the list expands in place, and the
+    instructor's transcript page all draw these. `messages` are tutor.conversations.ThreadMessage
+    (or anything with id, role, content, course, lecture_num, created_at, feedback). -#}
+{% macro thread_messages(messages) %}
+{% for m in messages %}
+<div id="msg-{{ m.id }}" class="flex rounded-2xl target:ring-2 target:ring-amber-400 target:ring-offset-2 target:scroll-mt-20 {% if m.role == 'user' %}justify-end{% else %}justify-start{% endif %}">
+  <div class="max-w-[85%] md:max-w-[75%] rounded-2xl px-4 py-2 text-sm whitespace-pre-wrap break-words
+    {% if m.role == 'user' %}bg-blue-600 text-white{% elif m.feedback and m.feedback.rating < 0 %}bg-red-50 text-gray-800 ring-2 ring-red-300{% else %}bg-gray-100 text-gray-800{% endif %}">
+    <div class="text-[10px] uppercase tracking-wide opacity-60 mb-0.5">
+      {{ m.role }}{% if m.course %} · {{ m.course }}{% endif %}{% if m.lecture_num %} · L{{ '%02d'|format(m.lecture_num) }}{% endif %} · {{ m.created_at.strftime('%m-%d %H:%M') if m.created_at else '' }} · #{{ m.id }}
+    </div>
+    {{ m.content }}
+    {% if m.feedback %}
+    <div class="mt-2 pt-2 border-t {% if m.feedback.rating < 0 %}border-red-200{% else %}border-gray-200{% endif %} text-xs text-gray-600">
+      {% if m.feedback.rating < 0 %}👎 Student flagged this{% if m.feedback.comment %}: <span class="text-gray-800">{{ m.feedback.comment }}</span>{% else %} (no reason given){% endif %}{% else %}👍 Student found this helpful{% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endfor %}
+{% endmacro %}

@@ -1,0 +1,32 @@
+[
+  {
+    "text": "[Maya] I saw the Moon at 3 in the afternoon today, about half lit, in the southeast. I thought the Moon only came out at night. Is that normal?\n[Jordan] Totally normal. Around first quarter the Moon rises about noon, so it is up all afternoon.\n[Dr. Morgan] Jordan is right. A first quarter Moon is 90 degrees from the Sun, so it rises around midday and is highest around sunset. Maya, that would make a good observing log entry. Note which side was lit: it should be the side facing the Sun.",
+    "source_file": "AST101-class-forum.json",
+    "section": "Moon out during the day?",
+    "doc_type": "forum"
+  },
+  {
+    "text": "[Sam] I get that the tilt causes seasons, but is that because when the north tilts toward the Sun, our half of Earth is closer to it?\n[Priya] Yes, I think so. When we are tilted toward the Sun our hemisphere is a few thousand kilometers closer, so it heats up more. That is why summer is warmer.\n[Dr. Morgan] Good wrong answer, Priya, and a common one. The tilt does put the northern half a few thousand kilometers closer, but the Sun is about 150 million kilometers away, so that changes the distance by a tiny fraction of a percent. It is not the cause. The tilt matters because of the angle of the sunlight (the flashlight on the table: steep light concentrates energy) and the longer days. Distance plays no real part; remember Earth is closest to the Sun in January.",
+    "source_file": "AST101-class-forum.json",
+    "section": "Is the tilt just making us closer to the Sun?",
+    "doc_type": "forum"
+  },
+  {
+    "text": "[Leo] For Problem Set 1 question 2, what latitude should we use if we did not measure Polaris ourselves?\n[Dr. Morgan] Use 45 degrees north unless you measured your own latitude in Question 1. Either is fine as long as you say which one you used. Show the sketch of the celestial sphere; that is where most of the credit is.",
+    "source_file": "AST101-class-forum.json",
+    "section": "Problem Set 1, Question 2: which latitude?",
+    "doc_type": "forum"
+  },
+  {
+    "text": "[Student] What happens to the observing night if it is cloudy on Friday?\n[Dr. Morgan] If the sky is cloudy at 6 pm, the observing night moves to Monday at the same time, and the course page will say so by 6:30. If both nights are cloudy, write a log entry about the clouds and do the indoor alternative on the handout. It counts the same.",
+    "source_file": "AST101-class-forum.json",
+    "section": "Observing night if it is cloudy?",
+    "doc_type": "forum"
+  },
+  {
+    "text": "[Maya] If the Moon pulls the ocean toward it, why is there also a high tide on the side facing away from the Moon?\n[Dr. Morgan] Great thing to be puzzled by. The Moon's pull gets weaker with distance, so it pulls the near-side ocean more than Earth's center, and Earth's center more than the far-side ocean. Relative to the center, the near side is pulled ahead and the far side is left behind. Three runners on one rope, pulled from the front: the group stretches at both ends. That gives two bulges, and Earth turns under both every day.",
+    "source_file": "AST101-class-forum.json",
+    "section": "Why two tides a day and not one?",
+    "doc_type": "forum"
+  }
+]

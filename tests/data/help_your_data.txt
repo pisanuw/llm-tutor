@@ -1,0 +1,9 @@
+Your data
+Your questions, code, and progress are recorded to run the tutor and to improve it
+for future students. If your instructor uses Astra for your class, they can see how
+you are using it — how often, which topics, how the exercises went — and read your
+conversations for that class. How you use the site is recorded too: which pages,
+slides, and lectures you open, and for how long. It is a learning tool: it is not used to grade you,
+and your data is never sold or shared outside the course. Identifiable records are
+kept for up to one year, then anonymized. To request deletion, email instructor@example.edu.
+The full notice is on the course site.

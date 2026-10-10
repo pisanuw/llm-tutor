@@ -1,0 +1,65 @@
+[
+  {
+    "text": "Chapter 4. Galaxies and Cosmology. Stars are not scattered evenly through space; they gather into galaxies of billions. This chapter describes our own galaxy, the Milky Way, and our place within it, surveys the kinds of galaxies seen across the universe, and presents the evidence that galaxies contain far more mass than their stars and gas can account for. It ends with the largest scales of all: the discovery that the universe is expanding and the evidence that it began in a hot, dense state about 13.8 billion years ago.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 49,
+    "chunk_index": 26,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "The Milky Way. From a dark site, a faint band of light arches across the sky. It is the disk of our own galaxy seen edge-on from inside. The Milky Way is a flat disk of stars, gas and dust about 100,000 light-years across, with a central bulge of older stars and a sparse, roughly spherical halo of old stars and globular clusters. It contains a few hundred billion stars. Because we live within the disk, we see many more stars when looking along it than when looking above or below it, just as a hiker in a forest sees trees in every horizontal direction but open sky overhead.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 50,
+    "chunk_index": 27,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Our place in the galaxy. The Sun lies in the disk about 26,000 light-years, or 8 kiloparsecs, from the galactic center, which lies in the direction of the constellation Sagittarius. The Sun orbits the center at about 230 kilometers per second and takes about 230 million years to complete one orbit. Dust in the disk hides the center from view in visible light. Its location was first established from the distribution of globular clusters, which surround the center above and below the dusty disk, and has since been confirmed with infrared and radio observations that pass through the dust.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 51,
+    "chunk_index": 28,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Types of galaxies. Galaxies are classified by shape. Spiral galaxies, such as the Milky Way and the Andromeda galaxy, have a flattened disk with spiral arms and a central bulge; many, including ours, have a bar through the center. Their arms are rich in gas and dust and glow blue with young, massive stars. Elliptical galaxies are smooth, round or oval systems of old, reddish stars with little gas or dust and little ongoing star formation. Irregular galaxies, such as the Large and Small Magellanic Clouds, lack a clear shape and are often rich in gas and newly formed stars.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 53,
+    "chunk_index": 29,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Rotation curves and dark matter. A rotation curve plots how fast material orbits a galaxy's center against its distance from the center. In the solar system, where nearly all the mass is in the Sun, orbital speeds fall steadily with distance: Mercury moves at about 47 kilometers per second and Neptune at about 5. If a galaxy's mass were concentrated where its stars are, speeds in its outer parts would likewise fall off. Instead, measurements of hydrogen gas show speeds that stay roughly constant far beyond the visible disk. The extra gravity comes from unseen dark matter.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 55,
+    "chunk_index": 30,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "What dark matter is not. Dark matter neither emits nor absorbs light, so it is detected only through its gravity. Observations of galaxy rotation, galaxy clusters and the bending of light by gravity all point to about five times as much dark matter as ordinary matter. It cannot be ordinary gas or dust, which would absorb or emit light we could detect, and surveys find too few dim stars and black holes to account for it. Most astronomers suspect a kind of particle that has not yet been detected, but what dark matter actually is remains an open question.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 56,
+    "chunk_index": 31,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Redshift and Hubble's law. When a light source moves away from us, its waves are stretched to longer, redder wavelengths. The redshift is z = (observed wavelength - rest wavelength) / rest wavelength, and for small z the recession speed is about z times the speed of light. Early in the twentieth century astronomers found that nearly all galaxies are redshifted and that more distant galaxies recede faster. This relation, Hubble's law, is written v = H0 x d, where the Hubble constant H0 is about 70 kilometers per second per megaparsec. Measurements by different methods range from about 67 to 73.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 58,
+    "chunk_index": 32,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "An expanding universe with no center. Hubble's law does not mean that we sit at the center of the universe. A loaf of raisin bread rising in an oven is a useful picture: every raisin moves away from every other raisin, and a raisin twice as far away recedes twice as fast, so every raisin sees the same pattern. The galaxies are not flying through space away from a central point; space itself is expanding. Gravity holds individual galaxies and clusters together, so they do not expand. Running the expansion backward gives an age of roughly 1/H0, about 14 billion years.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 60,
+    "chunk_index": 33,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Evidence for the Big Bang. Three independent lines of evidence support a hot, dense beginning. The first is the expansion itself. The second is the cosmic microwave background, a faint glow arriving from every direction, released about 380,000 years after the beginning, when the universe had cooled enough to become transparent, and since stretched by expansion to microwave wavelengths matching a temperature of about 2.7 kelvin. The third is the abundance of light elements: fusion in the first few minutes left the universe about one quarter helium by mass, as observed in the oldest gas.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 62,
+    "chunk_index": 34,
+    "doc_type": "textbook"
+  }
+]

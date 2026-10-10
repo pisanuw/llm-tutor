@@ -1,0 +1,57 @@
+{
+  "_comment": "Starter prompts shown as chips to a student who does not know what to ask. label = chip text (short); message = what is sent to the tutor. 'meta' chips apply to every course; each course id has its own list. tutor/agent/starters.py samples a few per student and adds a personalized pair from the navigator.",
+  "meta": [
+    {
+      "label": "What can you help me with?",
+      "message": "What can you help me with, and how do I get the most out of you?"
+    },
+    {
+      "label": "How do your hints work?",
+      "message": "How do your hints work? Why won't you just give me the full answer?"
+    }
+  ],
+  "AST101": [
+    {
+      "label": "Why does the Moon have phases?",
+      "message": "Why does the Moon go through phases? Is it Earth's shadow?"
+    },
+    {
+      "label": "What causes the seasons?",
+      "message": "What actually causes the seasons? Isn't Earth closer to the Sun in summer?"
+    },
+    {
+      "label": "Why no eclipse every month?",
+      "message": "If the Moon goes around Earth every month, why don't we get an eclipse every month?"
+    },
+    {
+      "label": "Measure the sky with my hand",
+      "message": "How do I measure angles on the sky with my hand? Give me one to try."
+    },
+    {
+      "label": "Why do bigger telescopes matter?",
+      "message": "Why is a bigger telescope better? Is it about magnification?"
+    }
+  ],
+  "AST102": [
+    {
+      "label": "How far away is that star?",
+      "message": "How do astronomers measure the distance to a star? Walk me through parallax, but let me try the math."
+    },
+    {
+      "label": "Read the H-R diagram",
+      "message": "How do I read an H-R diagram? Where would the Sun be?"
+    },
+    {
+      "label": "How will the Sun die?",
+      "message": "How will the Sun end its life, and why won't it become a black hole?"
+    },
+    {
+      "label": "What is dark matter evidence?",
+      "message": "What is the evidence for dark matter from galaxy rotation curves?"
+    },
+    {
+      "label": "Hubble's law practice",
+      "message": "Give me a Hubble's law problem to try, and check my answer."
+    }
+  ]
+}

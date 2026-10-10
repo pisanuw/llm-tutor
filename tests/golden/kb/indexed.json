@@ -1,0 +1,136 @@
+{
+  "counts": {
+    "assignments": 1,
+    "code": 1,
+    "documents": 1,
+    "forum": 1,
+    "slides": 3,
+    "textbook": 1,
+    "transcripts": 3
+  },
+  "documents": {
+    "assignments": [
+      {
+        "id": "c3dbb0bedaa5bc48d5046eff690ad287",
+        "meta": {
+          "collection": "assignments",
+          "doc_type": "assignment",
+          "source_file": "p1.pdf"
+        },
+        "text": "Observe the Moon each night for a week and sketch every phase"
+      }
+    ],
+    "code": [
+      {
+        "id": "7fac12ba450e9876f642cb3e20a2c2cc",
+        "meta": {
+          "collection": "code",
+          "language": "cpp",
+          "relative_path": "main.cpp",
+          "source_file": "example/ast101-labs"
+        },
+        "text": "int main() { std::cout << \"hello\" << std::endl; return 0; }"
+      }
+    ],
+    "documents": [
+      {
+        "id": "31d4b53ecbe5c6f4bcdd521a42bf932e",
+        "meta": {
+          "collection": "documents",
+          "section": "Policies",
+          "source_file": "syllabus.pdf"
+        },
+        "text": "Late work loses ten percent per day up to three days"
+      }
+    ],
+    "forum": [
+      {
+        "id": "08c9953fd4c6b2af3c1fe981fca457b4",
+        "meta": {
+          "collection": "forum",
+          "source_file": "general"
+        },
+        "text": "Why does the Moon look bigger near the horizon tonight"
+      }
+    ],
+    "slides": [
+      {
+        "id": "0240adc2fdbceffb17ed2497f9ffa2f2",
+        "meta": {
+          "collection": "slides",
+          "has_code": "True",
+          "lecture_title": "The Sky Above Us",
+          "slide_number": 3,
+          "source_file": "week1-sky.pptx"
+        },
+        "text": "Angles in code Convert degrees to radians first"
+      },
+      {
+        "id": "54e2b90273afc398879f8f772cf53691",
+        "meta": {
+          "collection": "slides",
+          "has_code": "False",
+          "lecture_title": "Phases of the Moon and Eclipses",
+          "slide_number": 4,
+          "source_file": "week2-moon.pptx"
+        },
+        "text": "Lunar phases Every phase is the Sun lighting half the Moon"
+      },
+      {
+        "id": "ed86aadfa2b55206a0d973e75ce1a3d1",
+        "meta": {
+          "collection": "slides",
+          "has_code": "False",
+          "lecture_title": "The Sky Above Us",
+          "slide_number": 1,
+          "source_file": "week1-sky.pptx"
+        },
+        "text": "The celestial sphere Stars appear fixed on a sphere The sphere turns once a day Say why it matters"
+      }
+    ],
+    "textbook": [
+      {
+        "id": "8132726c4a2dc38e4ce9586dbd54c541",
+        "meta": {
+          "chunk_index": "0",
+          "collection": "textbook",
+          "page_number": "512",
+          "source_file": "astronomy-textbook.pdf"
+        },
+        "text": "A star's parallax angle shrinks as its distance from the Sun grows"
+      }
+    ],
+    "transcripts": [
+      {
+        "id": "d9b1eeabf93b1e5455e5262df2d002db",
+        "meta": {
+          "collection": "transcripts",
+          "end_seconds": "18.0",
+          "source_file": "lec02.mp4",
+          "start_seconds": "12.5"
+        },
+        "text": "The Moon shows phases because we see different parts of its lit half"
+      },
+      {
+        "id": "eb8f372eabe75210e0cfaa261418f9c0",
+        "meta": {
+          "collection": "transcripts",
+          "end_seconds": "7.5",
+          "source_file": "AST102-2026Winter/2026-01-08",
+          "start_seconds": "3.0"
+        },
+        "text": "Parallax lets us measure the distance to nearby stars"
+      },
+      {
+        "id": "f6d9e776c66a8f94912a15f0e2788243",
+        "meta": {
+          "collection": "transcripts",
+          "end_seconds": "5.2",
+          "source_file": "lec01.mp4",
+          "start_seconds": "0.0"
+        },
+        "text": "Today we talk about the celestial sphere and daily motion"
+      }
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+project:
+  type: book
+  output-dir: _book
+  # narration.js fetches this at runtime, so Quarto cannot see the reference
+  # and would not copy it into _book/ on its own.
+  resources:
+    - narration-index.json
+
+book:
+  title: "Astra's Astronomy Notes"
+  subtitle: "A short companion to AST 101 and AST 102"
+  author: "Dr. Alex Morgan"
+  date: today
+  date-format: "MMMM YYYY"
+  search: true
+  sidebar:
+    style: docked
+    background: light
+    collapse-level: 1
+  page-footer:
+    left: "Dr. Alex Morgan, AST 101 and AST 102"
+    right: "Built with Quarto"
+
+  # One chapter per lecture. The file stems are the "chapter" values of the
+  # goals' book_anchor in curriculum/learning_goals.json, and the per-lecture
+  # map in curriculum/book-chapters.json.
+  chapters:
+    - index.qmd
+
+    - part: "AST 101: The Night Sky"
+      chapters:
+        - ast101-01-the-sky.qmd
+        - ast101-02-moon.qmd
+        - ast101-03-seasons.qmd
+        - ast101-04-light.qmd
+
+    - part: "AST 102: Stars and Galaxies"
+      chapters:
+        - ast102-01-measuring-stars.qmd
+        - ast102-02-lives-of-stars.qmd
+        - ast102-03-galaxies.qmd
+        - ast102-04-expanding-universe.qmd
+
+format:
+  html:
+    theme:
+      light: cosmo
+      dark: darkly
+    css: styles.css
+    callout-appearance: simple
+    callout-icon: true
+    toc: true
+    toc-depth: 2
+    toc-location: right
+    smooth-scroll: true
+    link-external-newwindow: true
+    include-after-body:
+      - text: |
+          <script src="quiz.js"></script>
+          <script src="narration.js"></script>
+
+  # PDF output is opt-in. Run `quarto install tinytex` once, then:
+  #   quarto render --to pdf

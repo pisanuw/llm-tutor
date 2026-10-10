@@ -1,0 +1,65 @@
+[
+  {
+    "text": "Chapter 3. The Stars. Every star except the Sun appears as a point of light, even through the largest telescopes. Everything we know about stars has been worked out from three measurable things: how far away they are, how bright they look, and the spectrum of their light. This chapter shows how astronomers measure distance with parallax, describe brightness with magnitudes, read temperature from color and spectral class, and then combine these measurements into the Hertzsprung-Russell diagram, which reveals how stars live and die.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 33,
+    "chunk_index": 17,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Parallax. When you look at a nearby object first with one eye and then the other, it appears to shift against the background. Astronomers use the same effect with a much longer baseline, Earth's orbit. Observed six months apart, a nearby star shifts slightly against far more distant stars. Half of the total shift is the parallax angle, p. A star with a parallax of one arcsecond is, by definition, one parsec away, and in general the distance in parsecs is d = 1/p, with p in arcseconds. One parsec is about 3.26 light-years. A smaller parallax means a more distant star.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 34,
+    "chunk_index": 18,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "The reach of parallax. Even the nearest star beyond the Sun, Proxima Centauri, has a parallax of only 0.77 arcseconds, which places it about 1.3 parsecs, or 4.2 light-years, away. No star shows a parallax as large as one arcsecond. A star 100 parsecs away shifts by only 0.01 arcseconds, and turbulence in Earth's atmosphere blurs images by about an arcsecond, so the most precise parallaxes are measured from space. Even space telescopes reach only a few thousand parsecs with good accuracy, a small part of our galaxy. Parallax is the first step of the distance ladder that calibrates every method beyond it.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 35,
+    "chunk_index": 19,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Magnitudes. Astronomers describe apparent brightness with the magnitude scale, inherited from ancient catalogs that ranked the brightest stars as first magnitude and the faintest visible stars as sixth. The scale runs backwards: smaller numbers mean brighter stars, and the brightest objects have negative magnitudes. Sirius is about -1.5 and the Sun about -26.7. A difference of five magnitudes is defined as a factor of exactly 100 in brightness, so each single magnitude is a factor of about 2.512. A magnitude 1 star is therefore 100 times brighter than a magnitude 6 star.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 37,
+    "chunk_index": 20,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Apparent and absolute magnitude. Apparent magnitude describes how bright a star looks from Earth, which depends on both its true power output and its distance. To compare stars fairly, astronomers use absolute magnitude, the apparent magnitude a star would have if it were placed at a standard distance of 10 parsecs. The Sun, dazzling at an apparent magnitude of about -26.7, has an absolute magnitude of about 4.8, which would make it an unremarkable star in the night sky from 10 parsecs. The inverse-square law connects the two magnitudes once the distance is known.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 38,
+    "chunk_index": 21,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Spectral classes. A star's color reveals its surface temperature: hot stars look blue-white and cool stars look orange-red. Astronomers classify stars by the dark absorption lines in their spectra, whose strengths depend mainly on temperature. The classes, in order from hottest to coolest, are O, B, A, F, G, K and M. O stars exceed 30,000 kelvin; M stars are near 3,000 kelvin. Each class is divided into subclasses from 0 to 9. The Sun is a G2 star with a surface temperature of about 5,800 kelvin. In Orion, orange-red Betelgeuse and blue-white Rigel show the range.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 40,
+    "chunk_index": 22,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "The Hertzsprung-Russell diagram. Plotting stars by luminosity against surface temperature, with temperature increasing to the left by tradition, produces the Hertzsprung-Russell diagram. About 90 percent of stars fall along a diagonal band called the main sequence, running from hot, luminous stars at the upper left to cool, dim stars at the lower right. Giants and supergiants sit at the upper right: they are cool yet very luminous, so they must be enormous. White dwarfs sit at the lower left: hot yet dim, so they must be tiny, roughly the size of Earth. The Sun lies on the main sequence.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 43,
+    "chunk_index": 23,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "Fusion and stellar lifetimes. A main-sequence star shines by fusing hydrogen into helium in its core, where the Sun's temperature reaches about 15 million kelvin. Four hydrogen nuclei combine into one helium nucleus with about 0.7 percent less mass, and that mass is released as energy. The outward pressure of the hot gas balances the inward pull of gravity, keeping the star stable. A star's mass sets its place on the main sequence and its lifetime. Massive stars burn their fuel much faster: the Sun will last about 10 billion years, while a star of 10 solar masses lasts only tens of millions.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 45,
+    "chunk_index": 24,
+    "doc_type": "textbook"
+  },
+  {
+    "text": "How stars end. When a star exhausts the hydrogen in its core, the core contracts and heats, the outer layers swell, and the star becomes a red giant. The Sun will reach this stage in about 5 billion years. A star born with less than about 8 solar masses eventually sheds its outer layers as a planetary nebula and leaves behind a white dwarf. More massive stars end in a supernova explosion whose collapsed core becomes a neutron star, an object about 20 kilometers across, or, for the most massive stars, a black hole. The exact dividing masses are still uncertain.",
+    "source_file": "open-astronomy-notes.pdf",
+    "page_number": 47,
+    "chunk_index": 25,
+    "doc_type": "textbook"
+  }
+]

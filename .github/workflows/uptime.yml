@@ -1,0 +1,79 @@
+# An outside look at the live site (docs/student-facing-review-2026-10.md,
+# decision 12). Render's own health check is /auth/login, which answers 200
+# with the database down, and db-keepalive probes /healthz every third day;
+# between those a dead site was reported by students. This asks /healthz
+# every two hours and emails on anything but 200. Every two hours, not
+# every five minutes, because each run bills a GitHub Actions minute on a
+# private repository; an uptime service with five-minute checks is the
+# better tool, and this is the one the repository can run itself.
+
+name: uptime
+
+on:
+  schedule:
+    - cron: "11 */2 * * *"   # every 2 hours at :11 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    # Set the repository variable SITE_URL (Settings > Secrets and variables >
+    # Actions > Variables) to your public address; unset, the probe is skipped.
+    if: ${{ vars.SITE_URL != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Probe /healthz
+        env:
+          SITE: ${{ vars.SITE_URL }}
+        run: |
+          for attempt in 1 2 3; do
+            code=$(curl -sS -o /tmp/healthz.json -w '%{http_code}' --max-time 30 "$SITE/healthz" || echo "000")
+            echo "attempt $attempt: HTTP $code"
+            cat /tmp/healthz.json 2>/dev/null; echo
+            if [ "$code" = "200" ]; then
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "::error::$SITE/healthz did not answer 200 in three attempts"
+          exit 1
+
+      - name: Email alert on failure
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SITE: ${{ vars.SITE_URL }}
+        run: |
+          python3 - <<'EOF'
+          import json, os, urllib.request
+
+          key = os.environ.get("RESEND_API_KEY", "").strip()
+          to = [e.strip() for e in os.environ.get("ADMIN_EMAILS", "").split(",") if e.strip()]
+          if not key or not to:
+              print("No RESEND_API_KEY/ADMIN_EMAILS secret; cannot email. The failed run is the only signal.")
+              raise SystemExit(0)
+          body = {
+              "from": os.environ.get("FROM_EMAIL", "tutor@yourdomain.com"),
+              "to": to,
+              "subject": "[tutor] uptime: /healthz did not answer 200",
+              "text": (os.environ["SITE"] + "/healthz did not answer 200 in three attempts over a "
+                       "minute. The site may be down for students; the probe's output is in the run log.\n\n"
+                       "Run log: " + os.environ["RUN_URL"] + "\n"),
+          }
+          req = urllib.request.Request(
+              "https://api.resend.com/emails",
+              data=json.dumps(body).encode(),
+              headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+          )
+          try:
+              print("Resend response:", urllib.request.urlopen(req, timeout=15).status)
+          except Exception as exc:
+              print("the failure email itself failed:", exc)
+          EOF

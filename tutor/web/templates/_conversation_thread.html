@@ -1,0 +1,8 @@
+{% from "_conversation_bubbles.html" import thread_messages %}
+{#- The fragment GET /admin/conversations/thread and GET /instructor/conversations/thread
+    return, inserted under a row by conversations.js. -#}
+{% if messages %}
+{{ thread_messages(messages) }}
+{% else %}
+<p class="text-sm text-gray-400">No messages in this span.</p>
+{% endif %}

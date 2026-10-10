@@ -1,0 +1,22 @@
+{#
+  The tutor's avatar: the image courses.yaml names (tutor.avatar), or, when it
+  names none, the tutor's initial in a round blue circle.
+
+    {% from "_avatar.html" import avatar %}
+    {{ avatar("w-14 h-14 shrink-0 shadow ring-2 ring-blue-100", "text-2xl") }}
+
+  size_classes  width, height and placement classes (literal strings, so the
+                Tailwind build finds them)
+  text_class    the initial's size in the circle
+
+  chat.js builds the same markup for reply bubbles (avatarHtml) from
+  window.TUTOR_AVATAR, which chat.html sets.
+#}
+{% macro avatar(size_classes, text_class="text-sm") -%}
+{%- if tutor.avatar_url -%}
+<img src="{{ tutor.avatar_url }}" alt="{{ tutor.name }}" class="{{ size_classes }} rounded-full object-cover">
+{%- else -%}
+<span role="img" aria-label="{{ tutor.name }}"
+      class="{{ size_classes }} rounded-full bg-blue-600 text-white font-bold flex items-center justify-center select-none leading-none {{ text_class }}">{{ tutor.initial }}</span>
+{%- endif -%}
+{%- endmacro %}

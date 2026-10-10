@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AST 101 Lecture 04</title>
+<link rel="stylesheet" href="/static/vendor/reveal/dist/reveal.css">
+<link rel="stylesheet" href="/static/vendor/reveal/dist/theme/white.css">
+<link rel="stylesheet" href="/static/vendor/reveal/plugin/highlight/monokai.css">
+<style>
+  :root {
+    --r-background-color: #fff;
+    --r-heading-color: #3730a3;
+    --r-link-color: #3730a3;
+  }
+  .reveal h1, .reveal h2 { color: #3730a3; }
+  .reveal .title-slide h1 { font-size: 1.8em; }
+  .reveal .title-slide p  { color: #b45309; font-size: 1em; }
+  /* tighter base size gives more room on dense slides */
+  .reveal { font-size: 38px; }
+  .reveal ul { text-align: left; }
+  .reveal li { margin: 0.15em 0; font-size: 0.9em; }
+  /* allow dense slides to scroll rather than clip */
+  .reveal .slides section { overflow-y: auto; }
+  /* hide speaker notes from the slide view */
+  .reveal .slides section aside { display: none !important; }
+  .reveal pre { width: 100%; box-shadow: none; }
+  .reveal code { font-size: 0.65em; line-height: 1.4; }
+  .reveal pre.diagram {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.42em;
+    line-height: 1.35;
+    text-align: left;
+    white-space: pre;
+    overflow-x: auto;
+    background: #f7f7fa;
+    border-left: 4px solid #3730a3;
+    border-radius: 3px;
+    padding: 0.6em 0.8em;
+    margin: 0.5em 0 0 0;
+    box-shadow: none;
+  }
+  @media (max-width: 600px) {
+    .reveal pre.diagram { font-size: 0.34em; }
+  }
+  /* The deck lays out at 800px tall; a drawing has to share that with the
+     bullets above it, so cap it rather than let it push off the slide. */
+  .diagram-svg { margin: 0.4em auto 0; max-width: 78%; }
+  .diagram-svg svg { width: 100%; height: auto; max-height: 300px; }
+  .reveal section:has(li:nth-child(5)) .diagram-svg svg { max-height: 210px; }
+  .reveal section:has(li:nth-child(7)) .diagram-svg svg { max-height: 150px; }
+  /* bullets and a drawing have to share 800px: tighten the text a notch */
+  .reveal section:has(.diagram-svg) li { font-size: 0.8em; line-height: 1.25; margin: 0.08em 0; }
+  .reveal section:has(.diagram-svg) h2 { font-size: 1.25em; margin-bottom: 0.25em; }
+  .placeholder-box {
+    border: 2px dashed #aaa;
+    padding: 2em;
+    margin: 1em auto;
+    color: #888;
+    font-style: italic;
+    text-align: center;
+    max-width: 80%;
+  }
+  .slide-num {
+    position: absolute; bottom: 0.5em; right: 1em;
+    font-size: 0.45em; color: #bbb;
+  }
+  .deck-narrate {
+    position: fixed; bottom: 12px; left: 12px; z-index: 60;
+    background: #3730a3; color: #fff; border: none; border-radius: 6px;
+    padding: 8px 14px; font-size: 15px; cursor: pointer; opacity: 0.9;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  .deck-narrate:hover { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+    <section class="title-slide">
+      <h1>Light and Telescopes</h1>
+      
+      
+      <span class="slide-num">1</span>
+      <aside class="notes">Welcome everyone.</aside>
+    </section>
+    <section>
+      <h2>Today</h2>
+            <ul>
+        <li>The inverse-square law</li>
+        <li>Brightness at a distance</li>
+        <li>Light-gathering power</li>
+      </ul>
+      
+      <span class="slide-num">2</span>
+      <aside class="notes"></aside>
+    </section>
+    <section>
+      <h2>The inverse-square law</h2>
+            <ul>
+        <li>With dust in the way, b &lt;= L / (4 pi d^2)</li>
+        <li>Twice as far is a quarter as bright</li>
+      </ul>
+            <p>Light spreads over a sphere: at distance d its area is 4 pi d^2.</p>
+      <span class="slide-num">3</span>
+      <aside class="notes">Draw the spheres around the star.</aside>
+    </section>
+    <section>
+      <h2>Brightness at a distance</h2>
+            <ul>
+        <li>Divide by the square of the distance</li>
+      </ul>
+            <pre><code class="language-cpp" data-trim data-noescape>double brightness(double luminosity, double d) {
+  // &lt;divide &amp; square&gt;
+}</code></pre>
+      
+      <span class="slide-num">4</span>
+      <aside class="notes"></aside>
+    </section>
+    <section>
+      <h2>Light spreading out</h2>
+      
+            <p>Diagram of light crossing spheres of growing radius.</p>
+      <span class="slide-num">5</span>
+      <aside class="notes"></aside>
+    </section>
+    <section>
+      <h2>Check your understanding</h2>
+            <ul>
+        <li>How much dimmer is a star three times as far?</li>
+      </ul>
+      
+      <span class="slide-num">6</span>
+      <aside class="notes"></aside>
+    </section>
+  </div>
+</div>
+
+<script type="module">
+  import Reveal from '/static/vendor/reveal/dist/reveal.esm.js';
+  import Highlight from '/static/vendor/reveal/plugin/highlight/highlight.esm.js';
+  import Notes from '/static/vendor/reveal/plugin/notes/notes.esm.js';
+  Reveal.initialize({
+    // Each deck lives in its own iframe (the /chat slide panel) or its own tab,
+    // so it should always run full-page to fill its viewport. The old
+    // `window.self !== window.top` test flipped to embedded mode inside the
+    // iframe, which drops Reveal's `reveal-full-page` sizing and renders blank.
+    embedded: false,
+    hash: true,
+    height: 800,
+    slideNumber: 'c/t',
+    plugins: [Highlight, Notes],
+    highlight: { highlightOnLoad: true },
+  }).then(() => {
+    // Self-heal sizing. The /chat slide panel sizes this iframe only AFTER
+    // Reveal's one-shot init runs, because its Tailwind CDN runtime applies the
+    // flex layout late. Reveal would then stay scaled to a 0/last-known height
+    // and render blank ("black panel"). A ResizeObserver re-fits the deck on
+    // every viewport size change, so it lays out correctly whenever the
+    // container finally gets real dimensions — no parent cooperation needed.
+    window.deck = Reveal;
+    const refit = () => Reveal.layout();
+    try { new ResizeObserver(refit).observe(document.documentElement); }
+    catch (e) { window.addEventListener('resize', refit); }
+    refit();
+
+  });
+</script>
+</body>
+</html>

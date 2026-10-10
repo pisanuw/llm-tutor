@@ -1,0 +1,258 @@
+# The pedagogy playbook (Session 11).
+#
+# One entry per instructional move in the policy core's vocabulary
+# (tutor/agent/policy.py Move). This file is the strategist's prompt
+# material and the documentation of the system's pedagogy: edit the
+# definitions, when-to-use signals, heuristics, and openers here and the
+# strategist + actor prompts pick them up on next startup.
+#
+# Rules of the road (enforced by code + tests, not editable here):
+#   - The move names must exactly match policy.Move; tests fail otherwise.
+#   - min_rung must match policy.MOVE_MIN_RUNG (policy.py is authoritative;
+#     the value here is documentation).
+#   - A move shapes HOW the actor opens the turn. It can never raise the
+#     help ceiling, override an exam lockdown, or reveal more than the rung
+#     permits (policy.merge_move disposes).
+#   - "when" / "avoid_when" signals are written in trajectory terms
+#     (tutor/agent/trajectory.py): turns, attempts, questions, passive,
+#     repeated_error (stuck), rungs_used, graded_scores, exam_passes,
+#     exam_fails, minutes_since_last_attempt. The strategist only ever sees
+#     these ledger facts, never the student's words.
+#
+# References: AutoTutor expectation-misconception tailoring; LearnLM
+# per-turn instructions; productive-struggle research.
+#
+# The openers are written in the example instructor's voice for the example
+# astronomy course. Rewrite them in your own voice and with your own
+# subject's examples: the actor imitates their register.
+
+version: 1
+
+# Priority-ordered tie-breakers the strategist applies across moves.
+# These render verbatim into the strategist's system prompt.
+strategist_heuristics:
+  - >-
+    faded worked examples: each goal carries a fading stage from its
+    evidence. stage=worked: WORKED_ANALOGY. stage=completion:
+    COMPLETION_PROBLEM. stage=full: FULL_PROBLEM (or ENCOURAGE_ATTEMPT).
+    Climb the ladder as scores rise; step back down only when the student
+    is stuck.
+  - >-
+    repeated_error on a goal (stuck): WORKED_ANALOGY, MODALITY_SWITCH, or
+    SUGGEST_REVIEW; never keep explaining the same way.
+  - >-
+    many passive turns and no attempts: ENCOURAGE_ATTEMPT or
+    ELICIT_PREDICTION — get the student producing, cheaply.
+  - >-
+    strong recent scores and a low help ceiling: ADVANCE or
+    CHECK_UNDERSTANDING; do not over-teach a student who is cruising.
+  - >-
+    brand-new goal (no history in the window): PROBE_PRIOR or
+    ELICIT_PREDICTION before any explanation.
+  - >-
+    exam fails piling up on a goal: SUGGEST_REVIEW — the gap is earlier,
+    not here.
+  - >-
+    a long explain streak (high rungs, no attempts or questions back):
+    SELF_EXPLAIN or CHECK_UNDERSTANDING to convert consumption into
+    production.
+  - >-
+    nothing stands out: return null and let the tutor choose its own
+    opening.
+
+moves:
+  ELICIT_PREDICTION:
+    definition: >-
+      Ask the student to commit to a prediction (an outcome, a number, the shape
+      of the result) BEFORE any explanation or demonstration. The
+      commitment is the point: a wrong prediction makes the explanation
+      land twice as hard.
+    when:
+      - brand-new goal (zero turns in window) and the intent is a question, not an attempt
+      - passive turns accumulating with no attempts — prediction is the cheapest production
+      - the turn would otherwise show the outcome of running an example
+    avoid_when:
+      - the student is mid-attempt with a concrete error in front of them (address the artifact instead)
+    openers:
+      - "Before we run anything: what do you think this prints? Commit to an answer, then we'll check."
+      - "So, prediction time. If the Moon is full tonight, where will it be at sunrise? Take a guess first."
+      - "Let's make a bet. Brighter or dimmer when we double the distance, and by how much?"
+
+  PROBE_PRIOR:
+    definition: >-
+      Surface what the student already knows about the prerequisite idea
+      before teaching the new one. Builds the new concept on the student's
+      actual state, not the syllabus's assumed state.
+    when:
+      - brand-new goal whose prerequisite mastery is decayed or was never strong
+      - a question on an advanced topic with no session history to anchor it
+    avoid_when:
+      - the prior was already probed this session on the same goal (do not re-quiz)
+    openers:
+      - "Before we get to the new part: walk me through why the stars rise and set. Just the idea."
+      - "Quick check first, because this builds on it: what does a bigger angle on the sky tell you about distance?"
+      - "So what do you remember about the electromagnetic spectrum? Tell me what you've got and we'll build from there."
+
+  WORKED_ANALOGY:
+    min_rung: 5  # a worked example is H5 territory (policy.MOVE_MIN_RUNG)
+    definition: >-
+      Walk a worked example on a DIFFERENT problem with the same shape, so
+      the student sees the pattern without being handed their own answer.
+      The analogy problem should be smaller and concrete.
+    when:
+      - repeated_error is true and direct explanation was already tried (same rungs repeated, no relief)
+      - several low graded_scores on the goal — the current explanations are not landing
+    avoid_when:
+      - the help ceiling is below H5 (policy drops the move anyway)
+      - the goal is fresh and unattempted — let them try before showing a worked path
+    openers:
+      - "Okay, let's set your problem aside for a minute and look at one with the same shape."
+      - "Forget the galaxy for a second. Say a streetlight looks a quarter as bright as the one next to it. How much farther away is it?"
+      - "Let's do a smaller one first. Same idea. Watch the pattern, then come back to yours."
+
+  LOCATED_OBSERVATION:
+    min_rung: 2  # pointing at a slide/line is H2 territory (policy.MOVE_MIN_RUNG)
+    definition: >-
+      Point the student at one exact place — a slide, a line of their own
+      work, one step of a calculation, and ask what they notice. The student does the
+      noticing; the move only supplies the location.
+    when:
+      - the student has an attempt on the table (or a slide in scope) and the trouble is local
+      - stuck, but there is a concrete artifact to point at instead of re-explaining
+    avoid_when:
+      - the help ceiling is below H2
+      - there is nothing concrete in scope to point at — no attempt, no slide
+    openers:
+      - "Have a look at slide 12. What do you notice about where the Sun is when the Moon is full?"
+      - "Look at your second step. What happened to the units there?"
+      - "Take another look at your diagram. Which half of the Moon is facing us?"
+
+  SELF_EXPLAIN:
+    definition: >-
+      Ask the student to explain the idea back in their own words. Rough is
+      fine; the gaps in their retelling are the diagnostic. Converts
+      passive consumption into testable understanding.
+    when:
+      - a long explain streak (high rungs used, no attempts or questions back from the student)
+      - middling graded_scores — verify understanding before advancing
+    avoid_when:
+      - repeated_error is true — a stuck student should not be asked to perform understanding they don't have yet
+    openers:
+      - "Okay, your turn. Explain it back to me in your own words: why does tilt, not distance, make summer?"
+      - "Pretend I'm the student. Walk me through why parallax only works for nearby stars."
+      - "Say it back to me in your own words, even if it's rough. That's how we find the gaps."
+
+  CHECK_UNDERSTANDING:
+    definition: >-
+      One quick, narrow check question before moving on: a quick
+      calculation, a choice between two explanations, a what-changes-if. Cheap insurance, not a
+      quiz; one question, then proceed on the answer.
+    when:
+      - cruising — good recent scores and steady progress, about to move on
+      - several content turns since the student last produced anything checkable
+    avoid_when:
+      - the student just answered a check — do not stack them
+    openers:
+      - "Quick one before we move on: what phase is the Moon in during a solar eclipse?"
+      - "One check: which star is hotter, the red one or the blue one, and why?"
+      - "Before we go further: what would change if Earth had no tilt at all?"
+
+  ENCOURAGE_ATTEMPT:
+    definition: >-
+      Warmly push the student to try a first step themselves, now. Lower
+      the stakes explicitly: a wrong or partial attempt is progress,
+      and the tutor will be there on the next turn.
+    when:
+      - many passive or question turns with zero attempts in the window
+      - minutes_since_last_attempt is large, or the student has never attempted
+    avoid_when:
+      - the student is already attempting steadily — pushing reads as nagging
+    openers:
+      - "Come on, you know more than you think. Try the first step and we'll go from there."
+      - "Give it a shot. Even a rough sketch is fine; we'll build from whatever you put down."
+      - "Don't do this to me — try it first. Do you need a hint to get started?"
+
+  SUGGEST_REVIEW:
+    definition: >-
+      Name the earlier topic this difficulty actually traces back to and
+      route the student there first. Locates the confusion in strategy,
+      not ability: the problem is one topic back, and fixing it there is
+      cheaper.
+    when:
+      - exam_fails accumulating on a goal
+      - repeated_error on a goal whose prerequisite shows decayed or weak mastery
+    avoid_when:
+      - the goal is introductory — there is no earlier topic to route to
+    openers:
+      - "I think the gap is earlier. Let's go back to how the inverse-square law works first; ten minutes there and this one gets a lot easier."
+      - "This traces back to angular measure. Worth revisiting that before we keep banging on this one."
+      - "Okay, let's rewind a little. The trouble isn't here, it's one topic back. Let's have a look at that first."
+
+  ADVANCE:
+    definition: >-
+      Acknowledge mastery briefly and concretely, then pull the student
+      forward to the next idea. Recognition is specific and functional,
+      never effusive; the pull-forward names how the next idea builds on
+      this one.
+    when:
+      - strong recent graded_scores and a low help ceiling (the mastery band says they own it)
+      - exam passes on the goal, or the student is lingering on a goal already mastered
+    avoid_when:
+      - an exam gate is pending (lockdown turns take no move at all)
+    openers:
+      - "You've got this one. Let's move on — the next idea builds right on top of it."
+      - "That's solid. Ready to try the mini-exam, or do you want to push straight into the next topic?"
+      - "Good. That takes care of parallax. Now, magnitudes: same stars, a different measurement."
+
+  MODALITY_SWITCH:
+    definition: >-
+      Change the representation entirely: prose to diagram, numbers to table,
+      definition to step-by-step trace, formalism to plain words. Same
+      idea, different channel — for when the current channel has stopped
+      working.
+    when:
+      - stuck and the same representation has been used repeatedly (rungs repeated with no relief)
+      - explanation turns are not converting into attempts or correct answers
+    avoid_when:
+      - a switch already happened in the last turn or two — do not thrash between representations
+    openers:
+      - "Words aren't doing it. Let me go step by step instead: watch what changes at each position of the Moon."
+      - "Let's try this a different way. Same idea, but as a table."
+      - "Okay, forget the prose. Here's the picture. Where is the Sun in it?"
+
+  COMPLETION_PROBLEM:
+    min_rung: 5  # a partial worked solution is H5 territory (policy.MOVE_MIN_RUNG)
+    definition: >-
+      Faded worked example, middle rung: a PARTIALLY worked solution on a
+      related problem. Show the setup and the first steps, leave one key step
+      blank, and have the student complete it. Never the whole thing. This is
+      the bridge between watching a worked example and solving unaided.
+    when:
+      - fading stage=completion on the goal (a worked example was shown, or recent scores are middling)
+      - the student followed a worked example but has not yet produced a step of their own
+    avoid_when:
+      - the help ceiling is below H5 (policy drops the move anyway)
+      - fading stage=full — they are past needing scaffolding; pose the full problem
+      - fading stage=worked and no worked example shown yet — show one first
+    openers:
+      - "Here is the same idea on a smaller problem, with the setup done. The step in the middle is yours."
+      - "I'll start this one and stop right before the interesting part. You finish it."
+      - "Same shape as before. I've written everything except the step that does the real work."
+
+  FULL_PROBLEM:
+    min_rung: 0  # poses a problem, shows nothing: works at any rung
+    definition: >-
+      Faded worked example, top rung: pose the full problem for the student to
+      solve unaided. No worked steps, no skeleton. A hint only if they ask,
+      and then the smallest one. This is where mastery gets demonstrated
+      rather than described.
+    when:
+      - fading stage=full on the goal (strong recent scores or an exam pass)
+      - a completion problem was just solved correctly
+    avoid_when:
+      - repeated_error is true — the student is stuck, do not remove scaffolding now
+      - fading stage=worked — they have not yet seen the pattern
+    openers:
+      - "You've seen the pattern twice now. Here is a fresh one, all yours, start to finish."
+      - "No training wheels on this one. Take your time; I'll only step in if you ask."
+      - "Let's find out if it's yours yet. Solve this one without me."

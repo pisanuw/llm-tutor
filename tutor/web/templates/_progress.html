@@ -1,0 +1,50 @@
+{#- The chat's progress panel, fetched from /chat/progress (plan step 5.4,
+    finding C23: it was 169 lines of f-string HTML escaped by hand). Titles
+    and ids are escaped by Jinja; the "What's next" links hand the goal to
+    recordPathEvent through data attributes, never through a JS string. -#}
+<div class="text-xs text-gray-500 space-y-1 px-2 py-2">
+<p class="font-semibold text-gray-700 text-sm mb-2">{{ "Getting started" if is_new else "Your progress" }} in {{ course_label(course) }}</p>
+{%- if is_new %}
+<p>Nothing here yet. Ask a question or pick a suggestion below the chat; your progress shows up here as you go. <a href="/map" class="text-blue-500 hover:underline">See the map ↗</a></p>
+{%- elif total_goals %}
+{#- The map's words for the statuses (plan step 3.6, finding D24). #}
+<p>Topics: <span class="font-semibold text-yellow-700">{{ mastered }} solid</span>, <span class="font-semibold text-blue-600">{{ unlocked }} practiced</span> of {{ total_goals }} &nbsp;<span class="text-gray-400">({{ pct }}%)</span> &nbsp;<a href="/map" class="text-blue-500 hover:underline">view map ↗</a></p>
+{%- endif %}
+{%- if review_due %}
+<p class="mt-1"><a href="/review?course={{ course }}" class="text-purple-600 hover:underline font-semibold">🔁 {{ review_due }} due for review</a> <span class="text-gray-400">(~{{ review_minutes }} min)</span></p>
+{%- endif %}
+{%- if not is_new %}
+<p>Messages: <span class="font-semibold">{{ msg_count }}</span></p>
+{%- endif %}
+{#- Exercises and topic visits carry no course, so these say they cover both.
+    Long names end in an ellipsis (CSS truncate), not a hard cut. #}
+{%- if avg_score is not none %}
+<p>Average exercise score, both courses: <span class="font-semibold">{{ avg_score }}/4</span></p>
+{%- endif %}
+{%- if topics %}
+<p class="font-semibold mt-2">Recent topics, both courses:</p><ul class="list-disc pl-3">
+{%- for tag, lec in topics %}
+<li class="truncate" title="{{ tag }}">L{{ "%02d"|format(lec) }}: {{ tag }}</li>
+{%- endfor %}
+</ul>
+{%- endif %}
+{%- if exercises %}
+<p class="font-semibold mt-2">Recent exercises, both courses:</p><ul class="list-disc pl-3">
+{%- for e in exercises %}
+<li class="truncate" title="{{ e.exercise_id }}"><span class="{{ 'text-green-600' if e.passed else 'text-red-500' }}">{{ e.score }}/4</span> {{ e.exercise_id }}</li>
+{%- endfor %}
+</ul>
+{%- endif %}
+{%- if next_goals %}
+<p class="font-semibold mt-3">What's next:</p>
+<ul class="space-y-1 mt-1">
+{%- for g in next_goals %}
+<li class="text-xs leading-snug"><span class="block truncate font-medium text-gray-800" title="{{ g.title }}">{{ g.title }}</span><a href="{{ g.chat_url }}" class="text-blue-500 hover:underline text-xs" data-goal="{{ g.id }}" data-course="{{ g.course }}" onclick="recordPathEvent(this.dataset.goal, this.dataset.course, 'teach')">Teach me</a>
+{%- if g.slides_url %} &nbsp;<a href="{{ g.slides_url }}" target="_blank" class="text-gray-400 hover:text-blue-500" data-goal="{{ g.id }}" data-course="{{ g.course }}" onclick="recordPathEvent(this.dataset.goal, this.dataset.course, 'slides')">slides</a>{% endif %}
+{%- if g.explore_url %} &nbsp;<a href="{{ g.explore_url }}" target="_blank" class="text-purple-500 hover:text-purple-700 font-medium" data-goal="{{ g.id }}" data-course="{{ g.course }}" onclick="recordPathEvent(this.dataset.goal, this.dataset.course, 'explore')">🧪 explore</a>{% endif %}
+</li>
+{%- endfor %}
+</ul>
+<p class="mt-1"><a href="/track-picker?course={{ course }}" class="inline-flex items-center min-h-[44px] text-xs text-purple-600 hover:underline">Change the order ↗</a></p>
+{%- endif %}
+</div>

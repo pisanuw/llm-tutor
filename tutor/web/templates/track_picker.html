@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% from "_nav.html" import site_header %}
+{% block title %}{{ tutor.name }} — Order of suggestions{% endblock %}
+{% block content %}
+
+<style>
+  /* Each card is a button (plan step 3.4, finding D12: they were pointer-only
+     divs), so Tab reaches it and Enter or Space picks it. */
+  .track-card {
+    display: block; width: 100%; text-align: left;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    background: white;
+  }
+  /* The accent follows the course (course_color, set on #track-page). */
+  .track-card:hover { border-color: var(--accent, #6d28d9); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+  .track-card:focus-visible { outline: 3px solid var(--accent, #6d28d9); outline-offset: 2px; }
+  .track-card.active { border-color: var(--accent, #6d28d9); background: var(--accent-wash, #f5f3ff); }
+  .track-card .title { display: block; font-size: 1rem; font-weight: 700; color: #1e1b4b; margin-bottom: 0.25rem; }
+  .track-card .desc  { display: block; font-size: 0.85rem; color: #6b7280; margin: 0; }
+  .track-card .badge {
+    display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem;
+    border-radius: 9999px; background: var(--accent-wash, #ede9fe); color: var(--accent, #5b21b6);
+    font-weight: 600; margin-bottom: 0.5rem;
+  }
+  .track-card.active .badge { background: var(--accent, #6d28d9); color: white; }
+  /* Course pills: each sets its own colors inline (course_color). */
+  .course-pill:not([aria-current]):hover { border-color: var(--pill-hover); }
+</style>
+
+{{ site_header("", None, student=student, is_admin=is_admin,
+               is_instructor=is_instructor, course=course) }}
+
+{%- set accent = course_color(course) %}
+<div id="track-page" class="min-h-screen bg-gray-50 py-10 px-4"
+     style="--accent: {{ accent.strong }}; --accent-wash: {{ accent.wash }};">
+  <div class="max-w-2xl mx-auto">
+
+    <h1 class="text-2xl font-bold text-gray-900 mb-1">Order of suggestions</h1>
+    <p class="text-gray-500 text-sm mb-6">
+      Optional. This only changes the <em>order</em> of the "What's next" suggestions in
+      the chat and on the map; every order covers the same topics. <strong>Lecture
+      order</strong> (the default) follows the course week by week. Pick another if you want to
+      build foundations first, code first, or cover what exams lean on most. You can change it
+      any time.
+    </p>
+
+    <!-- Course selector -->
+    <div class="flex flex-wrap gap-2 mb-6">
+      {%- for c in course_list %}
+      {%- set cc = course_color(c.id) %}
+      <a href="/track-picker?course={{ c.id|urlencode }}" {% if course == c.id %}aria-current="page"{% endif %}
+         class="course-pill inline-flex items-center px-4 min-h-[44px] rounded-full text-sm font-semibold border
+                {% if course == c.id %}text-white{% else %}bg-white text-gray-600 border-gray-300{% endif %}"
+         style="--pill-hover: {{ cc.light }};{% if course == c.id %} background-color: {{ cc.strong }}; border-color: {{ cc.strong }};{% endif %}">
+        {{ c.label }}
+      </a>
+      {%- endfor %}
+    </div>
+
+    <div id="track-list" class="space-y-3" role="group" aria-label="Tracks">
+      {% for t in tracks %}
+      <button type="button" class="track-card {% if t.active %}active{% endif %}"
+              id="card-{{ t.id | replace('/', '-') }}" data-track-id="{{ t.id }}"
+              aria-pressed="{{ 'true' if t.active else 'false' }}"
+              onclick="selectTrack(this.dataset.trackId)">
+        <span class="badge">{% if t.active %}Active{% else %}{{ t.goal_count }} goals{% endif %}</span>
+        <span class="title">{{ t.title }}</span>
+        <span class="desc">{{ t.description }}</span>
+      </button>
+      {% endfor %}
+    </div>
+
+    <div id="status-msg" role="status" class="mt-4 min-h-[1.25rem] text-sm text-green-600"></div>
+
+    <div class="mt-8 text-center">
+      <button id="start-btn" onclick="saveAndStart()"
+         class="inline-flex items-center min-h-[44px] bg-violet-700 text-white px-6 rounded-lg font-semibold text-sm hover:bg-violet-800">
+        Save this order and go to the chat
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let activeCourse = {{ course|tojson }};
+let activeTrackId = {{ current_track|tojson }};
+
+function selectTrack(trackId) {
+  // Update visual state immediately
+  document.querySelectorAll(".track-card").forEach(el => {
+    el.classList.remove("active");
+    el.setAttribute("aria-pressed", "false");
+    const badge = el.querySelector(".badge");
+    // restore goal count text
+    const goalCount = el.dataset.goalCount;
+    if (goalCount) badge.textContent = goalCount + " goals";
+  });
+  const card = document.getElementById("card-" + trackId.replace(/\//g, "-"));
+  if (card) {
+    card.classList.add("active");
+    card.setAttribute("aria-pressed", "true");
+    card.querySelector(".badge").textContent = "Active";
+  }
+
+  activeTrackId = trackId;
+
+  // POST to server
+  fetch("/path/track", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({course: activeCourse, track_id: trackId}),
+  }).then(r => r.json()).then(data => {
+    say(data.ok ? "Order saved." : "Could not save the order. Try again.", data.ok);
+  }).catch(() => say("Could not save the order. Check your connection and try again.", false));
+}
+
+// The status line is a live region that stays in the page (a hidden one may
+// not be read out); only its text comes and goes.
+function say(text, ok) {
+  const msg = document.getElementById("status-msg");
+  msg.textContent = text;
+  msg.className = "mt-4 min-h-[1.25rem] text-sm " + (ok ? "text-green-600" : "text-red-500");
+  clearTimeout(say._timer);
+  say._timer = setTimeout(() => { msg.textContent = ""; }, 2500);
+}
+
+// Persist the (visually) active track, then go to chat. Guarantees a
+// StudentPath exists — even if the student never clicked a card — so the
+// first-login /chat gate does not bounce them back here.
+function saveAndStart() {
+  const go = () => { window.location = "/chat?course=" + activeCourse; };
+  fetch("/path/track", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({course: activeCourse, track_id: activeTrackId}),
+  }).then(go).catch(go);
+}
+
+// Store goal counts on cards for re-labeling
+document.querySelectorAll(".track-card").forEach(el => {
+  const badge = el.querySelector(".badge");
+  if (badge && !badge.textContent.includes("Active")) {
+    el.dataset.goalCount = badge.textContent.replace(" goals", "").trim();
+  }
+});
+</script>
+
+{% endblock %}

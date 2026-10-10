@@ -1,0 +1,25 @@
+<!doctype html>
+{#- What the chat's slides pane shows when the session ran out before a deck
+    loaded (docs/bulletproofing-plan-2026-10.md, R20): the login page used to
+    open inside the pane. One sentence, as the missing-deck one reads, and a
+    link that signs in the whole page (target="_top"), not the frame. Standalone:
+    no header, no scripts, nothing the pane would have to lay out. -#}
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signed out — {{ tutor.name }}</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body { display: flex; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box;
+         background: #111827; color: #d1d5db; text-align: center;
+         font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  p { max-width: 20rem; margin: 0; }
+  a { color: #93c5fd; display: inline-block; min-height: 44px; line-height: 44px; }
+</style>
+</head>
+<body data-signed-out>
+<p>Your session has ended, so the slides cannot load.
+  <a href="{{ login }}" target="_top">Sign in again</a> and the page comes back.</p>
+</body>
+</html>

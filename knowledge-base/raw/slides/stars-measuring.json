@@ -1,0 +1,130 @@
+{
+  "filename": "stars-measuring.pptx",
+  "lecture_title": "AST 102: Measuring the Stars",
+  "slide_count": 10,
+  "slides": [
+    {
+      "slide_number": 1,
+      "layout_name": "TITLE",
+      "title": "AST 102: Measuring the Stars",
+      "body_text": [
+        "Distance, brightness, temperature",
+        "Dr. Alex Morgan"
+      ],
+      "speaker_notes": "Welcome to AST 102. We start with the hardest question in astronomy: how far?",
+      "has_code": false
+    },
+    {
+      "slide_number": 2,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "How Far?",
+      "body_text": [
+        "Every star is a point of light",
+        "A faint star could be dim and close or brilliant and far",
+        "We need a distance before anything else makes sense"
+      ],
+      "speaker_notes": "Recap from AST 101: arcseconds and the inverse-square law.",
+      "has_code": false
+    },
+    {
+      "slide_number": 3,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Parallax",
+      "body_text": [
+        "The apparent shift of a nearby object against distant ones",
+        "Baseline: Earth's orbit, observations six months apart",
+        "Parallax angle p: half the total shift",
+        "Nearer stars have bigger parallax"
+      ],
+      "speaker_notes": "Thumb blink demonstration. Hold the thumb closer and it jumps more.",
+      "has_code": false
+    },
+    {
+      "slide_number": 4,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Parsecs",
+      "body_text": [
+        "d = 1 / p, with d in parsecs and p in arcseconds",
+        "1 parsec = about 3.26 light-years",
+        "1 parsec = about 206,000 times the Earth-Sun distance"
+      ],
+      "speaker_notes": "Parsec: parallax of one arcsecond. A unit built to make the formula a single division.",
+      "has_code": false
+    },
+    {
+      "slide_number": 5,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Nearest Stars",
+      "body_text": [
+        "Proxima Centauri: p = 0.77 arcseconds, d = about 1.3 pc (4.2 light-years)",
+        "Sirius: p = 0.38 arcseconds, d = about 2.6 pc (8.6 light-years)",
+        "No star has a parallax as large as 1 arcsecond"
+      ],
+      "speaker_notes": "Everyone gets 1.3 parsecs. Then ask: why is it more than 1? Because p is less than 1.",
+      "has_code": false
+    },
+    {
+      "slide_number": 6,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Limits of Parallax",
+      "body_text": [
+        "At 100 pc, p = 0.01 arcseconds",
+        "Air turbulence blurs ground-based images by about 1 arcsecond",
+        "Space telescopes measure parallaxes to tens of millionths of an arcsecond",
+        "That reaches thousands of parsecs, a small part of the galaxy"
+      ],
+      "speaker_notes": "Parallax is the first rung of the distance ladder. Everything farther is calibrated on it.",
+      "has_code": false
+    },
+    {
+      "slide_number": 7,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Magnitude Scale",
+      "body_text": [
+        "Smaller magnitude = brighter star",
+        "5 magnitudes = a factor of exactly 100 in brightness",
+        "1 magnitude = a factor of about 2.512",
+        "Very bright objects have negative magnitudes: Sirius -1.5, the Sun -26.7"
+      ],
+      "speaker_notes": "Golf scores: lower is better. The ancient catalogs called the brightest stars first magnitude.",
+      "has_code": false
+    },
+    {
+      "slide_number": 8,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Absolute Magnitude",
+      "body_text": [
+        "Apparent magnitude: how bright a star looks from Earth",
+        "Absolute magnitude: how bright it would look from 10 parsecs",
+        "The Sun's absolute magnitude is about 4.8"
+      ],
+      "speaker_notes": "Absolute magnitude puts every star at the same distance so we can compare their real output.",
+      "has_code": false
+    },
+    {
+      "slide_number": 9,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Stellar Colors",
+      "body_text": [
+        "Hot stars look blue-white; cool stars look orange-red",
+        "Color measures surface temperature",
+        "In Orion: Betelgeuse is orange-red, Rigel is blue-white"
+      ],
+      "speaker_notes": "Red is cool here. Faucets have it backwards for astronomy.",
+      "has_code": false
+    },
+    {
+      "slide_number": 10,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Spectral Classes",
+      "body_text": [
+        "O B A F G K M, from hottest to coolest",
+        "O stars: 30,000 K and up, blue; M stars: about 3,000 K, red",
+        "The Sun is a G2 star, about 5,800 K",
+        "Each class has subclasses 0 to 9"
+      ],
+      "speaker_notes": "Students write their own mnemonic. The class votes on the best one.",
+      "has_code": false
+    }
+  ]
+}

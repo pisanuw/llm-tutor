@@ -1,0 +1,15 @@
+{
+  "_comment": "Optional. Which chapter of the course book (book/*.qmd, by file stem) teaches each lecture; python -m pipeline propose-anchors uses it to point each goal at a book section.",
+  "AST101": {
+    "1": "ast101-01-the-sky",
+    "2": "ast101-02-moon",
+    "3": "ast101-03-seasons",
+    "4": "ast101-04-light"
+  },
+  "AST102": {
+    "1": "ast102-01-measuring-stars",
+    "2": "ast102-02-lives-of-stars",
+    "3": "ast102-03-galaxies",
+    "4": "ast102-04-expanding-universe"
+  }
+}

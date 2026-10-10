@@ -1,0 +1,83 @@
+# Weekly instructor status report.
+#
+# One email per instructor covering their own classes: who used the tutor, who
+# never started, who went quiet, and what the class is learning. Read-only
+# against the production database (DATABASE_URL); the aggregation is the same
+# tutor/class_metrics.py computation the /instructor dashboard renders, so the
+# email and the page always agree. No-ops cleanly when DATABASE_URL is unset
+# (e.g. on forks), and prints instead of sending without RESEND_API_KEY.
+#
+# Manual: "Run workflow" sends the plain email. To send it every week, add a
+# schedule trigger (cron), or run scripts/instructor_report.py from a machine
+# that keeps the local analytics store (python -m tutor.analytics export), which
+# adds the day-by-day table and the chart attachment.
+
+name: instructor-report
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Look-back window in days"
+        default: "7"
+
+# One run at a time: a run that starts while another is going waits for it
+# (plan step 6.4, finding E19).
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-web.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-web.txt
+
+      - name: Send instructor reports
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          SECRET_KEY: ci-dummy-secret
+          ADMIN_TOKEN: ci-dummy-admin-token
+          ANTHROPIC_API_KEY: ci-dummy-key
+          # Public app URL for the "Open this class" links in the email.
+          BASE_URL: ${{ vars.SITE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "DATABASE_URL not set; skipping instructor reports."
+            exit 0
+          fi
+          DAYS="${{ github.event.inputs.days }}"
+          python -m scripts.instructor_report --days "${DAYS:-7}"
+
+      - name: Email alert on failure
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+        run: |
+          if [ -z "$RESEND_API_KEY" ] || [ -z "$ADMIN_EMAILS" ]; then
+            echo "Resend not configured; the failed run is the only signal."
+            exit 0
+          fi
+          TO="${ADMIN_EMAILS%%,*}"
+          curl -fsS -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"from\":\"${FROM_EMAIL:-tutor@example.edu}\",\"to\":\"$TO\",
+                 \"subject\":\"Tutor: weekly instructor report failed\",
+                 \"html\":\"<p>The instructor-report workflow failed. See the Actions run.</p>\"}" \
+            > /dev/null

@@ -1,0 +1,147 @@
+# Nightly logical backup of the production database (ROADMAP stability 4a).
+#
+# Supabase Free has no PITR; this is the recovery story. pg_dump runs over the
+# session pooler (the DATABASE_URL secret already points at port 5432, session
+# mode; the transaction pooler on 6543 would break pg_dump). The dump holds every
+# student's transcripts, so it is encrypted with age to the public key in the
+# BACKUP_AGE_RECIPIENT Actions variable before it is kept as an artifact for 21
+# days: anyone with read access to the repo can download artifacts, but only the
+# holder of the offline private key can read one. Without the variable the job
+# fails (and emails) rather than store a readable dump. Setup and restore:
+# DEPLOY.md, "Nightly database backups".
+#
+# postgresql-client-17 from PGDG: pg_dump must be >= the server's major
+# version, and the runner's default client can lag Supabase upgrades.
+# On failure this emails ADMIN_EMAILS via Resend (same secrets as
+# db-keepalive.yml; without them the failed run is the only signal).
+
+name: db-backup
+
+on:
+  schedule:
+    - cron: "20 9 * * *"   # 09:20 UTC daily: 02:20 PDT, 01:20 PST; after the daily report
+  workflow_dispatch:
+
+# One run at a time: a run that starts while another is going waits for it
+# (plan step 6.4, finding E19).
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    # Backups start once the repository variable BACKUP_AGE_RECIPIENT is set
+    # (the public key they are encrypted to); until then the job is skipped.
+    # Set, a missing DATABASE_URL or a bad dump fails loudly.
+    if: ${{ vars.BACKUP_AGE_RECIPIENT != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Install postgresql-client-17 (PGDG)
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
+            https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] \
+            http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+            | sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client-17 age
+          pg_dump --version
+          age --version
+
+      - name: Dump database
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::DATABASE_URL secret unset; nothing to back up."
+            exit 1
+          fi
+          # The secret carries app-oriented query params (e.g. Prisma-style
+          # ?schema=public) that libpq rejects outright. Keep only params
+          # libpq understands; drop the rest.
+          CLEAN_URL=$(python3 - <<'PY'
+          import os
+          from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
+          u = urlsplit(os.environ["DATABASE_URL"].strip())
+          keep = {"sslmode", "sslrootcert", "connect_timeout", "application_name", "options"}
+          q = [(k, v) for k, v in parse_qsl(u.query) if k in keep]
+          print(urlunsplit((u.scheme, u.netloc, u.path, urlencode(q), "")))
+          PY
+          )
+          # The runner preinstalls pg_dump 16 and its wrapper can shadow the
+          # freshly installed 17; call the versioned binary explicitly.
+          PGBIN=$(ls -d /usr/lib/postgresql/*/bin | sort -V | tail -1)
+          "$PGBIN/pg_dump" --version
+          "$PGBIN/pg_dump" "$CLEAN_URL" -Fc --no-owner --no-privileges -f tutor.dump
+          ls -la tutor.dump
+          # A trivially small dump means the DB was empty or the dump silently
+          # failed; either way a human should look.
+          test "$(stat -c%s tutor.dump)" -gt 10000 || {
+            echo "::error::dump suspiciously small ($(stat -c%s tutor.dump) bytes)"; exit 1; }
+
+      - name: Encrypt dump
+        env:
+          # Public key(s), space-separated (age1...). Not a secret; an Actions
+          # variable. The matching private key stays offline with the operator.
+          BACKUP_AGE_RECIPIENT: ${{ vars.BACKUP_AGE_RECIPIENT || secrets.BACKUP_AGE_RECIPIENT }}
+        run: |
+          if [ -z "$BACKUP_AGE_RECIPIENT" ]; then
+            echo "::error::BACKUP_AGE_RECIPIENT is not set, so the dump would be stored readable. Backups stay off until it is set (DEPLOY.md, Nightly database backups)."
+            exit 1
+          fi
+          args=()
+          for r in $BACKUP_AGE_RECIPIENT; do
+            case "$r" in
+              age1*) args+=(-r "$r") ;;
+              *) echo "::error::BACKUP_AGE_RECIPIENT holds something that is not an age public key"; exit 1 ;;
+            esac
+          done
+          age "${args[@]}" -o tutor.dump.age tutor.dump
+          rm -f tutor.dump
+          ls -la tutor.dump.age
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tutor-db-${{ github.run_id }}
+          path: tutor.dump.age
+          retention-days: 21
+          if-no-files-found: error
+
+      - name: Email alert on failure
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'EOF'
+          import json, os, urllib.request
+
+          key = os.environ.get("RESEND_API_KEY", "").strip()
+          to = [e.strip() for e in os.environ.get("ADMIN_EMAILS", "").split(",") if e.strip()]
+          if not key or not to:
+              print("No RESEND_API_KEY/ADMIN_EMAILS secret; cannot email. The failed run is the only signal.")
+              raise SystemExit(0)
+          run_url = os.environ["RUN_URL"]
+          body = {
+              "from": os.environ.get("FROM_EMAIL", "tutor@yourdomain.com"),
+              "to": to,
+              "subject": "[tutor] nightly db-backup FAILED",
+              "text": ("The nightly database backup failed; there is no fresh "
+                       "restore point today.\n\nRun log: " + run_url + "\n"),
+          }
+          req = urllib.request.Request(
+              "https://api.resend.com/emails",
+              data=json.dumps(body).encode(),
+              headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+          )
+          try:
+              print("Resend response:", urllib.request.urlopen(req, timeout=15).status)
+          except urllib.error.HTTPError as e:
+              # Never fail the alert step itself; surface Resend's reason.
+              print("Resend rejected the email:", e.code, e.read().decode(errors="replace"))
+          EOF

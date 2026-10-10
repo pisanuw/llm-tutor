@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why the Moon Has Phases (test fixture explorable)</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 1rem auto; padding: 0 1rem; color: #1f2937; }
+  .step { border: 1px solid #d1d5db; border-radius: .5rem; padding: .75rem 1rem; margin: .75rem 0; }
+  button, input { font-size: 1rem; min-height: 44px; }
+  output { display: block; margin-top: .5rem; font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>Why the Moon Has Phases</h1>
+<p>This is a small test-fixture explorable. It follows the contract: predict first, then
+manipulate the model, then reconstruct the idea from memory.</p>
+
+<section class="step" aria-labelledby="p">
+  <h2 id="p">1. Predict</h2>
+  <p>When the Moon is on the opposite side of Earth from the Sun, what do we see?</p>
+  <label><input type="radio" name="guess" value="a"> A full Moon (the whole lit half faces us)</label><br>
+  <label><input type="radio" name="guess" value="b"> A new Moon (Earth's shadow covers it)</label><br>
+  <button type="button" id="commit">Commit my prediction</button>
+  <output id="said" aria-live="polite"></output>
+</section>
+
+<section class="step" aria-labelledby="m">
+  <h2 id="m">2. Manipulate</h2>
+  <label for="knob">The Moon's position around Earth (eighths of an orbit)</label>
+  <input id="knob" type="range" min="0" max="7" value="0" disabled>
+  <output id="shown" aria-live="polite">Commit a prediction to unlock the model.</output>
+</section>
+
+<section class="step" aria-labelledby="r">
+  <h2 id="r">3. Reconstruct</h2>
+  <p>Close this page. On a blank sheet, reconstruct the idea from memory: draw the Sun, Earth and the Moon at four positions, shade the lit half each time, and label the phase seen from Earth.</p>
+</section>
+
+<script>
+  (function () {
+    var states = ["New Moon: the lit half faces away from us.", "Waxing crescent.", "First quarter: half of the lit half faces us.", "Waxing gibbous.", "Full Moon: the whole lit half faces us.", "Waning gibbous.", "Third quarter.", "Waning crescent."];
+    var knob = document.getElementById('knob');
+    document.getElementById('commit').addEventListener('click', function () {
+      var picked = document.querySelector('input[name="guess"]:checked');
+      document.getElementById('said').textContent = picked
+        ? 'You predicted: ' + picked.parentNode.textContent.trim() + '. Now test it.'
+        : 'Pick one first: a prediction you can be wrong about is the point.';
+      if (picked) { knob.disabled = false; show(); }
+    });
+    function show() { document.getElementById('shown').textContent = states[Number(knob.value)]; }
+    knob.addEventListener('input', show);
+  })();
+</script>
+</body>
+</html>

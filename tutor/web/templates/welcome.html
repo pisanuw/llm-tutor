@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% from "_nav.html" import site_header %}
+{% from "_avatar.html" import avatar %}
+{% block title %}Welcome — {{ tutor.name }}{% endblock %}
+{% block content %}
+
+{{ site_header("", None, student=student, is_admin=is_admin,
+               is_instructor=is_instructor, course=course) }}
+
+<div class="min-h-full bg-gray-50 px-4 py-6 sm:py-10">
+  <div class="max-w-2xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-6">
+      {{ avatar("w-14 h-14 shrink-0 shadow ring-2 ring-blue-100", "text-2xl") }}
+      <div class="min-w-0">
+        <h1 class="text-2xl font-bold text-gray-900 leading-tight">
+          Welcome{% if first_name %}, {{ first_name }}{% endif %}.
+        </h1>
+        <p class="text-sm text-gray-600 mt-1">
+          {{ tutor.name }} is {{ tutor.instructor_short }}'s tutor for {{ tutor.subject }}. It knows the
+          lectures and slides, and it guides you to answers instead of handing them over.
+        </p>
+      </div>
+    </div>
+
+    {% if error %}
+    <div class="bg-red-50 border border-red-300 text-red-700 rounded-lg px-4 py-3 text-sm mb-4">
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Step 1: course -->
+    <h2 class="text-base font-semibold text-gray-800 mb-2">
+      {% if current %}Which course do you want to work in?{% else %}Which course are you in?{% endif %}
+    </h2>
+    <style>
+      /* Each card's colors come from course_color, set inline as variables,
+         so any number of courses needs no new Tailwind classes. */
+      .course-card:hover { border-color: var(--card-strong); }
+      .course-card:focus { --tw-ring-color: var(--card-light); }
+    </style>
+    <form method="post" action="/welcome" class="grid gap-3 {% if courses|length > 1 %}sm:grid-cols-2{% endif %}">
+      {% for c in courses %}
+      {%- set cc = course_color(c.number) %}
+      <button type="submit" name="course" value="{{ c.number }}"
+              class="course-card text-left rounded-xl border-2 bg-white p-4 min-w-0 transition
+                     focus:outline-none focus:ring-2{% if current != c.number %} border-gray-200{% endif %}"
+              style="--card-strong: {{ cc.strong }}; --card-light: {{ cc.light }};{% if current == c.number %} border-color: {{ cc.strong }};{% endif %}">
+        <span class="flex items-center justify-between gap-2">
+          <span class="text-lg font-bold min-w-0 break-words" style="color: {{ cc.strong }}">{{ c.title }}</span>
+          {% if current == c.number %}
+          <span class="text-xs font-semibold px-2 py-0.5 rounded-full shrink-0"
+                style="background-color: {{ cc.wash }}; color: {{ cc.strong }}">Current</span>
+          {% endif %}
+        </span>
+        <span class="block text-sm text-gray-700 mt-0.5">{{ c.subtitle }}</span>
+        {% if c.topics %}<span class="block text-xs text-gray-500 mt-2 break-words">{{ c.topics }}.</span>{% endif %}
+        {% if c.note %}<span class="block text-xs text-gray-500 mt-2 break-words">{{ c.note }}</span>{% endif %}
+        <span class="block mt-3 text-sm font-semibold" style="color: {{ cc.strong }}">
+          {% if current == c.number %}Continue with {{ c.title }} &rarr;{% else %}Start with {{ c.title }} &rarr;{% endif %}
+        </span>
+      </button>
+      {% endfor %}
+    </form>
+    {% if courses|length > 1 %}
+    <p class="text-xs text-gray-500 mt-2">
+      You can switch courses any time from the chat header.
+    </p>
+    {% endif %}
+
+    <!-- Step 2: how it works -->
+    <h2 class="text-base font-semibold text-gray-800 mt-8 mb-2">How this works</h2>
+    <ul class="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100 text-sm text-gray-700">
+      <li class="flex gap-3 px-4 py-3">
+        <span class="shrink-0" aria-hidden="true">💬</span>
+        <span>Ask anything about the course in your own words. When the answer is on a slide,
+          the tutor pulls up that slide next to the chat.</span>
+      </li>
+      <li class="flex gap-3 px-4 py-3">
+        <span class="shrink-0" aria-hidden="true">🪜</span>
+        <span>It guides instead of telling. It gives one hint at a time so you still do the
+          thinking, and it will not write your homework solution for you.</span>
+      </li>
+      {% if tutor.code_language %}
+      <li class="flex gap-3 px-4 py-3">
+        <span class="shrink-0" aria-hidden="true">&lt;/&gt;</span>
+        <span>Paste your {{ tutor.code_language }} with the <span class="font-mono">&lt;/&gt;</span> button for feedback on
+          what is wrong, or ask for an exercise to practice a topic.</span>
+      </li>
+      {% endif %}
+      <li class="flex gap-3 px-4 py-3">
+        <span class="shrink-0" aria-hidden="true">🗺</span>
+        <span>The Map shows every topic and what you have covered; Lectures replays the
+          narrated decks; Review brings back what you learned before it fades.</span>
+      </li>
+    </ul>
+
+    <div class="flex flex-wrap items-center justify-between gap-2 mt-6 text-xs text-gray-500">
+      <a href="/track-picker" class="hover:underline text-purple-700">Optional: choose the order of suggestions</a>
+      <span class="flex gap-3">
+        {% if is_instructor %}
+        <a href="/instructor" class="hover:underline text-blue-700">🧑‍🏫 Instructor</a>
+        {% endif %}
+        <a href="/help" class="hover:underline">❓ Help</a>
+        <a href="/auth/logout" class="hover:underline">Log out</a>
+      </span>
+    </div>
+  </div>
+</div>
+{% endblock %}

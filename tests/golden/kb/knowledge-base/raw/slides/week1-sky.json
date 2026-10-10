@@ -1,0 +1,5 @@
+{"filename": "week1-sky.pptx", "lecture_title": "The Sky Above Us", "slides": [
+ {"slide_number": 1, "title": "The celestial sphere", "body_text": ["Stars appear fixed on a sphere", "The sphere turns once a day"], "speaker_notes": "Say why it matters", "has_code": false},
+ {"slide_number": 2, "title": "x", "body_text": [], "has_code": false},
+ {"slide_number": 3, "title": "Angles in code", "body_text": ["Convert degrees to radians first"], "has_code": true}
+]}

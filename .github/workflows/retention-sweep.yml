@@ -1,0 +1,79 @@
+# The retention sweep, scheduled (docs/retention-policy.md; the review's step
+# 0.8, decision 11). Until 2026-10-07 nothing ran it, so the 90-day prune of
+# login_attempts, the magic-link prune and the one-year anonymization were
+# promises only. Read-only on a fork (no DATABASE_URL); --allow-prod is the
+# script's own guard against a --confirm meant for a local copy.
+
+name: retention-sweep
+
+on:
+  schedule:
+    - cron: "30 9 * * *"   # 09:30 UTC daily: 02:30 PDT, 01:30 PST; after the backup
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-web.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-web.txt
+
+      - name: Sweep
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          # Optional: the same value as on the web service, if you set one there.
+          ACTIVITY_EVENTS_DAYS: ${{ vars.ACTIVITY_EVENTS_DAYS }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "DATABASE_URL not set; skipping the retention sweep."
+            exit 0
+          fi
+          python -m scripts.retention_sweep --confirm --allow-prod
+
+      - name: Email alert on failure
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'EOF'
+          import json, os, urllib.request
+
+          key = os.environ.get("RESEND_API_KEY", "").strip()
+          to = [e.strip() for e in os.environ.get("ADMIN_EMAILS", "").split(",") if e.strip()]
+          if not key or not to:
+              print("No RESEND_API_KEY/ADMIN_EMAILS secret; cannot email. The failed run is the only signal.")
+              raise SystemExit(0)
+          body = {
+              "from": os.environ.get("FROM_EMAIL", "tutor@yourdomain.com"),
+              "to": to,
+              "subject": "[tutor] retention-sweep FAILED",
+              "text": ("The scheduled retention sweep failed: the 90-day prune of login_attempts, "
+                       "the magic-link prune and the one-year anonymization did not run.\n\n"
+                       "Run log: " + os.environ["RUN_URL"] + "\n"),
+          }
+          req = urllib.request.Request(
+              "https://api.resend.com/emails",
+              data=json.dumps(body).encode(),
+              headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+          )
+          try:
+              print("Resend response:", urllib.request.urlopen(req, timeout=15).status)
+          except Exception as exc:
+              print("the failure email itself failed:", exc)
+          EOF

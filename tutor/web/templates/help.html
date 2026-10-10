@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_nav.html" import site_header %}
+{% block title %}Help — {{ tutor.name }}{% endblock %}
+{% block content %}
+
+{% if logged_in %}
+{{ site_header("help", "Help", student=student, is_admin=is_admin,
+               is_instructor=is_instructor, course=course) }}
+{% else %}
+<header class="relative z-40 bg-blue-700 text-white shadow">
+  <h1 class="sr-only">Help</h1>
+  <div class="flex items-center justify-between gap-2 px-2 sm:px-4 min-h-[52px]">
+    <a href="/" class="font-bold text-lg text-white hover:text-blue-200 no-underline
+                       inline-flex items-center min-h-[44px] px-1">{{ tutor.name }}</a>
+    <a href="/auth/login" class="text-sm text-blue-100 hover:text-white hover:underline
+                                 inline-flex items-center min-h-[44px] px-3">Log in</a>
+  </div>
+</header>
+{% endif %}
+
+<main class="max-w-2xl mx-auto px-4 py-6 sm:py-8">
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-8">
+    {% include "_help_content.html" %}
+  </div>
+  <p class="text-center text-xs text-gray-400 mt-4">
+    {% if tutor.site_url %}<a href="{{ tutor.site_url }}" class="hover:underline break-words">{{ tutor.site_url.split("://")[-1].rstrip("/") }}</a> · {% endif %}{{ course_list|map(attribute="label")|join(" / ") }}{% if tutor.institution %} · {{ tutor.institution }}{% endif %}
+  </p>
+</main>
+
+{% endblock %}

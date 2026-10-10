@@ -1,0 +1,72 @@
+# Your raw course materials (decks, PDFs, recordings, Canvas downloads, exam
+# keys, anything with student work or grades). The pipeline reads them from
+# here (courses.yaml `sources`); never commit them (student privacy, copyright).
+source-materials/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Secrets: never commit credentials or encrypted secret bundles.
+.env
+.env-*
+.env.*
+!.env.example
+*.asc
+*.gpg
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Databases (regenerated on first run; never commit student data)
+*.db
+*.sqlite
+*.sqlite3
+
+# Generated artifacts (large, reproducible from source)
+knowledge-base/chromadb/
+tts-cache/
+# Rendered decks, narration and frames are generated; the slide SOURCE
+# (output/<course>/lecture-NN/content.md) is yours and is tracked.
+output/*
+!output/*/
+output/*/*
+!output/*/lecture-*/
+output/*/lecture-*/*
+!output/*/lecture-*/content.md
+
+# The mastery exam bank is generated (python -m pipeline generate-mastery-exams)
+# and holds answers and rubrics; production downloads it at boot.
+curriculum/mastery_exams.json
+
+# Quarto book build output (built from book/*.qmd; the Dockerfile renders it).
+book/_book/
+book/.quarto/
+book/_freeze/
+
+# Deploy seed tarballs (generated, large)
+*.tgz
+
+# Reports and exports that contain student data: emailed or kept locally, never committed.
+reports/
+docs/sim/preference-pairs.jsonl
+docs/audit/20*.md
+
+# Tooling
+tailwindcss
+.claude/scheduled_tasks.lock
+supabase/.temp/
+*.json.bak
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store

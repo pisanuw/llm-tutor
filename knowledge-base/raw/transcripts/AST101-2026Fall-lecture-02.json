@@ -1,0 +1,146 @@
+{
+  "source_file": "AST101-2026Fall-lecture-02.mp4",
+  "full_text": "Okay, folks, let's get started. Sky report first, like always. The Moon is at first quarter this week, so look south right around sunset and it'll be sitting there, half lit. Which is perfect, because today is all about the Moon. So. A question, and I want everybody to commit. Why does the Moon go through phases? Is it Earth's shadow, is it clouds, is it the distance changing, or is it something about angles? Hands up for Earth's shadow. Keep them up. Look around. Yeah, that's about half the room. You are in excellent company. Most adults say that. And it's wrong, and by the end of today you'll know exactly why. Okay, lamps on, lights off. Everybody grab a ball on a stick. The lamp in the middle is the Sun, the ball is the Moon, and your head is Earth. Hold the ball out at arm's length and turn slowly to your left. Slowly. Watch the ball, not your neighbor. What do you see? When the ball is between you and the lamp, you see the dark side. That's new moon. Keep turning. A little sliver of light shows up on one edge. That's a crescent. Keep going and you get half lit, a quarter of the way around. Now the ball's behind you, opposite the lamp, and you see the whole lit face. Full moon. And notice, um, your head's shadow didn't touch the ball the whole time. Unless you put the ball exactly behind your head. Then it goes dark. That's a lunar eclipse, and that's the only time Earth's shadow is involved. So here's the big idea. Write this down. The Moon is always half lit. Always. The Sun lights the half facing it. The phase is just how much of that lit half is pointed at you. That depends on the angle between the Sun, the Moon and Earth. Here's the test for the shadow idea. Earth's shadow points straight away from the Sun, right? So a shadow phase would have to be opposite the Sun. But you've all seen a thin crescent Moon in the west just after sunset. Right next to where the Sun went down. That's not opposite the Sun at all. So the shadow idea can't explain the crescent. Good wrong answer, but wrong. Let's put it away. Okay, timing. The full cycle, new moon to new moon, takes about twenty-nine and a half days. And because the phase is an angle, it tells you when the Moon rises. Full moon is opposite the Sun, so it rises at sunset. Always. First quarter, like this week, rises around noon and is highest at sunset. So yes, you can see the Moon in the afternoon. It's not a night-only thing. Now, eclipses. A solar eclipse is the Moon getting between us and the Sun, so it can only happen at new moon. A lunar eclipse is the Moon going into Earth's shadow, so only at full moon. Quick prediction: we get a new moon every month. So, eclipse every month? Nope. Somebody in the back said the orbit is tilted, and that's exactly it. The Moon's orbit is tilted about five degrees to ours. So most months the new moon slides a little above or below the Sun and nothing happens. You need the new or full moon right at a node, where the two orbits cross. That lines up roughly twice a year. Those are the eclipse seasons. And please, please, never look at the Sun without a proper solar filter. Sunglasses do not count. Last thing, tides. Two high tides a day, not one. The Moon pulls the near side of Earth more than the middle, and the middle more than the far side. So Earth gets stretched, like three runners on one rope being pulled from the front. The far bulge isn't pushed. It's left behind. Exit question on your card: the Moon is full tonight. Where is it at sunrise? Draw the top-down view. See you next week.",
+  "segments": [
+    {
+      "start": 5.4,
+      "end": 9.2,
+      "text": "Okay, folks, let's get started. Sky report first, like always."
+    },
+    {
+      "start": 9.8,
+      "end": 17.9,
+      "text": "The Moon is at first quarter this week, so look south right around sunset and it'll be sitting there, half lit."
+    },
+    {
+      "start": 18.5,
+      "end": 25.8,
+      "text": "Which is perfect, because today is all about the Moon. So. A question, and I want everybody to commit."
+    },
+    {
+      "start": 26.4,
+      "end": 36.0,
+      "text": "Why does the Moon go through phases? Is it Earth's shadow, is it clouds, is it the distance changing, or is it something about angles?"
+    },
+    {
+      "start": 36.6,
+      "end": 42.8,
+      "text": "Hands up for Earth's shadow. Keep them up. Look around. Yeah, that's about half the room."
+    },
+    {
+      "start": 43.4,
+      "end": 51.9,
+      "text": "You are in excellent company. Most adults say that. And it's wrong, and by the end of today you'll know exactly why."
+    },
+    {
+      "start": 52.5,
+      "end": 64.0,
+      "text": "Okay, lamps on, lights off. Everybody grab a ball on a stick. The lamp in the middle is the Sun, the ball is the Moon, and your head is Earth."
+    },
+    {
+      "start": 109.6,
+      "end": 117.3,
+      "text": "Hold the ball out at arm's length and turn slowly to your left. Slowly. Watch the ball, not your neighbor."
+    },
+    {
+      "start": 117.9,
+      "end": 126.0,
+      "text": "What do you see? When the ball is between you and the lamp, you see the dark side. That's new moon."
+    },
+    {
+      "start": 126.6,
+      "end": 137.4,
+      "text": "Keep turning. A little sliver of light shows up on one edge. That's a crescent. Keep going and you get half lit, a quarter of the way around."
+    },
+    {
+      "start": 138.0,
+      "end": 149.5,
+      "text": "Now the ball's behind you, opposite the lamp, and you see the whole lit face. Full moon. And notice, um, your head's shadow didn't touch the ball the whole time."
+    },
+    {
+      "start": 150.1,
+      "end": 160.1,
+      "text": "Unless you put the ball exactly behind your head. Then it goes dark. That's a lunar eclipse, and that's the only time Earth's shadow is involved."
+    },
+    {
+      "start": 180.7,
+      "end": 189.2,
+      "text": "So here's the big idea. Write this down. The Moon is always half lit. Always. The Sun lights the half facing it."
+    },
+    {
+      "start": 189.8,
+      "end": 199.8,
+      "text": "The phase is just how much of that lit half is pointed at you. That depends on the angle between the Sun, the Moon and Earth."
+    },
+    {
+      "start": 200.4,
+      "end": 210.8,
+      "text": "Here's the test for the shadow idea. Earth's shadow points straight away from the Sun, right? So a shadow phase would have to be opposite the Sun."
+    },
+    {
+      "start": 211.4,
+      "end": 222.6,
+      "text": "But you've all seen a thin crescent Moon in the west just after sunset. Right next to where the Sun went down. That's not opposite the Sun at all."
+    },
+    {
+      "start": 223.2,
+      "end": 229.7,
+      "text": "So the shadow idea can't explain the crescent. Good wrong answer, but wrong. Let's put it away."
+    },
+    {
+      "start": 230.3,
+      "end": 236.8,
+      "text": "Okay, timing. The full cycle, new moon to new moon, takes about twenty-nine and a half days."
+    },
+    {
+      "start": 237.4,
+      "end": 247.4,
+      "text": "And because the phase is an angle, it tells you when the Moon rises. Full moon is opposite the Sun, so it rises at sunset. Always."
+    },
+    {
+      "start": 248.0,
+      "end": 258.8,
+      "text": "First quarter, like this week, rises around noon and is highest at sunset. So yes, you can see the Moon in the afternoon. It's not a night-only thing."
+    },
+    {
+      "start": 259.4,
+      "end": 267.9,
+      "text": "Now, eclipses. A solar eclipse is the Moon getting between us and the Sun, so it can only happen at new moon."
+    },
+    {
+      "start": 268.5,
+      "end": 279.3,
+      "text": "A lunar eclipse is the Moon going into Earth's shadow, so only at full moon. Quick prediction: we get a new moon every month. So, eclipse every month?"
+    },
+    {
+      "start": 309.9,
+      "end": 319.1,
+      "text": "Nope. Somebody in the back said the orbit is tilted, and that's exactly it. The Moon's orbit is tilted about five degrees to ours."
+    },
+    {
+      "start": 319.7,
+      "end": 332.4,
+      "text": "So most months the new moon slides a little above or below the Sun and nothing happens. You need the new or full moon right at a node, where the two orbits cross."
+    },
+    {
+      "start": 333.0,
+      "end": 344.2,
+      "text": "That lines up roughly twice a year. Those are the eclipse seasons. And please, please, never look at the Sun without a proper solar filter. Sunglasses do not count."
+    },
+    {
+      "start": 344.8,
+      "end": 356.3,
+      "text": "Last thing, tides. Two high tides a day, not one. The Moon pulls the near side of Earth more than the middle, and the middle more than the far side."
+    },
+    {
+      "start": 356.9,
+      "end": 365.7,
+      "text": "So Earth gets stretched, like three runners on one rope being pulled from the front. The far bulge isn't pushed. It's left behind."
+    },
+    {
+      "start": 366.3,
+      "end": 375.1,
+      "text": "Exit question on your card: the Moon is full tonight. Where is it at sunrise? Draw the top-down view. See you next week."
+    }
+  ]
+}

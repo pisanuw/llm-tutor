@@ -1,0 +1,143 @@
+{
+  "filename": "week2-moon.pptx",
+  "lecture_title": "AST 101 Week 2: The Moon",
+  "slide_count": 11,
+  "slides": [
+    {
+      "slide_number": 1,
+      "layout_name": "TITLE",
+      "title": "AST 101 Week 2: The Moon",
+      "body_text": [
+        "Phases, eclipses and tides",
+        "Dr. Alex Morgan"
+      ],
+      "speaker_notes": "Sky report: where is the Moon tonight, and when does it rise?",
+      "has_code": false
+    },
+    {
+      "slide_number": 2,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Poll: Why Does the Moon Have Phases?",
+      "body_text": [
+        "Earth's shadow",
+        "Clouds or dust",
+        "Changing distance",
+        "The angle between Sun, Earth and Moon"
+      ],
+      "speaker_notes": "Most of the room votes for Earth's shadow every year. Keep the tally on the board.",
+      "has_code": false
+    },
+    {
+      "slide_number": 3,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Half Lit, Always",
+      "body_text": [
+        "The Sun lights one half of the Moon at all times",
+        "The phase is how much of the lit half faces Earth",
+        "That fraction depends on the Sun-Earth-Moon angle"
+      ],
+      "speaker_notes": "Lamp-and-ball activity: a bare lamp is the Sun, a ball at arm's length is the Moon, your head is Earth. Turn slowly in a circle.",
+      "has_code": false
+    },
+    {
+      "slide_number": 4,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Not Earth's Shadow",
+      "body_text": [
+        "Earth's shadow points directly away from the Sun",
+        "A crescent Moon appears close to the Sun in the sky",
+        "The shadow reaches the Moon only during a lunar eclipse, at full moon"
+      ],
+      "speaker_notes": "The crescent near the setting Sun is the observation the shadow idea cannot explain.",
+      "has_code": false
+    },
+    {
+      "slide_number": 5,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Phase Cycle",
+      "body_text": [
+        "New, waxing crescent, first quarter, waxing gibbous",
+        "Full, waning gibbous, third quarter, waning crescent",
+        "From new moon to new moon: about 29.5 days",
+        "One orbit relative to the stars: about 27.3 days"
+      ],
+      "speaker_notes": "The two months differ because Earth moves along its orbit while the Moon goes around, so the Moon needs about two extra days to line up with the Sun again.",
+      "has_code": false
+    },
+    {
+      "slide_number": 6,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Moonrise by Phase",
+      "body_text": [
+        "New moon: rises at sunrise",
+        "First quarter: rises around noon, highest at sunset",
+        "Full moon: rises at sunset, sets at sunrise",
+        "Third quarter: rises around midnight, highest at sunrise"
+      ],
+      "speaker_notes": "The Moon rises about 50 minutes later each day. Daytime Moons are normal.",
+      "has_code": false
+    },
+    {
+      "slide_number": 7,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Eclipses",
+      "body_text": [
+        "Solar eclipse: the Moon passes between the Sun and Earth, at new moon",
+        "Lunar eclipse: the Moon passes through Earth's shadow, at full moon",
+        "Umbra: the dark central shadow; penumbra: the lighter outer shadow"
+      ],
+      "speaker_notes": "Eye safety: never look at the Sun without a certified solar filter, eclipse or no eclipse.",
+      "has_code": false
+    },
+    {
+      "slide_number": 8,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The 5 Degree Tilt",
+      "body_text": [
+        "The Moon's orbit is tilted about 5 degrees to Earth's orbit",
+        "The two orbits cross at two points called nodes",
+        "Eclipses happen only when a new or full moon falls near a node",
+        "That lines up about every six months: eclipse seasons"
+      ],
+      "speaker_notes": "Two hula hoops tilted against each other show the nodes nicely.",
+      "has_code": false
+    },
+    {
+      "slide_number": 9,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Annular and Total",
+      "body_text": [
+        "The Moon's distance from Earth varies by about 10 percent",
+        "Near its farthest point it looks slightly smaller than the Sun: an annular eclipse",
+        "Near its closest point it can cover the Sun completely: a total eclipse"
+      ],
+      "speaker_notes": "The Sun is about 400 times wider than the Moon and about 400 times farther away. That is why they look the same size.",
+      "has_code": false
+    },
+    {
+      "slide_number": 10,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Tides",
+      "body_text": [
+        "Two high tides about every 24 hours and 50 minutes",
+        "Caused by the difference in the Moon's pull across Earth",
+        "Near-side water is pulled toward the Moon more than Earth's center is",
+        "Far-side water is pulled less than the center, so it is left behind"
+      ],
+      "speaker_notes": "Three runners on one rope, pulled from the front: the group stretches. That stretch is the two bulges.",
+      "has_code": false
+    },
+    {
+      "slide_number": 11,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Spring and Neap Tides",
+      "body_text": [
+        "Spring tides: new and full moon, Sun and Moon aligned, largest range",
+        "Neap tides: first and third quarter, smallest range",
+        "The Sun's tidal effect is a bit under half the Moon's"
+      ],
+      "speaker_notes": "Spring has nothing to do with the season. Think of the water springing up.",
+      "has_code": false
+    }
+  ]
+}

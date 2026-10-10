@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>{% block title %}{{ tutor.name }}{% endblock %}</title>
+  <!-- Home-screen install metadata. Deliberately NO apple-mobile-web-app-capable
+       meta: an iOS standalone PWA gets isolated cookies, which would break the
+       magic-link login flow (link opens in Safari, app stays logged out). As a
+       Safari bookmark, iOS shares the session. Android PWAs share Chrome's
+       cookie jar, so standalone there is safe. -->
+  <link rel="manifest" href="/static/manifest.json" />
+  <link rel="icon" type="image/png" href="/static/icon-192.png" />
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
+  <meta name="theme-color" content="#1d4ed8" />
+  <style>
+    /* Mobile foundation (see CLAUDE.md: style mobile-first, verify at 390px). */
+    html { -webkit-text-size-adjust: 100%; }
+    /* Full viewport height that tracks the *dynamic* mobile viewport (iOS URL
+       bar collapse). Plain 100vh overflows behind Safari's toolbars. */
+    .app-vh { height: 100vh; }
+    @supports (height: 100dvh) { .app-vh { height: 100dvh; } }
+    /* Bottom padding that clears the iPhone home-indicator area (needs
+       viewport-fit=cover above). */
+    .pad-safe-b { padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px)); }
+    @media (max-width: 767px) {
+      /* iOS Safari auto-zooms into form fields under 16px; keep inputs at 16px
+         on phones so focusing the chat box doesn't zoom the whole page. */
+      input, select, textarea { font-size: 16px !important; }
+    }
+    /* Reduced motion (plan step 3.4, finding D26): no blinking, pulsing,
+       sliding, or collapsing for anyone who asked their system for less
+       motion. Animations end at once on their final frame; scripted motion
+       (the map's zoom and layout) checks the same query. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+  <!-- All frontend assets are vendored and served same-origin (ROADMAP
+       stability item 2): a CDN outage can no longer take the app down.
+       Versions + hashes: tutor/web/static/vendor/VENDOR.md. tailwind.css is
+       precompiled by scripts/build_css.sh (CI fails when it is stale). -->
+  <link rel="stylesheet" href="/static/vendor/tailwind.css" />
+  <script defer src="/static/vendor/alpine-collapse.min.js"></script>
+  <script defer src="/static/vendor/alpine.min.js"></script>
+</head>
+<body class="h-full bg-gray-50 text-gray-900">
+  <!-- Dependency-load guard. If a CDN is down or an SRI integrity hash is stale,
+       the browser silently refuses to run Alpine and the page looks alive
+       but is dead (stuck "Thinking...", no progress). This banner makes that
+       failure legible instead of looking like a backend outage. Pure vanilla JS
+       + inline styles on purpose: it must not depend on the very libs it checks
+       (or on Tailwind). -->
+  <div id="dep-load-error" role="alert" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;
+       background:#b91c1c;color:#fff;font:14px/1.4 system-ui,sans-serif;padding:10px 16px;text-align:center;
+       box-shadow:0 2px 6px rgba(0,0,0,.3)">
+    ⚠️ This page couldn't load required scripts (<span id="dep-load-missing"></span>).
+    The page won't respond until they load. Try a hard refresh
+    (<strong>Ctrl/Cmd-Shift-R</strong>); if it persists, the app's static assets are missing (bad deploy).
+  </div>
+  <script>
+    // Deferred scripts (Alpine) have executed by the time 'load' fires. A small
+    // timeout absorbs any late init. (htmx is gone: no page used it; plan step
+    // 5.5, finding D20.)
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        var missing = [];
+        if (!window.Alpine) missing.push('Alpine.js');
+        if (missing.length) {
+          document.getElementById('dep-load-missing').textContent = missing.join(' + ');
+          document.getElementById('dep-load-error').style.display = 'block';
+          console.error('[dep-load-error] failed to load: ' + missing.join(', ') +
+            ' — likely a CDN outage or a stale SRI integrity hash in base.html.');
+          // The activity tracker (loaded below for a signed-in reader) does not depend on these libraries:
+          // the failure is recorded as a client_error with the missing names.
+          try {
+            if (window.tutorTrackError) window.tutorTrackError('DependencyLoad', '/static/vendor/' + missing.join('+'), 0);
+          } catch (e) { /* never */ }
+        }
+      }, 300);
+    });
+  </script>
+
+  {% block content %}{% endblock %}
+
+  <!-- A form marked data-submit-once swallows a second press within a few
+       seconds of the first, so a double tap on Sign in or Continue no longer
+       fails after the first succeeded (docs/bulletproofing-plan-2026-10.md,
+       R32). The button shows it is waiting, and comes back after the guard
+       or when Back shows the page from the cache: a stopped or stalled
+       submit used to leave the form dead until a reload. -->
+  <script>
+  (function () {
+    var GUARD_MS = 5000;
+    function buttons(form) { return form.querySelectorAll("button[type=submit]"); }
+    function release(form) {
+      delete form.dataset.sent;
+      buttons(form).forEach(function (b) {
+        b.disabled = false; b.style.opacity = ""; b.style.cursor = ""; b.removeAttribute("aria-busy");
+      });
+    }
+    document.addEventListener("submit", function (e) {
+      var form = e.target;
+      if (!form || !form.hasAttribute || !form.hasAttribute("data-submit-once")) return;
+      var sent = Number(form.dataset.sent || 0);
+      if (sent && Date.now() - sent < GUARD_MS) { e.preventDefault(); return; }
+      form.dataset.sent = String(Date.now());
+      setTimeout(function () {
+        buttons(form).forEach(function (b) {
+          b.disabled = true; b.style.opacity = "0.6"; b.style.cursor = "wait"; b.setAttribute("aria-busy", "true");
+        });
+      }, 0);
+      setTimeout(function () { release(form); }, GUARD_MS);
+    });
+    window.addEventListener("pageshow", function () {
+      document.querySelectorAll("form[data-submit-once]").forEach(release);
+    });
+  })();
+  </script>
+
+  <!-- The site header's phone menu (templates/_nav.html) is a <details>:
+       close it on a tap outside it or on Escape, as a menu should. -->
+  <script>
+  (function () {
+    function closeMenus(except) {
+      document.querySelectorAll("details[data-nav-menu][open]").forEach(function (d) {
+        if (d !== except) d.removeAttribute("open");
+      });
+    }
+    document.addEventListener("click", function (e) {
+      closeMenus(e.target.closest ? e.target.closest("details[data-nav-menu]") : null);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape") return;
+      // A dialog open over the menu takes this Escape; the next one is ours.
+      var modalOpen = Array.prototype.some.call(
+        document.querySelectorAll('[aria-modal="true"]'),
+        function (el) { return el.getClientRects().length > 0; });
+      if (modalOpen) return;
+      var open = document.querySelector("details[data-nav-menu][open]");
+      if (!open) return;
+      open.removeAttribute("open");
+      var summary = open.querySelector("summary");
+      if (summary) summary.focus();
+    });
+  })();
+  </script>
+
+  {# Activity events (docs/activity-analytics-plan-2026-10.md): what a
+     signed-in student does on the page, batched to /api/events. Only for a
+     signed-in reader (the login page has none), only while ACTIVITY_EVENTS
+     is on; page scripts add their own events through window.tutorTrack. #}
+  {% if student %}{% set tracking = activity_tracking() %}{% if tracking.on %}
+  <script src="{{ asset_url('track.js') }}" data-heartbeat="{{ tracking.heartbeat_s }}"></script>
+  {% endif %}{% endif %}
+</body>
+</html>

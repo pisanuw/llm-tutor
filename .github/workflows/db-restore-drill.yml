@@ -1,0 +1,231 @@
+# Monthly restore drill (plan step 6.4, finding E3): proves that a dump of the
+# production database restores into an empty Postgres and holds the app.
+#
+# Production mode (the monthly schedule, or a manual run): a fresh pg_dump of
+# the live database, read-only, the same command db-backup.yml runs. The
+# stored backups are encrypted to an offline key this job does not have, so
+# the drill takes the same path with a throwaway key: encrypt, delete the plain
+# dump, decrypt, restore the public schema into a scratch Postgres 17, and
+# check it (scripts/restore_drill.py: every app table, one Alembic revision,
+# students present, row level security still on). The scratch database gets
+# Supabase's auth shims first, because the shared project's public schema holds
+# policies that call auth.uid(); see that step. Nothing is uploaded, and the
+# log carries table names and counts, never rows. A failure emails
+# ADMIN_EMAILS the way the backup does.
+#
+# Synthetic mode (a push or pull request that changes the drill or the
+# migrations, or a manual run that picks it): the source is a second scratch
+# Postgres built by the migrations, with made-up rows. It never reads
+# production, and it shows the migrations dump and restore on Postgres 17.
+#
+# Restoring a real backup by hand: DEPLOY.md, "Nightly database backups".
+
+name: db-restore-drill
+
+on:
+  schedule:
+    - cron: "33 11 3 * *"   # the 3rd of each month, 11:33 UTC: 04:33 PDT, 03:33 PST
+  workflow_dispatch:
+    inputs:
+      source:
+        description: "production (a read-only dump of the live database) or synthetic (the migrations and made-up rows)"
+        type: choice
+        options: [production, synthetic]
+        default: production
+  push:
+    paths:
+      - .github/workflows/db-restore-drill.yml
+      - scripts/restore_drill.py
+      - migrations/**
+  pull_request:
+    paths:
+      - .github/workflows/db-restore-drill.yml
+      - scripts/restore_drill.py
+      - migrations/**
+
+# One drill per branch at a time; a run that starts while another is going
+# waits for it.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  drill:
+    # The monthly production drill runs once backups are set up (the
+    # BACKUP_AGE_RECIPIENT variable); the synthetic drill always runs.
+    if: ${{ github.event_name != 'schedule' || vars.BACKUP_AGE_RECIPIENT != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # Only the schedule and a manual run can read production.
+      SOURCE: ${{ github.event_name == 'schedule' && 'production' || (github.event_name == 'workflow_dispatch' && inputs.source || 'synthetic') }}
+      ORIGIN_URL: postgresql://postgres:drill@localhost:5432/postgres
+      SCRATCH_URL: postgresql://postgres:drill@localhost:5433/postgres
+      # tutor.config requires these; nothing here calls a paid API.
+      ANTHROPIC_API_KEY: drill-dummy-key
+      SECRET_KEY: drill-dummy-secret
+      ADMIN_TOKEN: drill-dummy-admin-token
+    services:
+      origin:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: drill
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 12
+      scratch:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: drill
+        ports: ["5433:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 12
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-web.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-web.txt
+
+      - name: Install postgresql-client-17 and age (PGDG)
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
+            https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] \
+            http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+            | sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client-17 age
+          # The runner's default client can shadow 17; use the newest explicitly.
+          echo "PGBIN=$(ls -d /usr/lib/postgresql/*/bin | sort -V | tail -1)" >> "$GITHUB_ENV"
+          echo "drill source: $SOURCE"
+
+      - name: Build and dump the synthetic source
+        if: env.SOURCE == 'synthetic'
+        env:
+          DATABASE_URL: postgresql+psycopg://postgres:drill@localhost:5432/postgres
+        run: |
+          python -m tutor.migrate
+          python scripts/restore_drill.py seed --dsn "$ORIGIN_URL"
+          "$PGBIN/pg_dump" "$ORIGIN_URL" -Fc --no-owner --no-privileges -f drill.dump
+
+      - name: Dump production (read-only)
+        if: env.SOURCE == 'production'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::DATABASE_URL secret unset; nothing to drill."
+            exit 1
+          fi
+          # As in db-backup.yml: keep only the query parameters libpq accepts.
+          CLEAN_URL=$(python3 - <<'PY'
+          import os
+          from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
+          u = urlsplit(os.environ["DATABASE_URL"].strip())
+          keep = {"sslmode", "sslrootcert", "connect_timeout", "application_name", "options"}
+          q = [(k, v) for k, v in parse_qsl(u.query) if k in keep]
+          print(urlunsplit((u.scheme, u.netloc, u.path, urlencode(q), "")))
+          PY
+          )
+          "$PGBIN/pg_dump" "$CLEAN_URL" -Fc --no-owner --no-privileges -f drill.dump
+          test "$(stat -c%s drill.dump)" -gt 10000 || {
+            echo "::error::dump suspiciously small ($(stat -c%s drill.dump) bytes)"; exit 1; }
+
+      - name: Encrypt and decrypt with a throwaway key
+        run: |
+          age-keygen -o drill.key 2> /dev/null
+          age -r "$(age-keygen -y drill.key)" -o drill.dump.age drill.dump
+          rm -f drill.dump
+          age -d -i drill.key -o drill.dump drill.dump.age
+          rm -f drill.key drill.dump.age
+          echo "dump: $(stat -c%s drill.dump) bytes, $("$PGBIN/pg_restore" --list drill.dump | grep -c 'TABLE DATA public') tables with data"
+
+      # The live database is a shared Supabase project, and three policies in its
+      # public schema (on other applications' `profiles` and `attempts` tables)
+      # call auth.uid(). A dump of the public schema therefore does not restore
+      # into a plain Postgres: pg_restore stops at `schema "auth" does not exist`,
+      # which is how the first production drill failed. A real recovery target is
+      # a Supabase project and has these, so the scratch database gets the same
+      # shims: the schema, and the helpers a policy body can name, returning
+      # NULL so no policy grants anything here. Synthetic mode is built by our
+      # own migrations, which never reference auth, so it stays untouched.
+      - name: Give the scratch database the Supabase auth shims
+        if: env.SOURCE == 'production'
+        run: |
+          "$PGBIN/psql" "$SCRATCH_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE SCHEMA IF NOT EXISTS auth;
+          CREATE OR REPLACE FUNCTION auth.uid()   RETURNS uuid  LANGUAGE sql STABLE AS $$ SELECT NULL::uuid $$;
+          CREATE OR REPLACE FUNCTION auth.role()  RETURNS text  LANGUAGE sql STABLE AS $$ SELECT NULL::text $$;
+          CREATE OR REPLACE FUNCTION auth.email() RETURNS text  LANGUAGE sql STABLE AS $$ SELECT NULL::text $$;
+          CREATE OR REPLACE FUNCTION auth.jwt()   RETURNS jsonb LANGUAGE sql STABLE AS $$ SELECT '{}'::jsonb $$;
+          SQL
+
+      - name: Restore into the scratch database
+        run: |
+          if ! "$PGBIN/pg_restore" --schema=public --no-owner --no-privileges --exit-on-error \
+                -d "$SCRATCH_URL" drill.dump 2> restore.err; then
+            # The error names the object that failed; the statement, and any
+            # row data a COPY error would quote, are left out of the log.
+            grep -m 5 '^pg_restore: error:' restore.err \
+              | sed -E 's/(COPY failed for table "[^"]+").*/\1/; s/Command was:.*//' | cut -c1-200
+            echo "::error::pg_restore could not restore the dump"
+            exit 1
+          fi
+
+      - name: Check the restore
+        run: |
+          if [ "$SOURCE" = synthetic ]; then
+            python scripts/restore_drill.py check --dsn "$SCRATCH_URL" --nonempty students,messages --expect-head
+          else
+            python scripts/restore_drill.py check --dsn "$SCRATCH_URL" --nonempty students
+          fi
+
+      - name: Remove the dump
+        if: always()
+        run: rm -f drill.dump drill.dump.age drill.key restore.err
+
+      - name: Email alert on failure
+        if: failure() && env.SOURCE == 'production'
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'EOF'
+          import json, os, urllib.request
+
+          key = os.environ.get("RESEND_API_KEY", "").strip()
+          to = [e.strip() for e in os.environ.get("ADMIN_EMAILS", "").split(",") if e.strip()]
+          if not key or not to:
+              print("No RESEND_API_KEY/ADMIN_EMAILS secret; cannot email. The failed run is the only signal.")
+              raise SystemExit(0)
+          run_url = os.environ["RUN_URL"]
+          body = {
+              "from": os.environ.get("FROM_EMAIL", "tutor@yourdomain.com"),
+              "to": to,
+              "subject": "[tutor] monthly restore drill FAILED",
+              "text": ("The monthly restore drill could not restore a dump of the "
+                       "production database into an empty Postgres; the nightly "
+                       "backups may not be restorable.\n\nRun log: " + run_url + "\n"),
+          }
+          req = urllib.request.Request(
+              "https://api.resend.com/emails",
+              data=json.dumps(body).encode(),
+              headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+          )
+          try:
+              print("Resend response:", urllib.request.urlopen(req, timeout=15).status)
+          except urllib.error.HTTPError as e:
+              print("Resend rejected the email:", e.code, e.read().decode(errors="replace"))
+          EOF

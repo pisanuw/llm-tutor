@@ -1,0 +1,44 @@
+# Pipeline (offline content-generation CLI) dependencies:
+#   pip install -r requirements.txt
+# needed for `python -m pipeline ingest` (python-pptx, python-docx, pdfplumber)
+# and `transcribe` (openai-whisper, which pulls in torch: large; skip it if you
+# transcribe elsewhere). requirements-dev.txt covers the web app, the tests and
+# the pipeline commands that need no document readers.
+#
+# Exact-pinned like requirements-web.txt; the overlapping deps (anthropic,
+# chromadb) use the SAME versions so the two manifests agree.
+#
+# openai-whisper is held at 20231117: newer releases pull numba/llvmlite builds
+# that have no wheels for some older platforms (Intel Macs). Bump it together
+# with numba, llvmlite, numpy and torch.
+
+# Transcription (local Whisper takes a recording of any length)
+openai-whisper==20231117
+
+# Office document processing
+python-pptx==1.0.2
+python-docx==1.2.0
+
+# PDF extraction
+pdfplumber==0.11.10
+
+# Claude API (same pin as requirements-web.txt)
+anthropic==0.105.2
+
+# Vector database (same pin as requirements-web.txt). It embeds too: the index is
+# built with Chroma's ONNX all-MiniLM-L6-v2, the embedder the app queries with,
+# so sentence-transformers is gone (plan step 6.7).
+chromadb==1.5.9
+
+# Configuration and utilities (click and rich as in requirements-dev.txt)
+python-dotenv==1.2.2
+pyyaml==6.0.3
+click==8.5.0
+rich==15.0.0
+
+# Imported by pipeline modules and declared here too (same pins as
+# requirements-web.txt): the slide-frame renderer (Pillow), the narration audio
+# renderer (httpx), and the turn auditor (sqlalchemy).
+pillow==12.3.0
+httpx==0.28.1
+sqlalchemy==2.0.50

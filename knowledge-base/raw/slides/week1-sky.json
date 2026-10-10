@@ -1,0 +1,128 @@
+{
+  "filename": "week1-sky.pptx",
+  "lecture_title": "AST 101 Week 1: The Sky Above Us",
+  "slide_count": 10,
+  "slides": [
+    {
+      "slide_number": 1,
+      "layout_name": "TITLE",
+      "title": "AST 101 Week 1: The Sky Above Us",
+      "body_text": [
+        "Dr. Alex Morgan",
+        "Example College"
+      ],
+      "speaker_notes": "Start with a sky report: the Moon's phase, when it rises, and one thing to look for tonight.",
+      "has_code": false
+    },
+    {
+      "slide_number": 2,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Look Up",
+      "body_text": [
+        "What do you already know about the night sky?",
+        "Write down one thing you have noticed about the stars or the Moon"
+      ],
+      "speaker_notes": "Collect a few answers. They usually include a misconception or two worth saving for later weeks.",
+      "has_code": false
+    },
+    {
+      "slide_number": 3,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Celestial Sphere",
+      "body_text": [
+        "An imaginary sphere centered on the observer",
+        "Stars appear fixed to its inside surface",
+        "A model for locating objects, not a physical shell"
+      ],
+      "speaker_notes": "Picture an open umbrella over your head with stars painted on the inside. The handle points at the celestial pole.",
+      "has_code": false
+    },
+    {
+      "slide_number": 4,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Landmarks on the Sphere",
+      "body_text": [
+        "Zenith: the point straight overhead",
+        "Horizon: where the sky meets the ground",
+        "North and south celestial poles: Earth's axis extended into the sky",
+        "Celestial equator: Earth's equator extended onto the sky"
+      ],
+      "speaker_notes": "Have students point to each one with their arms before reading the definitions.",
+      "has_code": false
+    },
+    {
+      "slide_number": 5,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "The Sky Turns",
+      "body_text": [
+        "Earth rotates west to east once every 24 hours",
+        "So the sky appears to rotate east to west, about 15 degrees per hour",
+        "Long-exposure photos show star trails as circles around the celestial pole"
+      ],
+      "speaker_notes": "Office chair demonstration: spin slowly and the whole room seems to go around you.",
+      "has_code": false
+    },
+    {
+      "slide_number": 6,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Polaris and Your Latitude",
+      "body_text": [
+        "Polaris lies within 1 degree of the north celestial pole",
+        "The altitude of Polaris above the horizon equals your latitude",
+        "At the equator Polaris sits on the horizon; at the North Pole it is overhead"
+      ],
+      "speaker_notes": "Polaris is not the brightest star in the sky. It is about the 50th. It is famous for where it is, not how bright it is.",
+      "has_code": false
+    },
+    {
+      "slide_number": 7,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Circumpolar Stars",
+      "body_text": [
+        "Stars closer to the pole than your latitude never set",
+        "At 45 degrees north, the Big Dipper and Cassiopeia are always above the horizon",
+        "Near the equator, almost every star rises and sets"
+      ],
+      "speaker_notes": "Ask: from the North Pole, which stars are circumpolar? All of the ones you can see, and none of the southern ones.",
+      "has_code": false
+    },
+    {
+      "slide_number": 8,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Hand Angles",
+      "body_text": [
+        "At arm's length, your little finger is about 1 degree wide",
+        "Three middle fingers together: about 5 degrees",
+        "A closed fist: about 10 degrees",
+        "A spread hand, thumb to little finger: about 20 degrees"
+      ],
+      "speaker_notes": "The full Moon is only about half a degree across. It hides behind your little finger, which surprises everyone.",
+      "has_code": false
+    },
+    {
+      "slide_number": 9,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Smaller Units",
+      "body_text": [
+        "1 degree = 60 arcminutes",
+        "1 arcminute = 60 arcseconds",
+        "The full Moon is about 30 arcminutes across",
+        "The sharpest human eye resolves about 1 arcminute"
+      ],
+      "speaker_notes": "Same pattern as hours, minutes and seconds. Arcseconds come back in AST 102 for star distances.",
+      "has_code": false
+    },
+    {
+      "slide_number": 10,
+      "layout_name": "TITLE_AND_BODY",
+      "title": "Observing Log, Entry 1",
+      "body_text": [
+        "Find the Big Dipper and follow its two pointer stars to Polaris",
+        "Measure the altitude of Polaris in fists",
+        "Record the date, time, location and sky conditions"
+      ],
+      "speaker_notes": "Cloudy all week? Describe the clouds and the entry still counts. Inventing an observation does not.",
+      "has_code": false
+    }
+  ]
+}

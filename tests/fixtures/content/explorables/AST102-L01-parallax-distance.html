@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parallax and Distance (test fixture explorable)</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 1rem auto; padding: 0 1rem; color: #1f2937; }
+  .step { border: 1px solid #d1d5db; border-radius: .5rem; padding: .75rem 1rem; margin: .75rem 0; }
+  button, input { font-size: 1rem; min-height: 44px; }
+  output { display: block; margin-top: .5rem; font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>Parallax and Distance</h1>
+<p>This is a small test-fixture explorable. It follows the contract: predict first, then
+manipulate the model, then reconstruct the idea from memory.</p>
+
+<section class="step" aria-labelledby="p">
+  <h2 id="p">1. Predict</h2>
+  <p>If a star's parallax angle halves, what happens to its distance?</p>
+  <label><input type="radio" name="guess" value="a"> The distance doubles (d = 1/p)</label><br>
+  <label><input type="radio" name="guess" value="b"> The distance halves</label><br>
+  <button type="button" id="commit">Commit my prediction</button>
+  <output id="said" aria-live="polite"></output>
+</section>
+
+<section class="step" aria-labelledby="m">
+  <h2 id="m">2. Manipulate</h2>
+  <label for="knob">Parallax angle (tenths of an arcsecond, plus one)</label>
+  <input id="knob" type="range" min="0" max="7" value="0" disabled>
+  <output id="shown" aria-live="polite">Commit a prediction to unlock the model.</output>
+</section>
+
+<section class="step" aria-labelledby="r">
+  <h2 id="r">3. Reconstruct</h2>
+  <p>Close this page. On a blank sheet, reconstruct the idea from memory: draw Earth's orbit, a nearby star and the background stars, mark the parallax angle, and write the rule linking angle and distance.</p>
+</section>
+
+<script>
+  (function () {
+    var states = ["p = 0.1 arcsec: d = 10 parsecs", "p = 0.2 arcsec: d = 5 parsecs", "p = 0.3 arcsec: d = 3.3 parsecs", "p = 0.4 arcsec: d = 2.5 parsecs", "p = 0.5 arcsec: d = 2 parsecs", "p = 0.6 arcsec: d = 1.7 parsecs", "p = 0.7 arcsec: d = 1.4 parsecs", "p = 0.8 arcsec: d = 1.25 parsecs"];
+    var knob = document.getElementById('knob');
+    document.getElementById('commit').addEventListener('click', function () {
+      var picked = document.querySelector('input[name="guess"]:checked');
+      document.getElementById('said').textContent = picked
+        ? 'You predicted: ' + picked.parentNode.textContent.trim() + '. Now test it.'
+        : 'Pick one first: a prediction you can be wrong about is the point.';
+      if (picked) { knob.disabled = false; show(); }
+    });
+    function show() { document.getElementById('shown').textContent = states[Number(knob.value)]; }
+    knob.addEventListener('input', show);
+  })();
+</script>
+</body>
+</html>

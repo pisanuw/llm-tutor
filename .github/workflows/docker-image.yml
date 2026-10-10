@@ -1,0 +1,74 @@
+# Builds the production image and checks it (plan step 6.5, finding E16): the
+# embedding model is inside it, so the first query needs no network; the app
+# runs as a non-root user that cannot write the image's code; and /healthz
+# answers. Render builds the same Dockerfile on deploy, so this catches a broken
+# image before a merge instead of after it.
+
+name: docker-image
+
+on:
+  push:
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - entrypoint.sh
+      - requirements-web.txt
+      - .github/workflows/docker-image.yml
+  pull_request:
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - entrypoint.sh
+      - requirements-web.txt
+      - .github/workflows/docker-image.yml
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build
+        run: docker build -t tutor:ci .
+
+      - name: The embedder works with no network
+        run: |
+          docker run --rm --network none --user app -e HOME=/home/app --entrypoint python tutor:ci -c "
+          from chromadb.utils import embedding_functions as ef
+          vector = ef.DefaultEmbeddingFunction()(['why does the Moon have phases?'])[0]
+          assert len(vector) == 384, len(vector)
+          print('embedded offline:', len(vector), 'dimensions')
+          "
+
+      - name: The app starts as a non-root user
+        run: |
+          docker run -d --name tutor -p 8000:8000 \
+            -e ANTHROPIC_API_KEY=ci-dummy-key -e SECRET_KEY=ci-dummy-secret \
+            -e ADMIN_TOKEN=ci-dummy-admin-token tutor:ci
+          for _ in $(seq 1 60); do
+            curl -fsS http://localhost:8000/healthz > /dev/null 2>&1 && break
+            sleep 2
+          done
+          docker logs tutor 2>&1 | tail -25
+          curl -fsS http://localhost:8000/healthz
+          echo
+          uid=$(docker exec tutor awk '/^Uid:/ {print $2}' /proc/1/status)
+          echo "the server (pid 1) runs as uid $uid"
+          test "$uid" != 0
+          docker exec --user app tutor sh -c 'test ! -w /app/tutor && test -w /app/data'
+          echo "the app cannot write its code, and can write /app/data"
+          curl -fsS -o /dev/null -w "sign-in page: %{http_code}\n" \
+            http://localhost:8000/auth/login
+
+      - name: Remove the container
+        if: always()
+        run: docker rm -f tutor > /dev/null 2>&1 || true

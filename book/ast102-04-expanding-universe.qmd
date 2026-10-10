@@ -1,0 +1,120 @@
+# The Expanding Universe
+
+Fourteen billion years in one chapter. Predict first. An ambulance drives toward you with its siren on, passes, and
+drives away. What happens to the pitch? Now: if light did the same thing,
+what would happen to its color?
+
+By the end of this chapter you should be able to:
+
+- explain redshift and compute it from a spectral line;
+- use Hubble's law to estimate a galaxy's distance;
+- list the evidence for the Big Bang and what each piece shows.
+
+## Redshift {#redshift}
+
+The siren's pitch rises as it approaches and drops as it moves away: the
+**Doppler effect**. A source moving away stretches its waves to longer
+wavelengths. For light, longer means redder, so a receding source shows a
+**redshift**.
+
+We can measure it precisely because atoms leave fingerprints in spectra.
+Hydrogen absorbs and emits at wavelengths we know from the laboratory, so a
+shifted line is a speedometer:
+
+> z = (observed wavelength - rest wavelength) / rest wavelength
+
+For small z, the speed away from us is about z times the speed of light.
+
+**Worked example.** The hydrogen-alpha line has a rest wavelength of 656.3 nm.
+In a galaxy's spectrum it appears at 662.9 nm. The shift is 6.6 nm, so
+z = 6.6 / 656.3, about 0.010, and the galaxy recedes at about 0.010 x 300,000
+km/s, about 3,000 km/s.
+
+For distant galaxies it is really space itself expanding while the light
+travels, stretching it: **cosmological redshift**.
+
+## Hubble's Law {#hubbles-law}
+
+About a century ago, astronomers found that nearly every galaxy is redshifted,
+and the farther it is, the faster it recedes. That is **Hubble's law**:
+
+> v = H0 x d
+
+v is the recession velocity, d the distance, and H0 the Hubble constant,
+about 70 km/s per megaparsec (a million parsecs, about 3.26 million
+light-years). Flipped around, a redshift gives a distance:
+
+> d = v / H0
+
+**Worked example.** A galaxy receding at 7,000 km/s is 7,000 / 70 = 100
+megaparsecs away, about 326 million light-years. The redshift example's
+galaxy, at about 3,000 km/s, is about 43 megaparsecs away.
+
+Honest footnote: methods disagree (about 67 to 73), and nobody knows why yet.
+
+Are we at the center? No. Picture raisin bread rising in the oven. Every
+raisin moves away from every other one, and a raisin twice as far away moves
+away twice as fast: Hubble's law. Every raisin sees the same thing, so no
+raisin is the center. The Big Bang was not an
+explosion at a point in space; space itself has been stretching, everywhere at
+once. Galaxies themselves do not expand: gravity holds them together.
+
+Run it backward: everything was together about 1 / H0 ago, roughly 14 billion
+years (careful measurements: 13.8 billion).
+
+## The Evidence {#big-bang-evidence}
+
+Three independent lines of evidence point to the same hot, dense beginning:
+
+1. **The expansion.** Galaxies recede following Hubble's law.
+2. **The cosmic microwave background.** About 380,000 years after the start,
+   the universe had cooled enough for light to travel freely. That light is
+   still arriving from every direction, stretched by the expansion into
+   microwaves, the glow of something at about 2.7 kelvin. Its tiny ripples are
+   the seeds of today's galaxies.
+3. **The light elements.** The first few minutes were hot enough to fuse
+   hydrogen into helium everywhere. The predicted mix, about three quarters
+   hydrogen and one quarter helium by mass with a trace of lithium, matches
+   what we measure in the oldest gas.
+
+::: {.callout-note title="Open questions"}
+The expansion is speeding up, which astronomers attribute to **dark energy**,
+about 68 percent of the universe's energy. What dark energy is, like what dark
+matter is, remains unknown. We know the history of the universe well and its
+ingredients poorly. That is a good place for a course to end.
+:::
+
+## Self-check
+
+```{=html}
+<div class="quiz" data-answer="b">
+  <div class="question">1. A galaxy recedes at 14,000 km/s. Using H0 = 70 km/s/Mpc, how far away is it?</div>
+  <ul>
+    <li data-choice="a"><label><strong>a.</strong> 20 megaparsecs</label></li>
+    <li data-choice="b"><label><strong>b.</strong> 200 megaparsecs</label></li>
+    <li data-choice="c"><label><strong>c.</strong> 980,000 megaparsecs</label></li>
+    <li data-choice="d"><label><strong>d.</strong> 2,000 megaparsecs</label></li>
+  </ul>
+  <div class="explain">
+    <strong>b</strong>. d = v / H0 = 14,000 / 70 = 200 megaparsecs, about 650 million light-years.
+  </div>
+</div>
+
+<div class="quiz" data-answer="c">
+  <div class="question">2. Which observation shows that the universe was once hot and dense enough to glow?</div>
+  <ul>
+    <li data-choice="a"><label><strong>a.</strong> Hubble's law</label></li>
+    <li data-choice="b"><label><strong>b.</strong> Flat galaxy rotation curves</label></li>
+    <li data-choice="c"><label><strong>c.</strong> The cosmic microwave background</label></li>
+    <li data-choice="d"><label><strong>d.</strong> The H-R diagram</label></li>
+  </ul>
+  <div class="explain">
+    <strong>c</strong>. The microwave background is that glow, cooled and stretched by the expansion.
+  </div>
+</div>
+```
+
+## Where this fits
+
+Last chapter. Go outside and look with everything you know now: the Moon's
+phase, the stars' colors, the galaxy's band, and Andromeda's 2.5-million-year-old light.

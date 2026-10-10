@@ -1,0 +1,72 @@
+# Weekly cohort misconception mining (ROADMAP pedagogy 12).
+#
+# Clusters per-student misconception notes into goal-level candidates using
+# the supervisor-tier model, only for goals with >=4 distinct students in the
+# 14-day window, capped at 12 goals per run. Candidates never reach prompts
+# until approved (scripts/mine_misconceptions.py --approve ID). With no
+# eligible goals, or no ANTHROPIC_API_KEY secret, the job reports and exits 0,
+# so a quiet week is silent. Emails ADMIN_EMAILS only on a real failure.
+
+name: misconception-mining
+
+on:
+  schedule:
+    - cron: "10 10 * * 0"   # Sundays 10:10 UTC: 03:10 PDT, 02:10 PST
+  workflow_dispatch:
+
+# One run at a time: a run that starts while another is going waits for it
+# (plan step 6.4, finding E19).
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  mine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-web.txt
+      - name: Install dependencies
+        run: python -m pip install -r requirements-web.txt
+      - name: Mine
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SECRET_KEY: ci-dummy-secret
+          ADMIN_TOKEN: ci-dummy-admin-token
+        # --allow-prod: this job is meant to write candidates to production.
+        run: |
+          if [ -z "$DATABASE_URL" ] || [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "DATABASE_URL or ANTHROPIC_API_KEY not set; skipping misconception mining."
+            exit 0
+          fi
+          python -m scripts.mine_misconceptions --days 14 --allow-prod
+      - name: Email alert on failure
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'EOF'
+          import json, os, urllib.request
+          key = os.environ.get("RESEND_API_KEY", "").strip()
+          to = [e.strip() for e in os.environ.get("ADMIN_EMAILS", "").split(",") if e.strip()]
+          if not key or not to:
+              raise SystemExit(0)
+          body = {"from": os.environ.get("FROM_EMAIL", "tutor@yourdomain.com"), "to": to,
+                  "subject": "[tutor] misconception-mining FAILED",
+                  "text": "The weekly misconception mining job failed.\n\nRun log: " + os.environ["RUN_URL"] + "\n"}
+          req = urllib.request.Request("https://api.resend.com/emails", data=json.dumps(body).encode(),
+                                       headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+          try:
+              print("Resend response:", urllib.request.urlopen(req, timeout=15).status)
+          except urllib.error.HTTPError as e:
+              print("Resend rejected the email:", e.code, e.read().decode(errors="replace"))
+          EOF
